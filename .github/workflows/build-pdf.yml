@@ -1,0 +1,27 @@
+name: Build and Upload PDF
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up TeX Live
+        uses: teatimeguest/setup-texlive-action@v2
+
+      - name: Build PDF
+        run: make pdf
+
+      - name: Upload PDF to pdf branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: pdf
+          keep_files: true
