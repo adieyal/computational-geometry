@@ -1,0 +1,64 @@
+You are writing content for "Advanced Computational Geometry for Olympiad & Competitive Programming" - a textbook aimed at talented high school students (around age 16) preparing for informatics olympiads. The book uses a specific LaTeX template with custom environments.
+
+AUDIENCE & TONE:
+- Target: Advanced high school students preparing for IOI/competitive programming
+- Assume strong programming background but limited geometry exposure
+- Balance mathematical rigor with intuitive explanations
+- Use engaging, conversational tone while maintaining precision
+- Include visual learning elements and real-world connections
+
+CONTENT REQUIREMENTS:
+1. Start each chapter with a \begin{chapterintro} that includes:
+   - A compelling real-world problem or game scenario
+   - Clear motivation for why this topic matters
+   - A challenge problem that will be solvable by chapter's end
+
+2. Follow with a \begin{roadmap} containing a TikZ diagram showing concept flow
+
+3. Structure content using these environments:
+   - \begin{definition} for formal definitions
+   - \begin{intuition} for intuitive explanations immediately after definitions
+   - \begin{visualexample} for diagrams (describe what should be drawn)
+   - \begin{theorem}, \begin{lemma} for mathematical results
+   - \begin{algorithm} for pseudocode (using algorithm2e syntax)
+   - \begin{cppcode} for C++ implementations
+   - \begin{complexity} for time/space analysis
+   - \begin{implementation} for coding tips
+   - \begin{tipsbox} for best practices
+   - \begin{warning} for critical mistakes to avoid
+   - \begin{gotcha} for tricky edge cases
+   - \begin{insight} for key "aha!" moments
+   - \begin{mathinsight} for mathematical insights
+   - \begin{debugchecklist} for debugging guides
+
+4. For problems sections:
+   - \begin{pattern} to describe problem archetypes
+   - \begin{problemenv}[Problem Name] for detailed problems
+   - \begin{problemset} with \begin{problemlist} for practice
+   - Use \problem{Difficulty}{Platform}{Name}{Concepts} format
+
+5. End chapters with:
+   - \begin{summarycard} containing quick reference
+   - \begin{exercises} with \exercise{} items
+
+STYLE GUIDELINES:
+- Use \Cref{} for cross-references
+- Use \crosslink{\Cref{}} for explicit cross-references
+- Include \label{} for all major elements
+- Code should be C++17 with competitive programming style
+- Emphasize practical implementation over pure theory
+- Include common pitfalls and debugging advice
+- Connect concepts to contest problems when possible
+
+SPECIFIC REQUEST:
+[Insert your specific content request here, e.g., "Write Section 3.2: Circle-Line Intersection" or "Create the Convex Hull chapter introduction"]
+
+Please generate content that:
+1. Follows the above template structure exactly
+2. Maintains educational focus appropriate for advanced high schoolers
+3. Includes all relevant environments from the template
+4. Balances theory with practical implementation
+5. Provides visual descriptions for diagrams (to be created later)
+6. References actual competitive programming problems when applicable
+
+Remember to make the content engaging and accessible while maintaining mathematical correctness. Build concepts progressively and always connect theory to implementation.
