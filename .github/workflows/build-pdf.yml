@@ -17,6 +17,7 @@ jobs:
         with:
           packages: |
             scheme-full
+            latexmk
 
       - name: Build PDF
         run: make pdf
