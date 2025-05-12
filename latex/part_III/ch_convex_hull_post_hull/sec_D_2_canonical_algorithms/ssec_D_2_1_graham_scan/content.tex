@@ -1,0 +1,29 @@
+\subsection{Graham Scan}
+\label{ssec:graham_scan}
+
+Graham Scan is one of the most well-known algorithms for computing the convex hull of a set of points in the plane. The convex hull is the smallest convex polygon that contains all the given points, and finding it is a fundamental problem in computational geometry with applications in pattern recognition, image processing, and more. Graham Scan is notable for its efficiency and elegance: it sorts the points by polar angle and then constructs the hull in a single pass, making it both intuitive and practical for a wide range of inputs.
+
+\subimport{./}{algorithm.tex}
+\label{algorithm:graham_scan_algorithm}
+
+\begin{intuition}
+Graham Scan builds the convex hull in a single counterclockwise sweep. The key insight is that as we process points in order of increasing polar angle, we can maintain a sequence of points that form the convex hull of all points processed so far. When we add a new point, we "backtrack" along our current hull, removing any points that would create a "dent" with this new point.
+\end{intuition}
+
+\subimport{./}{visualexample.tex}
+\label{visualexample:graham_scan_visualexample}
+
+\begin{tipsbox}
+\begin{itemize}
+    \item For numerical stability, use the cross product directly for the left turn test rather than computing actual angles.
+    \item Handle collinear points by sorting them by distance from $p_0$ when they have the same polar angle.
+    \item Be careful with the initial sorting—proper comparison of angles is crucial for correctness.
+\end{itemize}
+\end{tipsbox}
+
+\lstinputlisting[language=C++, caption=Graham Scan]{code.cpp}
+\begin{complexity}
+\label{comp:graham_scan}
+$O(n \log n)$ time. Sorting dominates.
+\end{complexity}
+Invariant: Stack maintains points forming a left-turning chain

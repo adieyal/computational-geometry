@@ -1,0 +1,97 @@
+% part_I/ch_A/sec_A_2_canonical_algorithms/ssec_A_2_1_vector_ops_pseudo/content.tex
+\subsection{Vector Operations in Pseudocode}
+\label{ssec:A.2.1}
+
+These algorithms assume points/vectors are represented as structures with \texttt{x} and \texttt{y} members (e.g., \texttt{P.x}, \texttt{P.y}).
+
+\begin{algorithm}[H]
+\caption{Dot Product of 2D Vectors $\mathbf{u}, \mathbf{v}$}
+\label{alg:A.2.1.dot_product}
+\KwInput{Vector $\mathbf{u} = (u_x, u_y)$, Vector $\mathbf{v} = (v_x, v_y)$}
+\KwOutput{Scalar dot product $\mathbf{u} \cdot \mathbf{v}$}
+\Return{$u_x \cdot v_x + u_y \cdot v_y$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.1.dot_product}
+$O(1)$ time. Two multiplications and one addition.
+\end{complexity}
+
+\begin{algorithm}[H]
+\caption{Cross Product of 2D Vectors $\mathbf{u}, \mathbf{v}$ (z-component)}
+\label{alg:A.2.1.cross_product_2d}
+\KwInput{Vector $\mathbf{u} = (u_x, u_y)$, Vector $\mathbf{v} = (v_x, v_y)$}
+\KwOutput{Scalar cross product $u_x v_y - u_y v_x$}
+\Return{$u_x \cdot v_y - u_y \cdot v_x$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.1.cross_product_2d}
+$O(1)$ time. Two multiplications and one subtraction.
+\end{complexity}
+\begin{warning}
+\label{warn:A.2.1.cross_product_overflow}
+Ensure the data type for the return value can hold $2 \cdot C_{max}^2$ if coordinates are up to $C_{max}$ (see \Cref{tips:A.1.4.integer_arithmetic}). Use \texttt{long long} if inputs are \texttt{int}.
+\end{warning}
+
+\begin{algorithm}[H]
+\caption{Norm Squared of a 2D Vector $\mathbf{v}$}
+\label{alg:A.2.1.norm_sq}
+\KwInput{Vector $\mathbf{v} = (v_x, v_y)$}
+\KwOutput{Scalar norm squared $|\mathbf{v}|^2$}
+\Return{$v_x \cdot v_x + v_y \cdot v_y$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.1.norm_sq}
+$O(1)$ time. Two multiplications and one addition.
+\end{complexity}
+\begin{insight}
+\label{insight:A.2.1.norm_sq_vs_norm}
+Using \texttt{norm\_sq} avoids computing the square root, which is slower and can introduce floating point errors if the coordinates are integers. This method is ideal for comparing distances.
+\end{insight}
+
+\begin{algorithm}[H]
+\caption{Rotate 2D Vector $\mathbf{v}$ CCW by Angle $\theta$}
+\label{alg:A.2.1.rotate_vector}
+\KwInput{Vector $\mathbf{v} = (v_x, v_y)$, Angle $\theta$ (in radians)}
+\KwOutput{Rotated vector $\mathbf{v}' = (v'_x, v'_y)$}
+$c \leftarrow \cos(\theta)$\;
+$s \leftarrow \sin(\theta)$\;
+$v'_x \leftarrow v_x \cdot c - v_y \cdot s$\;
+$v'_y \leftarrow v_x \cdot s + v_y \cdot c$\;
+\Return{$(v'_x, v'_y)$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.1.rotate_vector}
+$O(1)$ time, but involves trigonometric functions which are computationally more expensive than simple arithmetic.
+\end{complexity}
+\begin{implementation}
+\label{impl:A.2.1.rotate_vector_precision}
+If $\theta$ is a special angle like $90^\circ$ or $180^\circ$, use direct coordinate manipulation to avoid \texttt{sin}/\texttt{cos} and potential precision loss.
+For $90^\circ$ CCW: $v'_x \leftarrow -v_y$; $v'_y \leftarrow v_x$.
+For $90^\circ$ CW: $v'_x \leftarrow v_y$; $v'_y \leftarrow -v_x$.
+For $180^\circ$: $v'_x \leftarrow -v_x$; $v'_y \leftarrow -v_y$.
+\end{implementation}
+
+\begin{algorithm}[H]
+\caption{Project Vector $\mathbf{a}$ onto Non-Zero Vector $\mathbf{b}$}
+\label{alg:A.2.1.project_vector}
+\KwInput{Vector $\mathbf{a}$, Vector $\mathbf{b}$ (non-zero)}
+\KwOutput{Vector projection of $\mathbf{a}$ onto $\mathbf{b}$}
+\lIf{$\mathbf{b}.x = 0$ \textbf{and} $\mathbf{b}.y = 0$} { \Return{\textbf{Error} or $\mathbf{0}$} \Comment{Cannot project onto zero vector} }
+dot\_prod $\leftarrow \text{dot\_product}(\mathbf{a}, \mathbf{b})$\;
+norm\_sq\_b $\leftarrow \text{norm\_sq}(\mathbf{b})$\;
+\If{norm\_sq\_b is very close to 0 (for floats) or is 0 (for integers)} {
+    \Return{\textbf{Error} or $(0,0)$ } \Comment{Should be caught by initial check if exact 0}
+}
+scalar\_factor $\leftarrow \text{dot\_prod} / \text{norm\_sq\_b}$\;
+projected\_vector\_x $\leftarrow \mathbf{b}.x \cdot \text{scalar\_factor}$\;
+projected\_vector\_y $\leftarrow \mathbf{b}.y \cdot \text{scalar\_factor}$\;
+\Return{$(projected\_vector\_x, projected\_vector\_y)$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.1.project_vector}
+$O(1)$ time. Involves dot product, norm squared, one division, two multiplications.
+\end{complexity}
+\begin{warning}
+\label{warn:A.2.1.project_vector_zero}
+Always check if vector $\mathbf{b}$ is the zero vector before dividing by its norm squared to prevent division by zero. If $\mathbf{b}$ is zero, the projection is often considered undefined or the zero vector depending on context.
+\end{warning}

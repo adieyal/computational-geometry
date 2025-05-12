@@ -1,0 +1,23 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Chan's Algorithm}
+\KwIn{A set $P$ of $n$ points in the plane}
+\KwOut{The convex hull of $P$}
+
+\For{$m = 3, 6, 12, ..., n$}{
+    Partition $P$ into groups of size $\leq m$\;
+    Compute the convex hull of each group using a standard algorithm\;
+    
+    \tcc{Attempt to compute the full hull using the group hulls}
+    Initialize $h$ with the leftmost point\;
+    \For{$i = 1$ to $m$}{
+        \tcc{Find the tangent from the last hull point to each group hull}
+        Find the point $p$ across all groups that gives the most counter-clockwise turn from the last hull point\;
+        \If{$p$ is the starting point}{
+            \Return{hull $h$}\; \tcc{Complete hull found}
+        }
+        Add $p$ to $h$\;
+    }
+    \tcc{Failed to find the complete hull with this value of m}
+}
+\end{algorithm}

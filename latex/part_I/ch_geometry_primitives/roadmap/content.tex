@@ -1,0 +1,60 @@
+\begin{roadmap}
+\label{roadmap:geometry_primitives}
+% TikZ diagram description:
+% The roadmap starts with "Points & Vectors" and "Lines, Segments, Rays". "Points & Vectors" leads to "Dot & Cross Products".
+% "Dot & Cross Products" is a key tool for "Orientation Test (CCW)" and is used in "Distance Calculations".
+% "Lines, Segments, Rays" and "Dot & Cross Products" feed into "Distance Calculations".
+% "Orientation Test (CCW)" is the basis for "Segment Intersection". "Distance Calculations" can be a component of segment intersection (e.g. for collinear checks).
+% "Orientation Test" and "Segment Intersection" are applied in "Basic Geometric Queries", "Angular Sort", and "Path Self-Intersection".
+% All foundational concepts ("Points & Vectors", "Lines, Segments, Rays", "Dot & Cross Products", "Distance Calculations", "Orientation Test", "Segment Intersection") are affected by "Numerical Precision".
+% "Template Code" provides implementations for many of these primitives.
+% The flow shows dependencies: e.g., understanding points/vectors is needed for dot/cross products, which are needed for orientation, which is needed for segment intersection. Applications branch off from these core concepts.
+\begin{center}
+    \begin{tikzpicture}[
+        concept/.style={rectangle, draw, fill=blue!10, rounded corners, minimum height=1cm, minimum width=3cm, text centered, text width=3.5cm},
+        arrow/.style={->, >=stealth, thick},
+        subarrow/.style={->, >=stealth, dashed}
+    ]
+        % Core Concepts
+        \node[concept] (points_vectors) {Points \& Vectors (\Cref{ssec:A.1.1})};
+        \node[concept, right=2cm of points_vectors] (dot_cross) {Dot \& Cross Products (\Cref{sssec:A.1.1.3}, \Cref{sssec:A.1.1.4})};
+        \node[concept, below=1cm of points_vectors] (lines_segments) {Lines, Segments, Rays (\Cref{ssec:A.1.2})};
+        \node[concept, below=1cm of dot_cross] (distances) {Distance Calculations (\Cref{ssec:A.1.3}, \Cref{ssec:A.2.2})};
+        \node[concept, right=2cm of dot_cross] (orientation) {Orientation Test (\Cref{ssec:A.1.4}, \Cref{ssec:A.2.3})};
+        \node[concept, below=1cm of orientation] (seg_intersect) {Segment Intersection (\Cref{ssec:A.1.5}, \Cref{ssec:A.2.4})};
+
+        % Overarching Concerns
+        \node[concept, fill=red!10, below=2.5cm of distances, xshift=1cm] (precision) {Numerical Precision (\Cref{sec:A.3})};
+        \node[concept, fill=green!10, right=2cm of seg_intersect, yshift=1cm] (templates) {Template Code (\Cref{sec:A.5})};
+        
+        % Applications
+        \node[concept, fill=yellow!10, above=0.7cm of templates] (basic_queries) {Basic Queries (\Cref{ssec:A.4.1})};
+        \node[concept, fill=yellow!10, right=2cm of orientation] (angular_sort) {Angular Sort (\Cref{ssec:A.4.2})}; % Corrected Cref ssec:A.2.X to ssec:A.4.X
+        \node[concept, fill=yellow!10, below=0.7cm of templates] (path_intersect) {Path Self-Intersection (\Cref{ssec:A.4.3})}; % Corrected Cref
+
+        % Arrows - Core Flow
+        \draw[arrow] (points_vectors) -- (dot_cross);
+        \draw[arrow] (points_vectors) -- (lines_segments);
+        \draw[arrow] (dot_cross) -- (distances);
+        \draw[arrow] (dot_cross) -- (orientation);
+        \draw[arrow] (lines_segments) -- (distances); % Added missing arrow based on textual description
+        \draw[arrow] (orientation) -- (seg_intersect);
+        
+        % Arrows - To Applications
+        \draw[arrow] (orientation) -- (basic_queries);
+        \draw[arrow] (seg_intersect) -- (basic_queries);
+        \draw[arrow] (orientation) -- (angular_sort);
+        \draw[arrow] (dot_cross) -- (angular_sort); % for distance tie-breaking
+        \draw[arrow] (seg_intersect) -- (path_intersect);
+
+        % Arrows - To Overarching
+        \foreach \source in {points_vectors, dot_cross, lines_segments, distances, orientation, seg_intersect} {
+            \draw[subarrow] (\source.south) to [out=270,in=90] (precision.north); % Improved arrow routing
+        }
+        \foreach \source in {points_vectors, dot_cross, orientation, seg_intersect} {
+             \draw[subarrow] (\source.east) to [out=0,in=180] (templates.west); % Improved arrow routing
+        }
+    \end{tikzpicture}
+\end{center}
+\end{roadmap}
+

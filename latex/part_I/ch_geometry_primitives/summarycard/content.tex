@@ -1,0 +1,32 @@
+\begin{summarycard}
+\label{summary:A}
+\textbf{Key Definitions:}
+\begin{itemize}
+    \item \textbf{Point}: A location $(x,y)$ in 2D space. (\Cref{def:A.1.1.point})
+    \item \textbf{Vector}: Direction and magnitude, e.g., $\vec{AB} = B - A$. (\Cref{def:A.1.1.vector})
+    \item \textbf{Dot Product}: $\vec{a} \cdot \vec{b} = a_x b_x + a_y b_y = |\vec{a}||\vec{b}|\cos\theta$. Measures alignment. Zero if orthogonal. (\Cref{def:A.1.1.dot_product})
+    \item \textbf{Cross Product (2D)}: $\vec{a} \times \vec{b} = a_x b_y - a_y b_x = |\vec{a}||\vec{b}|\sin\theta$. Signed area of parallelogram. Zero if collinear. Sign gives orientation. (\Cref{def:A.1.1.cross_product_2d})
+    \item \textbf{Orientation Test}: Uses cross product $(P_2-P_1) \times (P_3-P_1)$ to determine if $P_3$ is Left (CCW), Right (CW), or Collinear w.r.t. directed line $P_1P_2$. (\Cref{def:A.1.4.orientation})
+    \item \textbf{Segment Intersection}: Two segments share a common point. Checked using orientations and handling collinear cases. (\Cref{def:A.1.5.segment_intersection})
+\end{itemize}
+\textbf{Core Algorithms:}
+\begin{itemize}
+    \item Point-Line Distance: $|\text{cross}(\vec{AP}, \vec{AB})| / |\vec{AB}|$. (\Cref{def:A.1.3.point_line_dist}, \Cref{alg:A.2.2.dist_point_line})
+    \item Point-Segment Distance: Check projection; if outside segment, use endpoint distance. (\Cref{def:A.1.3.point_segment_dist}, \Cref{alg:A.2.2.dist_point_segment})
+    \item Angular Sort: Use \texttt{atan2(dy, dx)} (careful with range/precision) or cross-product comparator (robust with integers). (\Cref{ssec:A.4.2})
+    \item Segment Intersection Test: Combines orientation tests for general and collinear cases. (\Cref{alg:A.2.4.segment_intersect})
+\end{itemize}
+\textbf{Critical Gotchas:}
+\begin{itemize}
+    \item \textbf{Floating Point Precision}: Use \texttt{EPS} for comparisons. Avoid equality checks. \texttt{1e-9} is a common \texttt{EPS}. (\Cref{ssec:A.3.1})
+    \item \textbf{Integer Overflow}: Cross products and squared norms can exceed \texttt{int} range. Use \texttt{long long}. (\Cref{ssec:A.3.2})
+    \item \textbf{Collinear Cases}: Often edge cases in orientation, intersection, angular sort. Handle explicitly. (\Cref{warn:A.1.4.collinear_subcases}, \Cref{gotcha:A.4.2.collinear_tie_breaking})
+    \item \textbf{\texttt{atan2(y,x)} Range}: $(-\pi, \pi]$. Be careful when comparing angles near $\pm\pi$. (\Cref{warn:A.4.2.atan2_precision}, \Cref{ssec:A.3.3})
+\end{itemize}
+\textbf{When to Use What:}
+\begin{itemize}
+    \item \textbf{Integers + Cross Product}: For exact orientation, collinearity, and intersection tests if coordinates are integers. Most robust. (\Cref{tips:A.1.4.integer_arithmetic})
+    \item \textbf{Floats + \texttt{atan2}}: For direct angle calculation, but be wary of precision. (\Cref{sssec:A.4.2.1.atan2_sort})
+    \item \textbf{Squared Norms}: For distance comparisons to avoid \texttt{sqrt}. (\Cref{tips:A.1.1.norm_sq_compare})
+\end{itemize}
+\end{summarycard}

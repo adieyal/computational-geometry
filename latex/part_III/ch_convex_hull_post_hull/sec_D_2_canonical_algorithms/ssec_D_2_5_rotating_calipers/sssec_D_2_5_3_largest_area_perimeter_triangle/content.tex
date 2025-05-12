@@ -1,0 +1,39 @@
+Given a convex polygon, find the triangle of maximum area (or perimeter) whose vertices are vertices of the polygon.
+
+\begin{intuition}
+For any fixed base (an edge of the polygon), the area of a triangle increases as the third vertex moves farther from the base. Using rotating calipers, we can efficiently find the farthest vertex for each possible base.
+\end{intuition}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Maximum Area Triangle in Convex Polygon}
+\KwIn{A convex polygon $P$ with vertices in counterclockwise order}
+\KwOut{The maximum area triangle formed by three vertices of $P$}
+
+Initialize $maxArea = 0$, $bestTriangle = \emptyset$\;
+
+\For{each edge $(v_i, v_{i+1})$ in $P$}{
+    Initialize $j$ to be the vertex farthest from the line through $v_i$ and $v_{i+1}$\;
+    
+    \For{each vertex $v_k$ from $v_i$ to $v_{i+1}$}{
+        \While{area of triangle $(v_k, v_{k+1}, v_{j+1})$ > area of triangle $(v_k, v_{k+1}, v_j)$}{
+            $j = (j + 1) \bmod n$\;
+        }
+        
+        $area = $ area of triangle $(v_k, v_{k+1}, v_j)$\;
+        \If{$area > maxArea$}{
+            $maxArea = area$\;
+            $bestTriangle = (v_k, v_{k+1}, v_j)$\;
+        }
+    }
+}
+\Return{$bestTriangle$}\;
+\end{algorithm}
+
+\begin{implementation}
+For the maximum perimeter triangle, the approach is similar, but we use the perimeter calculation instead of area. Interestingly, the maximum area and maximum perimeter triangles are not necessarily the same.
+\end{implementation}
+
+\begin{complexity}
+Both algorithms run in $O(n)$ time where $n$ is the number of vertices in the polygon.
+\end{complexity}

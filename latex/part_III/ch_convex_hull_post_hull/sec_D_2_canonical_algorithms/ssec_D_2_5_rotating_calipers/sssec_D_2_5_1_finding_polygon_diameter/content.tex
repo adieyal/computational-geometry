@@ -1,0 +1,27 @@
+\begin{definition}[Polygon Diameter]
+The diameter of a convex polygon is the maximum distance between any two points on the polygon. For a convex polygon, this maximum always occurs between two vertices.
+\end{definition}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Finding Polygon Diameter Using Rotating Calipers}
+\KwIn{A convex polygon $P$ with vertices in counterclockwise order}
+\KwOut{The squared diameter of $P$}
+
+Find the indices $i_{min}$ and $i_{max}$ of the leftmost and rightmost vertices\;
+Initialize $j = i_{max}$\;
+Initialize $maxDist^2 = 0$\;
+
+\For{each vertex $i$ from $i_{min}$ to $i_{min}+n$}{
+    \While{area of triangle formed by vertices $i$, $i+1$, and $j+1$ > area of triangle formed by vertices $i$, $i+1$, and $j$}{
+        $j = (j + 1) \bmod n$\;
+    }
+    Update $maxDist^2 = \max(maxDist^2, dist^2(vertices[i], vertices[j]))$\;
+    Update $maxDist^2 = \max(maxDist^2, dist^2(vertices[i+1], vertices[j]))$\;
+}
+\Return{$maxDist^2$}\;
+\end{algorithm}
+
+\begin{insight}
+The key insight of this algorithm is that the diameter of a convex polygon must occur between two vertices that form an antipodal pair—vertices that admit parallel supporting lines. The rotating calipers technique efficiently finds all such pairs in linear time.
+\end{insight}

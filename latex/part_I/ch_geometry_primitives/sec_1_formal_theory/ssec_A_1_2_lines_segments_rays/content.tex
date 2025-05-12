@@ -1,0 +1,112 @@
+% part_I/ch_A/sec_A_1_formal_theory/ssec_A_1_2_lines_segments_rays/content.tex
+\subsection{Lines, Segments, and Rays: Paths and Boundaries}
+\label{ssec:A.1.2}
+
+Points and vectors are fundamental, but we often care about collections of points forming lines, segments, or rays.
+
+\subsubsection{Representations: Describing Infinite and Finite Paths}
+\label{sssec:A.1.2.1}
+
+There are several common ways to represent these linear objects.
+
+\begin{definition}[Line, Segment, Ray Representations]
+\label{def:A.1.2.representations}
+\begin{itemize}
+    \item \textbf{Two Points}: A line can be uniquely defined by two distinct points $P_1, P_2$ that lie on it. A segment is defined by its two endpoints $P_1, P_2$. A ray can be defined by a starting point $P_1$ and another point $P_2$ through which it passes.
+    \item \textbf{Point and Direction Vector}: A line can be defined by a point $P_0$ on the line and a non-zero direction vector $\mathbf{d}$ parallel to the line. A ray is defined by its start point $P_0$ and a direction vector $\mathbf{d}$.
+    \item \textbf{Implicit Form (for lines)}: A line in 2D can be represented by the equation $ax + by + c = 0$, where $a, b, c$ are constants. The vector $(a,b)$ is a \textbf{normal vector} (perpendicular) to the line. This form is unique up to a scaling factor.
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.2.representations}
+Choosing a representation depends on the task:
+\begin{itemize}
+    \item \textbf{Two Points}: Natural for segments. Often how lines/segments are given in problems.
+    \item \textbf{Point and Vector}: Great for parametric forms (\Cref{sssec:A.1.2.2}) and understanding direction.
+    \item \textbf{Implicit Form ($ax+by+c=0$)}: Useful for checking if a point lies on a line (plug in coordinates), finding distance from a point to a line, and finding intersection of two lines (solve system of equations). If you have two points $P_1(x_1,y_1), P_2(x_2,y_2)$, you can find $a,b,c$: $a = y_2-y_1$, $b = x_1-x_2$, $c = -(a x_1 + b y_1)$. (Note: this $c$ is $-(ax_1+by_1)$, so $ax_1+by_1+c=0$. Alternatively $c = x_2 y_1 - x_1 y_2$).
+\end{itemize}
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.2.representations}
+% Description of diagram:
+% Panel 1: Line L1 shown passing through P1 and P2. Segment S between P1 and P2 highlighted. Ray R1 starting at P1 passing through P2.
+% Panel 2: Line L2 shown with point P0 on it and direction vector d parallel to it. Ray R2 starting at P0 in direction d.
+% Panel 3: Line L3 shown with equation ax+by+c=0. Normal vector (a,b) shown perpendicular to L3.
+Diagram showing:
+1. A line $L_1$ passing through points $P_1, P_2$. The segment $P_1P_2$ is highlighted. A ray starting at $P_1$ and going through $P_2$ is also shown.
+2. A line $L_2$ defined by point $P_0$ and direction vector $\mathbf{d}$.
+3. A line $L_3$ with its equation $ax+by+c=0$. A normal vector $\mathbf{n}=(a,b)$ is shown perpendicular to $L_3$.
+\end{visualexample}
+
+\subsubsection{Parametric Form: Tracing the Path}
+\label{sssec:A.1.2.2}
+
+\begin{definition}[Parametric Form]
+\label{def:A.1.2.parametric}
+Given two distinct points $P_1$ and $P_2$, any point $P(t)$ on the line passing through them can be expressed as:
+$$ P(t) = P_1 + t(P_2 - P_1) = (1-t)P_1 + tP_2 $$
+where $t$ is a real-valued parameter.
+\begin{itemize}
+    \item \textbf{Line}: $t \in (-\infty, \infty)$.
+    \item \textbf{Segment $[P_1, P_2]$}: $t \in [0, 1]$. $P(0)=P_1$, $P(1)=P_2$. Values of $t$ between 0 and 1 give points on the segment.
+    \item \textbf{Ray starting at $P_1$ passing through $P_2$}: $t \in [0, \infty)$.
+    \item \textbf{Ray starting at $P_2$ passing through $P_1$}: $t \in (-\infty, 1]$ (or equivalently $P_2 + s(P_1-P_2)$ for $s \in [0, \infty)$).
+\end{itemize}
+If using point $P_0$ and direction vector $\mathbf{d}$: $P(t) = P_0 + t\mathbf{d}$.
+For a segment from $P_0$ with length $L$ in direction $\mathbf{d}$ (assuming $\mathbf{d}$ is unit vector): $t \in [0, L]$. (Actually, $P(t) = P_0 + t \cdot \mathbf{d}$ means $t$ scales $\mathbf{d}$. If $\mathbf{d}$ is not unit, $P(1)$ is $P_0+\mathbf{d}$. For segment of length $L$ using unit vector $\mathbf{u}$, $P(t)=P_0+t\mathbf{u}$, $t \in [0,L]$. If $\mathbf{d}$ is $P_2-P_1$, then $t \in [0,1]$ covers segment $P_1P_2$.)
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.2.parametric}
+Think of $t$ as "time".
+\begin{itemize}
+    \item For a segment $P_1P_2$: At $t=0$, you are at $P_1$. At $t=1$, you are at $P_2$. For $0 < t < 1$, you are somewhere in between. If $t<0$ or $t>1$, you are on the line but outside the segment.
+    \item This form is excellent for finding intersection points (solve for $t$) or checking if a point lies on a segment/ray.
+\end{itemize}
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.2.parametric}
+% Description of diagram:
+% Points P1 and P2. The infinite line through them is shown.
+% The segment P1P2 is highlighted, labeled "t in [0,1]".
+% The ray from P1 through P2 is shown, labeled "t in [0,inf)".
+% A point for t=-0.5 (on line, outside segment, beyond P1) and t=1.5 (on line, outside segment, beyond P2) are marked.
+Line through $P_1, P_2$.
+Point $P(0)=P_1$, $P(0.5)$ (midpoint), $P(1)=P_2$.
+Also show $P(-0.5)$ and $P(1.5)$ on the extended line.
+Labels for segment ($0 \le t \le 1$) and ray ($t \ge 0$) parts.
+\end{visualexample}
+
+\subsubsection{Properties: Slope and Intercepts (Mainly for Lines)}
+\label{sssec:A.1.2.3}
+
+\begin{definition}[Slope, Intercepts]
+\label{def:A.1.2.slope_intercept}
+For a non-vertical line:
+\begin{itemize}
+    \item \textbf{Slope ($m$)}: Measures the steepness. Given two points $(x_1, y_1)$ and $(x_2, y_2)$ on the line with $x_1 \neq x_2$, $m = \frac{y_2 - y_1}{x_2 - x_1}$.
+    \item \textbf{Y-intercept ($c$ or $b$)}: The y-coordinate where the line crosses the y-axis. The line equation can be $y = mx + c$.
+    \item \textbf{X-intercept}: The x-coordinate where the line crosses the x-axis.
+\end{itemize}
+For a line $ax+by+c=0$:
+\begin{itemize}
+    \item If $b \neq 0$, slope $m = -a/b$. Y-intercept is $-c/b$.
+    \item If $b = 0$ (so $ax+c=0$, $a \neq 0$): Vertical line $x = -c/a$. Slope is undefined.
+    \item If $a = 0$ (so $by+c=0$, $b \neq 0$): Horizontal line $y = -c/b$. Slope is 0.
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.2.slope_intercept}
+Slope-intercept form $y=mx+c$ is familiar but has issues with vertical lines (infinite slope). The $ax+by+c=0$ form is more general.
+In competitive programming, we often work with vectors or pairs of points, and calculate slope only if needed, being careful about division by zero for vertical lines.
+Two lines are parallel if their slopes are equal or both are vertical. They are perpendicular if $m_1 \cdot m_2 = -1$ (unless one is horizontal and other vertical). Using dot product of direction vectors or normal vectors is more robust for checking parallelism/perpendicularity. (Parallel: cross product of direction vectors is 0. Perpendicular: dot product of direction vectors is 0).
+\end{intuition}
+
+\begin{gotcha}
+\label{gotcha:A.1.2.vertical_lines_slope}
+\textbf{Vertical Lines and Slope}: The concept of slope breaks down for vertical lines ($x_1 = x_2$). Always handle this case separately if your algorithm relies on slope calculation. Using vector directions (e.g., $(0, \Delta y)$ for vertical) or the $ax+by+c=0$ form avoids this issue.
+\end{gotcha}

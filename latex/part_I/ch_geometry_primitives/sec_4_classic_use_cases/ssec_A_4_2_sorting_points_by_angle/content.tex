@@ -1,0 +1,214 @@
+\subsection{Sorting Points by Angle: Sweeping Around}
+\label{ssec:A.4.2}
+
+A common task in computational geometry is to process points in angular order around a central pivot point. This is a key step in algorithms like Graham Scan for convex hulls (\crosslink{\Cref{ssec:D.2.1}}), finding tangent lines, or radial sweep algorithms.
+
+\begin{pattern}[Angular Sort]
+\label{pattern:A.4.2.angular_sort}
+\textbf{Archetype}: Given a pivot point $P_0$ and a set of other points $\{P_1, P_2, \ldots, P_N\}$, sort these points based on the angle formed by the vector $\vec{P_0P_i}$ with a reference direction (usually the positive x-axis).
+\textbf{Key Challenge}: Doing this robustly and efficiently, especially with integer coordinates.
+\end{pattern}
+
+There are two main approaches:
+
+\subsubsection{Using \texttt{atan2(dy, dx)}}
+\label{sssec:A.4.2.1.atan2_sort}
+
+\begin{intuition}
+\label{intuition:A.4.2.atan2_sort}
+The most straightforward way conceptually is to calculate the angle for each vector $\vec{P_0P_i}$ using \texttt{atan2(Pi.y - P0.y, Pi.x - P0.x)} (\Cref{def:A.3.3.atan2}) and then sort the points based on these angles.
+\end{intuition}
+
+\begin{algorithm}[H]
+\caption{Angular Sort using \texttt{atan2}}
+\KwIn{Pivot point $P_0$, list of points $Points = \{P_1, \ldots, P_N\}$}
+\KwOut{List $Points$ sorted angularly around $P_0$}
+\ForEach{point $P_i$ in $Points$}{
+    $dx \gets P_i.x - P_0.x$\;
+    $dy \gets P_i.y - P_0.y$\;
+    $angle_i \gets \operatorname{atan2}(dy, dx)$\;
+}
+Sort $Points$ based on $angle_i$\;
+\If{two points $P_i, P_j$ have (almost) the same angle}{
+    Tie-break by distance to $P_0$: point closer to $P_0$ comes first\;
+    Use squared distance for tie-breaking to avoid \texttt{sqrt}: $\text{norm\_sq}(P_i-P_0)$ vs $\text{norm\_sq}(P_j-P_0)$\;
+}
+\end{algorithm}
+
+\begin{lstlisting}[language=C++, caption=Angular sort with \texttt{atan2} C++ comparator]
+\label{code:A.4.2.atan2_sort}
+\caption{Angular sort with \texttt{atan2} C++ comparator}
+\begin{verbatim}
+#include <vector>
+#include <algorithm> // For std::sort
+#include <cmath>     // For std::atan2, std::sqrt (if dist used)
+
+// Assuming Point struct with double x, y or long long x,y
+// For Point<long long>, dx/dy might need to be long double for atan2
+// or just cast to double.
+struct Point { /* ... members x, y ... */
+    double angle_around_pivot;
+    // Add original index or other data if needed
+};
+
+Point pivot; // Assume this is set
+
+// For norm_sq, if Point has T x,y;
+// T distSq(Point p1, Point p2) {
+//    T dx = p1.x - p2.x; T dy = p1.y - p2.y; return dx*dx + dy*dy;
+// }
+
+bool angular_sort_cmp_atan2(const Point& a, const Point& b) {
+    // Angles pre-calculated and stored in Point objects relative to 'pivot'
+    // double angle_a = std::atan2(a.y - pivot.y, a.x - pivot.x);
+    // double angle_b = std::atan2(b.y - pivot.y, b.x - pivot.x);
+    // Assumes angle_around_pivot is already computed.
+
+    if (std::abs(a.angle_around_pivot - b.angle_around_pivot) < EPS) { // EPS from ssec A.3.1
+        // Tie-break by distance (closer first)
+        // For long long coords, distSq should use long long and return long long
+        return distSq(pivot, a) < distSq(pivot, b);
+    }
+    return a.angle_around_pivot < b.angle_around_pivot;
+}
+
+// In main logic:
+// pivot = ...;
+// std::vector<Point> points_to_sort = ...;
+// for (Point& p : points_to_sort) {
+//    p.angle_around_pivot = std::atan2(p.y - pivot.y, p.x - pivot.x);
+// }
+// std::sort(points_to_sort.begin(), points_to_sort.end(), angular_sort_cmp_atan2);
+\end{verbatim}
+\end{lstlisting}
+\begin{complexity}
+\label{comp:A.4.2.atan2_sort}
+Time: $O(N \log N)$ for sorting, with each comparison involving \texttt{atan2} (if not precomputed) or float comparison. \texttt{atan2} itself is $O(1)$ but more expensive than integer ops. Pre-calculating angles is $O(N)$.
+Space: $O(N)$ or $O(1)$ depending on whether angles are stored.
+\end{complexity}
+\begin{warning}
+\label{warn:A.4.2.atan2_precision} % Renamed from warn:A.4.2.atan2_range
+Using \texttt{atan2} introduces floating-point numbers.
+\begin{itemize}
+    \item \textbf{Precision}: Comparisons must use \texttt{EPS} (\Cref{ssec:A.3.1}).
+    \item \textbf{Range $(-\pi, \pi]$}: Be mindful of this range. Standard sort usually handles it correctly. If you need $[0, 2\pi)$, normalize angles (\Cref{gotcha:A.3.3.angle_range_conversion}).
+    \item \textbf{Pivot Coincidence}: If $P_i = P_0$, then $dx=0, dy=0$. \texttt{atan2(0,0)} is usually 0. This point might need special handling (e.g., place it first or last, or exclude it).
+\end{itemize}
+\end{warning}
+
+\subsubsection{Using Cross Product for Comparison}
+\label{sssec:A.4.2.2.cross_product_sort}
+
+\begin{intuition}
+\label{intuition:A.4.2.cross_product_sort}
+Instead of calculating angles, we can compare two points $P_A$ and $P_B$ relative to the pivot $P_0$ using the orientation test (\Cref{def:A.1.4.orientation}).
+If $\text{orientation}(P_0, P_A, P_B)$ is CCW (positive cross product of $\vec{P_0P_A}$ and $\vec{P_0P_B}$), then $P_A$ comes before $P_B$ in a CCW angular sort.
+This method is generally more robust if coordinates are integers, as it avoids floating-point arithmetic entirely.
+\end{intuition}
+
+\begin{algorithm}[H]
+\caption{Angular Sort Comparator using Cross Product}
+\label{alg:A.4.2.cross_product_sort_cmp}
+\KwInput{Pivot point $P_0$, two points $P_A, P_B$ to compare}
+\KwOutput{True if $P_A$ comes before $P_B$ angularly around $P_0$, False otherwise}
+
+orient\_val $\leftarrow \text{orientation}(P_0, P_A, P_B)$\;
+\Comment*[r]{orientation computes $(P_A-P_0) \times (P_B-P_0)$}
+
+\If{orient\_val $= 0$}{%
+    \Comment*[r]{Tie-break by distance: point closer to $P_0$ comes first.}
+    \Comment*[r]{(Or farther, if context requires, e.g., Graham Scan upper/lower chain distinction)}
+    \Return{$\text{norm\_sq}(P_A-P_0) < \text{norm\_sq}(P_B-P_0)$}
+}
+\Return{orient\_val $> 0$} \Comment*[r]{Positive (CCW) means $P_A$ is before $P_B$}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.4.2.cross_product_sort}
+Time: $O(N \log N)$ for sorting. Each comparison is $O(1)$ (an orientation test and possibly a norm squared calculation). This is generally faster than \texttt{atan2}-based comparisons if using integers.
+Space: $O(N)$ or $O(1)$.
+\end{complexity}
+
+\begin{warning}
+\label{warn:A.4.2.cross_product_half_plane}
+\textbf{Handling Half-Planes}: The simple cross-product comparator works perfectly if all points lie in the same half-plane with respect to $P_0$ and a horizontal line through $P_0$ (e.g., all points $P_i$ have $P_i.y \ge P_0.y$, or all $P_i.y \le P_0.y$). If points span across the horizontal line through $P_0$ (i.e., some above, some below), this comparator needs adjustment because it only gives relative order for angles within a $180^\circ$ sweep.
+For a full $360^\circ$ sort:
+\begin{enumerate}
+    \item Partition points into two groups: those with $P_i.y > P_0.y$ or ($P_i.y == P_0.y$ and $P_i.x > P_0.x$) (upper half-plane including positive x-axis), and the rest (lower half-plane including negative x-axis).
+    \item Points in the upper half-plane come before points in the lower half-plane.
+    \item Within each group, use the cross-product comparator (\Cref{alg:A.4.2.cross_product_sort_cmp}).
+\end{enumerate}
+This is essentially what the Graham Scan pivot selection (lowest-then-leftmost) achieves: it places the pivot such that all other points are in a $\le 180^\circ$ angular range with respect to it and the positive x-axis direction.
+\end{warning}
+
+\begin{gotcha}
+\label{gotcha:A.4.2.collinear_tie_breaking}
+\textbf{Collinear Tie-Breaking is Crucial}:
+When $\text{orientation}(P_0, P_A, P_B) = 0$, $P_A$ and $P_B$ are collinear with $P_0$.
+\begin{itemize}
+    \item For general angular sort, typically the point closer to $P_0$ comes first.
+    \item For Graham Scan (\crosslink{\Cref{ssec:D.2.1}}), if building a hull, you might want the \textit{farthest} point first among collinear points, or discard all but the farthest to avoid including interior points on the hull edge. If multiple points are coincident with the pivot, they might be handled first or last.
+\end{itemize}
+Ensure your tie-breaking logic matches the specific requirements of your application. Using squared norm for distance comparison is standard (\Cref{tips:A.1.1.norm_sq_compare}).
+\end{gotcha}
+
+\begin{problemexample}[Problem: "Polygon" - TopCoder SRM 144 Div1 Easy]
+\label{probex:A.4.2.tc_polygon_sort}
+\textit{Why}: This problem (or similar ones like constructing a simple polygon from points) requires sorting points angularly around a chosen pivot (often the lowest-then-leftmost point, as in Graham Scan).
+\textbf{Problem Description (General Idea)}: Given a set of points, determine if they can form a simple polygon, or construct one. A key step is to sort them angularly.
+\textbf{Solution Strategy}:
+1. Pick a pivot point $P_0$. A common choice is the point with the smallest y-coordinate, breaking ties with the smallest x-coordinate. This ensures all other points lie in an angular range of $[0, \pi]$ relative to a horizontal line through $P_0$.
+2. Sort all other points $P_i$ using a comparator based on the cross product $(P_i - P_0) \times (P_j - P_0)$ as in \Cref{alg:A.4.2.cross_product_sort_cmp}. Handle collinear points by distance (e.g., farther point first for constructing a "tight" boundary for some hull variants, or closer point first for a general sort).
+\textbf{URL}: TopCoder SRM 144 Problem "Polygon" statement: \url{https://community.topcoder.com/stat?c=problem_statement&pm=1666&rd=4472}
+\end{problemexample}
+
+\begin{implementation}
+\label{impl:A.4.2.full_360_cross_product_sort}
+\textbf{Robust 360-degree Cross-Product Sort Comparator}:
+To sort points $A$ and $B$ around a pivot $P_0$ across the full $360^\circ$ range without \texttt{atan2}:
+\begin{lstlisting}[language=C++, caption=Full 360 degree angular sort comparator (C++)]
+    // Assuming PointLL struct, pivot P0, orientation(), distSq() defined
+    // PointLL P0; // The pivot point, global or captured by lambda
+
+    // Helper to determine half-plane (conceptual)
+    // 0 for on pivot, 1 for on positive x-axis from pivot or upper half-plane,
+    // 2 for on negative x-axis from pivot or lower half-plane
+    int get_half_plane(PointLL P) {
+        if (P.x == P0.x && P.y == P0.y) return 0; // Coincident with pivot
+        if (P.y > P0.y || (P.y == P0.y && P.x > P0.x)) {
+            return 1; // Upper half-plane or positive x-axis
+        }
+        return 2; // Lower half-plane or negative x-axis
+    }
+
+    bool robust_angular_cmp(PointLL A, PointLL B) {
+        int hp_A = get_half_plane(A);
+        int hp_B = get_half_plane(B);
+
+        if (hp_A != hp_B) {
+            return hp_A < hp_B; // Points in "earlier" half-planes come first
+        }
+
+        // If A or B is P0 itself, P0 comes first (or handle as per problem)
+        if (hp_A == 0) return true; // A is P0, B is not (or also P0, then equal)
+        if (hp_B == 0) return false; // B is P0, A is not
+
+        // Both points are in the same half-plane (and not P0)
+        long long orient_val = orientation(P0, A, B);
+        if (orient_val == 0) { // Collinear
+            return distSq(P0, A) < distSq(P0, B); // Closer first
+        }
+        return orient_val > 0; // CCW means A comes before B
+    }
+
+    // Usage:
+    // P0 = find_lowest_leftmost_point(points); // (Or any chosen pivot)
+    // std::sort(other_points.begin(), other_points.end(), robust_angular_cmp);
+\end{lstlisting}
+
+This comparator correctly orders points across the full circle.
+The \texttt{get\_half\_plane} function partitions points.
+Points on the pivot are handled first.
+Then points in the upper half-plane (including positive x-axis)
+come before points in the lower half-plane (including negative x-axis).
+Within each half-plane, the cross product determines order.
+\end{implementation}

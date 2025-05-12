@@ -1,0 +1,43 @@
+% part_I/ch_A/sec_A_2_canonical_algorithms/ssec_A_2_3_orientation_test_pseudo/content.tex
+\subsection{Orientation Test in Pseudocode}
+\label{ssec:A.2.3}
+
+This algorithm implements the orientation predicate defined in \Cref{def:A.1.4.orientation}.
+
+\begin{algorithm}[H]
+\caption{Orientation of Ordered Triplet $(P_1, P_2, P_3)$}
+\label{alg:A.2.3.orientation_test}
+\KwInput{Point $P_1=(x_1, y_1)$, Point $P_2=(x_2, y_2)$, Point $P_3=(x_3, y_3)$}
+\KwOutput{Integer: 1 for CCW (Left), -1 for CW (Right), 0 for Collinear}
+\Comment{Calculates $(P_2-P_1) \times (P_3-P_1)$}
+val\_dx1 $\leftarrow P_2.x - P_1.x$\;
+val\_dy1 $\leftarrow P_2.y - P_1.y$\;
+val\_dx2 $\leftarrow P_3.x - P_1.x$\;
+val\_dy2 $\leftarrow P_3.y - P_1.y$\;
+
+cross\_product\_val $\leftarrow \text{val\_dx1} \cdot \text{val\_dy2} - \text{val\_dy1} \cdot \text{val\_dx2}$\;
+
+\If{using floating point numbers and $\operatorname{abs}(\text{cross\_product\_val}) < \text{EPSILON}$} {
+    \Return{0} \Comment{Collinear within tolerance}
+}
+\If{\text{cross\_product\_val} = 0} {
+    \Return{0} \Comment{Collinear (exact)}
+}
+% No else, fall through if not collinear
+
+\If{cross\_product\_val $> 0$} {
+    \Return{1} \Comment{CCW / Left Turn}
+} \Else { % cross_product_val must be < 0
+    \Return{-1} \Comment{CW / Right Turn}
+}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.3.orientation_test}
+$O(1)$ time. Four subtractions, two multiplications, one subtraction.
+\end{complexity}
+\begin{tipsbox}
+\label{tips:A.2.3.integer_orientation}
+\textbf{Integer Arithmetic is King}: As stressed in \Cref{tips:A.1.4.integer_arithmetic}, if coordinates are integers, perform all calculations using \texttt{long long} to prevent overflow and maintain exactness. Avoid floats for orientation if at all possible. The \texttt{EPSILON} check for floats is notoriously tricky to get right for all geometric configurations.
+\end{tipsbox}
+
+\lstinputlisting[language=C++]{code.cpp}

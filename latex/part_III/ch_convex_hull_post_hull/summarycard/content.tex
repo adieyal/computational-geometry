@@ -1,0 +1,38 @@
+\begin{summarycard}
+\label{summary:D}
+\textbf{Key Definitions:}
+\begin{itemize}
+    \item \textbf{Convex Set}: A set where for any two points, the line segment connecting them lies entirely in the set (\Cref{sec:convex-set-convex-combination})
+    \item \textbf{Convex Combination}: A weighted average of points with non-negative weights summing to 1 (\Cref{sec:convex-set-convex-combination})
+    \item \textbf{Convex Hull}: Smallest convex set containing all given points (\Cref{sec:convex-hull-definition})
+    \item \textbf{Antipodal Pair}: Pair of points on a convex polygon admitting parallel supporting lines (\Cref{sssec:finding_polygon_width})
+    \item \textbf{Supporting Line}: A line touching the convex hull with all points of the hull on one side (\Cref{sec:convex-hull-properties})
+\end{itemize}
+
+\textbf{Core Algorithms:}
+\begin{itemize}
+    \item \textbf{Graham Scan}: Sort by polar angle, build hull using a stack. $O(n \log n)$ (\Cref{ssec:graham_scan})
+    \item \textbf{Monotone Chain}: Sort by x-coordinate, build upper/lower hulls. $O(n \log n)$ (\Cref{ssec:monotone_chain})
+    \item \textbf{Chan's Algorithm}: Optimally combines divide-and-conquer with gift wrapping. $O(n \log h)$ (\Cref{ssec:chans_algorithm})
+    \item \textbf{Divide-and-Conquer}: Split, recurse, merge with tangent lines. $O(n \log n)$ (\Cref{ssec:divide_and_conquer_convex_hull})
+    \item \textbf{Rotating Calipers}: Simulate rotating parallel lines around hull. $O(n)$ (\Cref{ssec:rotating_calipers})
+\end{itemize}
+
+\textbf{Critical Gotchas:}
+\begin{itemize}
+    \item Handle collinear points correctly (include only extremes)
+    \item Check orientation test for numerical stability
+    \item Special cases: fewer than 3 points, all collinear points
+    \item Ensure consistent clockwise/counterclockwise orientation
+    \item For floating-point coordinates, use appropriate epsilon values
+\end{itemize}
+
+\textbf{When to Use What:}
+\begin{itemize}
+    \item \textbf{Graham Scan}: Standard approach, widely applicable
+    \item \textbf{Monotone Chain}: When numerical stability is crucial
+    \item \textbf{Chan's Algorithm}: When output size h << input size n
+    \item \textbf{Rotating Calipers}: For post-hull optimization (diameter, width, min-area rectangle)
+    \item \textbf{Divide-and-Conquer}: When parallelization is needed
+\end{itemize}
+\end{summarycard}

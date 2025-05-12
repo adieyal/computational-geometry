@@ -1,0 +1,26 @@
+\section{Classic Use Cases}
+\begin{pattern}[Farthest Points]
+Many problems involve finding extreme configurations, such as:
+\begin{itemize}
+    \item Finding the two points with maximum distance
+    \item Finding the triangle with maximum area
+    \item Finding the pair of points with maximum/minimum slope
+\end{itemize}
+Key insight: These extremal values often occur at the vertices of the convex hull.
+\end{pattern}
+
+\begin{pattern}[Containment Testing]
+Testing whether a point lies inside a convex polygon can be done in $O(\log n)$ time using binary search, much faster than the $O(n)$ time required for general polygons.
+\end{pattern}
+
+% \begin{problemenv}[Smallest Enclosing Disk]
+% Given a set of points, find the smallest circle that contains all points.
+% \begin{solution}
+% The key insight is that the smallest enclosing disk is determined by at most three points, which must lie on its boundary. Moreover, these points must be on the convex hull of the original set.
+% \end{solution}
+% \end{problemenv}
+
+% \subimport{ssec_D_4_1_farthest_pair/}{content}
+% \subimport{ssec_D_4_2_smallest_enclosing/}{content}
+% \subimport{ssec_D_4_3_boundary_problems/}{content}
+% \subimport{ssec_D_4_4_gift_wrapping/}{content} 

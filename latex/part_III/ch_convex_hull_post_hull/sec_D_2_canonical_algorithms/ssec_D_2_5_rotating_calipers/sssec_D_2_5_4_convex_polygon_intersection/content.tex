@@ -1,0 +1,49 @@
+Given two convex polygons $P$ and $Q$, compute their intersection efficiently.
+
+\begin{intuition}
+We can compute the intersection of two convex polygons by using a linear-time algorithm that exploits their convexity. The algorithm walks around both polygons simultaneously, always advancing along the polygon that currently "lags behind" the other.
+\end{intuition}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Convex Polygon Intersection}
+\KwIn{Two convex polygons $P$ and $Q$ with vertices in counterclockwise order}
+\KwOut{The intersection polygon $R$}
+
+\If{$P$ or $Q$ is empty}{
+    \Return{empty polygon}\;
+}
+
+\If{$P$ is contained in $Q$}{
+    \Return{$P$}\;
+}
+
+\If{$Q$ is contained in $P$}{
+    \Return{$Q$}\;
+}
+
+Initialize result polygon $R = \emptyset$\;
+Find a vertex of $P$ inside $Q$ (or vice versa)\;
+Set starting position at this vertex\;
+
+\Repeat{we return to the starting position}{
+    Add current position to $R$\;
+    Compute the next intersection of the boundaries of $P$ and $Q$\;
+    Move to this intersection\;
+}
+\Return{$R$}\;
+\end{algorithm}
+
+\begin{implementation}
+The actual implementation is more complex, as we need to carefully handle various edge cases:
+\begin{itemize}
+    \item Finding the initial vertex that lies in both polygons
+    \item Detecting when the polygons don't intersect
+    \item Handling the case where one polygon is entirely inside the other
+    \item Dealing with edges that overlap exactly
+\end{itemize}
+\end{implementation}
+
+\begin{complexity}
+The algorithm runs in $O(n + m)$ time, where $n$ and $m$ are the numbers of vertices in the two polygons.
+\end{complexity}

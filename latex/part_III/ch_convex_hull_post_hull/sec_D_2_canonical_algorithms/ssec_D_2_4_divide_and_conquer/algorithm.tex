@@ -1,0 +1,15 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Divide-and-Conquer Convex Hull}
+\KwIn{A set $P$ of $n$ points in the plane}
+\KwOut{The convex hull of $P$}
+
+\If{$n \leq 3$}{
+    \Return{the trivial convex hull of $P$}\;
+}
+Sort points by $x$-coordinate\;
+Divide $P$ into left half $P_L$ and right half $P_R$\;
+Recursively compute the convex hull $H_L$ of $P_L$\;
+Recursively compute the convex hull $H_R$ of $P_R$\;
+Merge $H_L$ and $H_R$ to obtain the convex hull of $P$\;
+\end{algorithm}

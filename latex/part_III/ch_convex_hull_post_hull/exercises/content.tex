@@ -1,0 +1,21 @@
+\begin{exercises}
+\exercise{Implement a function that determines if a point lies inside a convex polygon in $O(\log n)$ time using binary search. Test it on various cases including points on the boundary.}
+
+\exercise{Modify the Graham Scan algorithm to handle collinear points by including only the extreme points on each line segment.}
+
+\exercise{Implement Chan's algorithm and compare its performance against Graham Scan on various inputs, particularly when the output hull size is much smaller than the input size.}
+
+\exercise{Using the rotating calipers technique, implement an algorithm that finds the smallest circle containing a set of points. Hint: The circle must be defined by either two or three points on the convex hull.}
+
+\exercise{Given a convex polygon, find the triangle with maximum perimeter whose vertices are vertices of the polygon. Is it always formed by three consecutive vertices? Prove or provide a counterexample.}
+
+\exercise{Implement an algorithm that dynamically maintains the convex hull as points are added one by one. What is the time complexity for adding $m$ points to an existing hull with $n$ vertices?}
+
+\exercise{Design an algorithm that finds the largest empty circle among a set of points (i.e., a circle that contains no points and has its center inside the convex hull).}
+
+\exercise{The width of a convex polygon is the minimum distance between any two parallel supporting lines. Prove that this minimum is attained when one of the lines contains an edge of the polygon.}
+
+\exercise{For a set of $n$ points, the convex layers (or onion peeling) are defined by repeatedly computing the convex hull and removing its vertices. Implement an algorithm to compute all convex layers of a point set. What is the worst-case time complexity?}
+
+\exercise{Research and implement Fortune's algorithm for computing the Voronoi diagram of a set of points. How can convex hulls be used in this context?}
+\end{exercises}

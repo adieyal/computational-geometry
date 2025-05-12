@@ -1,0 +1,41 @@
+% Content for C++ Implementation Templates 
+
+\subsection{C++ Implementation}
+
+\begin{lstlisting}[language=C++, caption={C++ Implementation of Polygon Area Calculation}, label={lst:polygon_area_cpp}]
+
+struct Point {
+    long long x, y;
+    Point(long long x = 0, long long y = 0) : x(x), y(y) {}
+};
+
+// Polygon area using shoelace formula
+long long polygonArea2(const vector<Point>& poly) {
+    int n = poly.size();
+    long long area = 0;
+    for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+        area += poly[i].x * poly[j].y;
+        area -= poly[j].x * poly[i].y;
+    }
+    return abs(area);  // Returns 2 * area
+}
+// Count boundary points on a segment
+long long boundaryPoints(Point p1, Point p2) {
+    return __gcd(abs(p2.x - p1.x), abs(p2.y - p1.y));
+}
+
+// Pick's theorem: find interior points
+long long interiorPoints(const vector<Point>& poly) {
+    long long area2 = polygonArea2(poly);
+    long long boundary = 0;
+    int n = poly.size();
+    
+    for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+        boundary += boundaryPoints(poly[i], poly[j]);
+    }
+    
+    return (area2 - boundary + 2) / 2;
+}
+\end{lstlisting}

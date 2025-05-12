@@ -1,0 +1,36 @@
+% part_I/ch_A/sec_A_5_template_code/ssec_A_5_1_point_vector_struct/content.tex
+\subsection{Point / Vector Struct in C++}
+\label{ssec:A.5.1}
+
+A robust \texttt{Point} (or \texttt{Vector}) struct is the cornerstone of any geometry library. Here's a template-based C++17 version.
+
+\lstinputlisting[language=C++, caption="Point/Vector Struct in C++17", label=code:A.5.1.point_vector_struct]{code.cpp}
+
+\begin{implementation}
+\label{impl:A.5.1.point_struct_choices}
+\textbf{Design Choices and Considerations}:
+\begin{itemize}
+    \item \textbf{Templated Type \texttt{T}}: Using a template parameter \texttt{T} allows this struct to work with \texttt{int}, \texttt{long long}, \texttt{double}, or \texttt{long double}. This is flexible. For competitive programming, you'll typically typedef \texttt{Point<long long>} as \texttt{PointLL} (or just \texttt{Pt}) and \texttt{Point<double>} as \texttt{PointD}.
+    \item \textbf{Default Constructor}: \texttt{Point(T \_x = 0, T \_y = 0)} initializes to origin by default.
+    \item \textbf{Vector Operations}: \texttt{+}, \texttt{-}, \texttt{*} (scalar) are natural. Operator overloading makes code cleaner (e.g., \texttt{vec\_AB = B - A;}). Be cautious with \texttt{/} (scalar) for integer types due to truncation; it might be better to omit or make it return \texttt{Point<double>}.
+    \item \textbf{Dot and Cross Products}: Essential. \texttt{cross} as defined is $P.x \cdot O.y - P.y \cdot O.x$, which is $\vec{OP} \times \vec{OO'}$ if $O$ is origin and $O'$ is \texttt{other}. If $P$ and $Q$ are vectors, $P.\texttt{cross}(Q)$ is $P_x Q_y - P_y Q_x$. The static \texttt{cross(P,A,B)} version or using \texttt{(A-P).cross(B-P)} is often for orientation.
+    \item \textbf{Norms}: \texttt{norm\_sq()} is crucial for exact distance comparisons with integers. \texttt{norm()} returning \texttt{double} is convenient for when actual length is needed.
+    \item \textbf{Rotation}: General \texttt{rotate(angle\_rad)} almost always involves \texttt{double}s and trig functions. Specific \texttt{rotate90\_ccw()} and \texttt{rotate90\_cw()} are exact for integers and very fast.
+    \item \textbf{Comparison \texttt{operator<}}: Lexicographical sort is standard for sorting points or using them in \texttt{std::map}/\texttt{std::set}.
+    \item \textbf{Equality \texttt{operator==}}: This is tricky for floats.\\ Using \texttt{if constexpr (std::is\_floating\_point\_v<T>)} \\ (C++17) allows different logic for float vs. integer types within the same template. For floats, comparison uses \texttt{EPS\_DEFAULT}.
+    \item \textbf{Input/Output}: \texttt{operator>>} and \texttt{operator<<} are convenient for debugging and I/O.
+    \item \textbf{\texttt{long long} Default for Contests}: For integer coordinates, \texttt{PointLL = Point<long long>} is generally the safest default to avoid overflow in cross/dot products (see Section~\ref{ssec:A.3.2}), unless problem constraints guarantee small coordinates.
+    \item \textbf{\texttt{double} Variant for Precision Needs}: \texttt{PointD = Point<double>} when calculations inherently require floats (e.g., non-trivial angles, intersections that don't fall on integer coords). The \texttt{EPS\_DEFAULT} should be chosen carefully (see Section~\ref{ssec:A.3.1}).
+\end{itemize}
+\end{implementation}
+
+\begin{tipsbox}
+\label{tips:A.5.1.point_struct_usage}
+\textbf{Best Practices for Usage}:
+\begin{itemize}
+    \item \textbf{Clarity}: Name instances clearly, e.g., \texttt{Point pivot;} \texttt{Vector dir;}.
+    \item \textbf{Operations}: Prefer \texttt{(B-A).cross(C-A)} for orientation of $A,B,C$ rather than global functions if methods are available.
+    \item \textbf{Templating vs. Separate Structs}: While templating is powerful, some prefer two distinct structs (\texttt{PointInt}, \texttt{PointDouble}) to avoid \texttt{if constexpr} and to be more explicit about types. This is a style choice.
+    \item \textbf{Keep it Minimal}: Only add methods you frequently use. A bloated struct can be harder to manage. Common additions: \texttt{dist\_sq(other)}, \texttt{dist(other)}.
+\end{itemize}
+\end{tipsbox}

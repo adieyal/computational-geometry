@@ -1,0 +1,16 @@
+\subimport{ssec_D_5_1_convex_hull_monotone_chain/}{content}
+\subimport{ssec_D_5_2_rotating_calipers_diameter/}{content}
+\subimport{ssec_D_5_3_rotating_calipers_min_rectangle/}{content} 
+
+When your convex hull algorithm isn't working correctly, check these common issues:
+\begin{debugchecklist}[Convex Hull Algorithms]
+\item \textbf{Orientation test}: Verify your cross product calculation is correct and handles numerical precision issues.
+\item \textbf{Sorting}: For Graham Scan, check if points are sorted correctly by polar angle.
+\item \textbf{Initial point selection}: Verify that your algorithm correctly identifies the point to start from (lowest y-coordinate for Graham Scan).
+\item \textbf{Collinear points}: Test your algorithm on sets of three or more collinear points.
+\item \textbf{Edge cases}: Test with inputs of size 0, 1, 2, and 3.
+\item \textbf{Stack operations}: For stack-based algorithms, ensure push/pop operations maintain the correct hull.
+\item \textbf{Visualization}: Draw the intermediate steps to identify where your algorithm deviates from the expected behavior.
+\item \textbf{Orientation consistency}: Make sure you're consistently checking for clockwise or counterclockwise orientation throughout your code.
+\item \textbf{Degeneracy handling}: Check that your code correctly handles degenerate cases like all points being collinear.
+\end{debugchecklist}

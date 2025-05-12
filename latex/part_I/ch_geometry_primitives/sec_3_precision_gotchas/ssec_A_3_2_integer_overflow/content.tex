@@ -1,0 +1,50 @@
+% part_I/ch_A/sec_A_3_precision_gotchas/ssec_A_3_2_integer_overflow/content.tex
+\subsection{Integer Overflow: When Numbers Get Too Big}
+\label{ssec:A.3.2}
+
+\begin{intuition}
+\label{intuition:A.3.2.int_limits}
+Integer types like \texttt{int} and \texttt{long long} have a limited range of values they can store. For a signed 32-bit \texttt{int}, this is roughly $\pm 2 \cdot 10^9$. For a signed 64-bit \texttt{long long}, it's roughly $\pm 9 \cdot 10^{18}$. If a calculation produces a result outside this range, it "wraps around" or overflows, leading to incorrect (and often wildly different) values without any warning from the compiler or runtime!
+\end{intuition}
+
+\begin{warning}[Overflow in Geometric Calculations]
+\label{warn:A.3.2.geo_overflow}
+Geometric calculations, especially those involving products of coordinates, are prime candidates for overflow:
+\begin{itemize}
+    \item \textbf{Cross Product}: The formula $(x_2-x_1)(y_3-y_1) - (y_2-y_1)(x_3-x_1)$ involves products of differences. If coordinates $x_i, y_i$ are up to $C_{max}$ (e.g., $10^5$), then $x_2-x_1$ can be $2 \cdot C_{max}$. A term like $(x_2-x_1)(y_3-y_1)$ can be up to $(2 C_{max}) \cdot (2 C_{max}) = 4 C_{max}^2$. If $C_{max}=10^5$, this is $4 \cdot (10^5)^2 = 4 \cdot 10^{10}$. This will overflow a 32-bit \texttt{int} (max $\approx 2 \cdot 10^9$) but fits in a 64-bit \texttt{long long} (max $\approx 9 \cdot 10^{18}$). The full cross product expression can be up to $2 \cdot ( (C_{max}-(-C_{max})) \cdot (C_{max}-(-C_{max})) ) = 8 C_{max}^2$ in magnitude, although a more direct $X_A Y_B - X_C Y_D$ with coordinates up to $C_{max}$ results in differences up to $2 C_{max}^2$.
+    \item \textbf{Dot Product}: $x_A x_B + y_A y_B$. Similar issue, each term can be $C_{max}^2$. Sum can be $2 C_{max}^2$.
+    \item \textbf{Squared Norm/Distance}: $x^2 + y^2$. If $x$ is $C_{max}$, $x^2$ is $C_{max}^2$. Sum can be $2 C_{max}^2$. For example, distance between $(-C_{max}, -C_{max})$ and $(C_{max}, C_{max})$ is $\sqrt{(2C_{max})^2 + (2C_{max})^2}$, squared distance is $8 C_{max}^2$.
+\end{itemize}
+\end{warning}
+
+\begin{tipsbox}
+\label{tips:A.3.2.use_long_long}
+\textbf{Default to \texttt{long long} for Coordinates or Calculations}:
+\begin{itemize}
+    \item If problem constraints allow coordinates up to $10^4 - 10^5$ or more, it's safest to use \texttt{long long} for storing coordinates in your \texttt{Point} struct, or at least for intermediate calculations in cross products, dot products, and squared distances.
+    \item Even if coordinates are small enough for \texttt{int} (e.g., $\pm 1000$), $C_{max}^2$ is $10^6$, $2 C_{max}^2$ is $2 \cdot 10^6$, which fits in \texttt{int}. But if $C_{max} \approx 40000$, $C_{max}^2 \approx 1.6 \cdot 10^9$, $2 C_{max}^2 \approx 3.2 \cdot 10^9$, which overflows \texttt{int}. So, a boundary exists around $C_{max} \approx 30000 - 40000$.
+    \item If intermediate products are cast to \texttt{long long} before multiplication, e.g., \texttt{(long long)dx1 * dy2}, this helps prevent overflow of the product itself.
+\end{itemize}
+Using \texttt{long long} consistently for geometric calculations involving products is a good habit in competitive programming. The performance difference is usually negligible.
+\end{tipsbox}
+
+\begin{mathinsight}
+\label{mathinsight:A.3.2.overflow_check}
+Maximum coordinate value $C_{max}$.
+\begin{itemize}
+    \item A single coordinate difference, e.g., $dx = x_2-x_1$: Range $\approx \pm 2 C_{max}$.
+    \item Product of two differences, e.g., $dx \cdot dy$: Range $\approx \pm (2 C_{max})^2 = \pm 4 C_{max}^2$.
+    \item Cross product value: Range $\approx \pm 2 \cdot (4 C_{max}^2) = \pm 8 C_{max}^2$ is a loose upper bound; more tightly, it's $\approx \pm 2 C_{max,diff}^2$ where $C_{max,diff}$ is max coordinate difference. If coordinates are $X_i, Y_i$, a product $X_1 Y_2$ is $C_{max}^2$. The difference $X_1 Y_2 - X_2 Y_1$ could be $2 C_{max}^2$.
+    \item A \texttt{long long} typically holds up to $\approx 9 \times 10^{18}$. So, $2 C_{max}^2 \le 9 \times 10^{18} \implies C_{max}^2 \le 4.5 \times 10^{18} \implies C_{max} \le \sqrt{4.5 \times 10^{18}} \approx 2.1 \times 10^9$.
+    If coordinates themselves can be this large (e.g., problem states $10^9$), then \texttt{long long} is essential for coordinates. Products would need \texttt{\_\_int128} or careful handling. Most contest problems keep coordinates within a range where \texttt{long long} suffices for products.
+\end{itemize}
+\end{mathinsight}
+
+\begin{debugchecklist}[Integer Overflow]
+\label{debug:A.3.2.int_overflow_checklist}
+    \item What are the maximum possible coordinate values given by problem constraints?
+    \item Am I performing multiplications of coordinates or coordinate differences (e.g., in cross product, dot product, squared distance)?
+    \item Are the intermediate products and final results guaranteed to fit within the chosen integer type (\texttt{int} or \texttt{long long})?
+    \item Have I explicitly cast operands to \texttt{long long} \emph{before} multiplication if they are stored as \texttt{int}s? E.g., \verb|(long long)val_dx1 * val_dy2|
+    \item Test with maximum and minimum coordinate values to check for overflow. E.g., points like $(C_{max}, C_{max}), (C_{max}, -C_{max}), (-C_{max}, -C_{max})$.
+\end{debugchecklist}

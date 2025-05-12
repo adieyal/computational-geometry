@@ -1,0 +1,45 @@
+\begin{figure}[ht]
+  \begin{roadmap}
+    \label{roadmap:convex_hull_post_hull}
+    \tikzset{
+      concept/.style={ellipse, draw, fill=blue!10},
+      algorithm/.style={rectangle, draw, fill=green!10},
+      technique/.style={diamond, draw, fill=orange!10, aspect=2},
+      application/.style={rectangle, draw, fill=red!10, rounded corners},
+      arrow/.style={->, thick}
+    }
+    \begin{tikzpicture}[node distance=1.5cm and 3cm]
+        % Core concepts
+        \node[concept] (convex) {Convex Sets};
+        \node[concept, right=of convex] (hull) {Convex Hull};
+        \node[concept, below=of hull] (properties) {Properties};
+        
+        % Algorithms
+        \node[algorithm, below=of convex] (graham) {Graham Scan};
+        \node[algorithm, below=of graham] (monotone) {Monotone Chain};
+        \node[algorithm, right=of monotone] (chan) {Chan's Algorithm};
+        \node[algorithm, right=of graham] (dnc) {Divide \& Conquer};
+        
+        % Post-Hull Techniques
+        \node[technique, below=2cm of monotone] (calipers) {Rotating Calipers};
+        
+        % Applications
+        \node[application, below left=of calipers] (diameter) {Diameter};
+        \node[application, below=of calipers] (width) {Width};
+        \node[application, below right=of calipers] (rectangle) {Min Rectangle};
+        
+        % Connections
+        \draw[arrow] (convex) -- (hull);
+        \draw[arrow] (hull) -- (properties);
+        \draw[arrow] (hull) -- (graham);
+        \draw[arrow] (hull) -- (dnc);
+        \draw[arrow] (graham) -- (monotone);
+        \draw[arrow] (monotone) -- (chan);
+        \draw[arrow] (properties) -- (calipers);
+        \draw[arrow] (calipers) -- (diameter);
+        \draw[arrow] (calipers) -- (width);
+        \draw[arrow] (calipers) -- (rectangle);
+    \end{tikzpicture}
+  \end{roadmap}
+  \caption{From convex hull theory to practical applications}
+\end{figure}

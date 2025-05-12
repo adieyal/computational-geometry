@@ -1,0 +1,33 @@
+\subsection{Properties of Convex Hulls}
+\label{sec:convex-hull-properties}
+(Vertices are input points, edges connect input points)
+
+Convex hulls have several key properties that are used extensively in algorithms. Understanding these properties is crucial.
+
+\begin{enumerate}
+    \item \textbf{Vertex property:} The vertices of the convex hull are a subset of the original points in $P$. No "new" points are created.
+    \item \textbf{Edge property:} Each edge of the convex hull connects two points from the original set $P$.
+    \item \textbf{Extremal property:} For any direction, the point in $P$ that is extreme in that direction (farthest in that direction) is a vertex of the convex hull.
+    \item \textbf{Supporting line property:} For every edge of the convex hull, all points in $P$ lie on or to one side of the line containing that edge.
+    \item \textbf{Minimal representation:} The convex hull is the minimal convex polygon (in terms of number of vertices or edges) that contains all points in $P$.
+    \item \textbf{Invariance under affine transformations:} If you apply an affine transformation (translation, rotation, scaling, shearing) to all points in $P$, the convex hull of the transformed points is the transformation of the convex hull of $P$.
+    \item \textbf{Monotonicity:} If $A \subseteq B$ are two point sets, then $\text{ConvexHull}(A) \subseteq \text{ConvexHull}(B)$.
+    \item \textbf{Computational complexity:} The convex hull of $n$ points in the plane can be computed in $O(n \log n)$ time in the worst case, and this is optimal in the comparison model.
+    \item \textbf{Output size:} The convex hull of $n$ points in the plane can have at most $n$ vertices, and in the worst case (when all points are on the hull), it has exactly $n$ vertices.
+\end{enumerate}
+
+\begin{insight}
+The extremal property is often used to efficiently find points on the convex hull by searching in different directions. The supporting line property is fundamental to the rotating calipers technique \crosslink{\Cref{sec:rotating-calipers-technique}}.
+\end{insight}
+
+\begin{mathinsight}
+The computational complexity result tells us that we can't generally hope to compute a convex hull faster than $O(n \log n)$. This result is extremely important as you start to analyze the time and space complexities of your algorithms.
+\end{mathinsight}
+
+These properties, when combined, provide a powerful toolkit for solving geometric problems by providing a minimal representation that captures the essential structure of the original point set.
+\label{intro:D}
+% --- Chapter Introduction Content Here ---
+% Example: Discuss the importance of convex hulls as a fundamental structure in computational geometry,
+% its application in preprocessing point sets for various queries, collision detection, pattern recognition, etc.
+% Introduce the concept of "post-hull" algorithms that operate on the computed hull.
+% Maybe a simple challenge problem: Given N points, find the two points furthest apart.

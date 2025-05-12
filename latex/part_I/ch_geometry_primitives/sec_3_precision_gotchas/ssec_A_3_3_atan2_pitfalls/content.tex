@@ -1,0 +1,83 @@
+% part_I/ch_A/sec_A_3_precision_gotchas/ssec_A_3_3_atan2_pitfalls/content.tex
+\subsection{\texttt{atan2(y,x)}: Uses and Pitfalls}
+\label{ssec:A.3.3}
+
+The \texttt{atan2(y, x)} function (from \texttt{<cmath>} or \texttt{<math.h>}) is a very useful tool for finding the angle of a vector $(x,y)$ or point $(x,y)$ relative to the positive x-axis.
+
+\begin{definition}[\texttt{atan2(y,x)}]
+\label{def:A.3.3.atan2}
+\texttt{atan2(y, x)} computes the principal value of the arc tangent of $y/x$, using the signs of both arguments to determine the quadrant of the result.
+It returns an angle in radians, typically in the range $(-\pi, \pi]$ (i.e., $-180^\circ < \text{angle} \le +180^\circ$).
+\begin{itemize}
+    \item $(x>0, y=0) \implies 0$
+    \item $(x>0, y>0) \implies (0, \pi/2)$ (Quadrant I)
+    \item $(x=0, y>0) \implies \pi/2$
+    \item $(x<0, y>0) \implies (\pi/2, \pi)$ (Quadrant II)
+    \item $(x<0, y=0) \implies \pi$
+    \item $(x<0, y<0) \implies (-\pi, -\pi/2)$ (Quadrant III)
+    \item $(x=0, y<0) \implies -\pi/2$
+    \item $(x>0, y<0) \implies (-\pi/2, 0)$ (Quadrant IV)
+    \item $(x=0, y=0) \implies 0$ (behavior might vary; usually 0).
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.3.3.atan2_why}
+Why \texttt{atan2(y,x)} instead of just \texttt{atan(y/x)}?
+\texttt{atan(ratio)} only returns angles in $(-\pi/2, \pi/2)$ (Quadrants I and IV). It loses information about the signs of $x$ and $y$ individually. For example, \texttt{atan(1/1)} and \texttt{atan(-1/-1)} both compute \texttt{atan(1)} which is $\pi/4$, but $(1,1)$ is in Q1 and $(-1,-1)$ is in Q3.
+\texttt{atan2} correctly distinguishes these, returning $\pi/4$ for $(1,1)$ and (typically) $-3\pi/4$ or $5\pi/4$ (depending on range, but standard C++ is $(-\pi, \pi]$ so $-3\pi/4$) for $(-1,-1)$.
+It's essential for angular sorts (\Cref{ssec:A.4.2}) and any problem requiring true polar angles.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.3.3.atan2_quadrants}
+% Description of diagram:
+% A 2D Cartesian plane.
+% Point P1(3,3) in Q1. Vector from O to P1. Angle from positive x-axis to OP1 shown as approx +pi/4. atan2(3,3) -> pi/4.
+% Point P2(-3,3) in Q2. Angle shown as approx +3pi/4. atan2(3,-3) -> 3pi/4.
+% Point P3(-3,-3) in Q3. Angle shown as approx -3pi/4. atan2(-3,-3) -> -3pi/4.
+% Point P4(3,-3) in Q4. Angle shown as approx -pi/4. atan2(-3,3) -> -pi/4. (Error in original: atan2(y,x) so atan2(-3,3) is QIV) No, atan2(-3,3) for P4(3,-3) -> correct.
+% The angles should clearly show the range (-pi, pi].
+A Cartesian plane with points in each quadrant:
+$P_1(2,2)$ in Q1, angle $\pi/4$.
+$P_2(-2,2)$ in Q2, angle $3\pi/4$.
+$P_3(-2,-2)$ in Q3, angle $-3\pi/4$.
+$P_4(2,-2)$ in Q4, angle $-\pi/4$.
+Point on positive x-axis $P_x(2,0)$, angle $0$.
+Point on negative x-axis $P_{nx}(-2,0)$, angle $\pi$.
+Point on positive y-axis $P_y(0,2)$, angle $\pi/2$.
+Point on negative y-axis $P_{ny}(0,-2)$, angle $-\pi/2$.
+All angles are labeled, showing the $(-\pi, \pi]$ range.
+\end{visualexample}
+
+\begin{warning}[Precision with \texttt{atan2}]
+\label{warn:A.3.3.atan2_precision}
+\begin{itemize}
+    \item \textbf{Floating-Point Output}: \texttt{atan2} returns a \texttt{double}. All the usual floating-point precision issues apply (\Cref{ssec:A.3.1}). Comparing angles obtained from \texttt{atan2} requires \texttt{EPS}.
+    \item \textbf{Boundary Cases}: Angles close to $\pi$ and $-\pi$ can be tricky. For example, a point just above the negative x-axis might have an angle slightly less than $\pi$ (e.g., $3.14159$), while a point just below might have an angle slightly more than $-\pi$ (e.g., $-3.14159$). When sorting, this jump can cause issues if not handled, though standard sort with \texttt{EPS} comparisons should work.
+    \item \textbf{Zero Vector}: \texttt{atan2(0,0)} is often 0. If you need to handle the origin point specially in an angular sort, ensure its behavior is what you expect.
+\end{itemize}
+\end{warning}
+
+\begin{tipsbox}
+\label{tips:A.3.3.atan2_alternatives}
+\textbf{When to Avoid \texttt{atan2}}:
+While \texttt{atan2} is powerful, it can be slow and prone to precision issues.
+\begin{itemize}
+    \item \textbf{Orientation Tests}: Use cross products (\Cref{ssec:A.1.4}). They are exact with integers and faster.
+    \item \textbf{Angle Comparison}: For sorting points around a pivot, a custom comparator using cross products is often more robust if coordinates are integers (\Cref{ssec:A.4.2}). This avoids floats entirely.
+    \item Only use \texttt{atan2} when you \textit{absolutely need} the actual angle value (e.g., for physics formulas, specific geometric constructions requiring angles, or when problem asks for an angle).
+\end{itemize}
+\end{tipsbox}
+
+\begin{gotcha}
+\label{gotcha:A.3.3.angle_range_conversion}
+\textbf{Angle Range Normalization}: \texttt{atan2} returns angles in $(-\pi, \pi]$. Sometimes you need angles in $[0, 2\pi)$.
+To convert an angle \texttt{ang} from $(-\pi, \pi]$ to $[0, 2\pi)$:
+\begin{lstlisting}[language=C++, caption=Angle Range Conversion]
+if (ang < 0) {
+    ang += 2 * PI; // Assuming PI is defined, e.g., std::acos(-1.0)
+}
+// Now ang is in [0, 2*PI) (or very close for ang near 0 or 2*PI)
+\end{lstlisting}
+\end{gotcha}

@@ -1,0 +1,139 @@
+% part_I/ch_A/sec_A_1_formal_theory/ssec_A_1_4_orientation_predicate/content.tex
+\subsection{Orientation Predicate: Which Way Did They Turn?}
+\label{ssec:A.1.4}
+
+The orientation predicate is one of the most fundamental tools in computational geometry. It tells us the relative orientation of an ordered triplet of points.
+
+\begin{definition}[Orientation]
+\label{def:A.1.4.orientation}
+Given an ordered triplet of points $P_1(x_1, y_1)$, $P_2(x_2, y_2)$, and $P_3(x_3, y_3)$, their \textbf{orientation} describes the nature of the turn made when traversing from $P_1$ to $P_2$ and then to $P_3$.
+It can be:
+\begin{itemize}
+    \item \textbf{Counter-Clockwise (CCW)} or \textbf{Left Turn}: If $P_3$ is to the left of the directed line $\vec{P_1P_2}$.
+    \item \textbf{Clockwise (CW)} or \textbf{Right Turn}: If $P_3$ is to the right of the directed line $\vec{P_1P_2}$.
+    \item \textbf{Collinear}: If $P_3$ lies on the infinite line defined by $P_1$ and $P_2$.
+\end{itemize}
+The orientation is determined by the sign of the 2D cross product of vectors $\vec{P_1P_2}$ and $\vec{P_1P_3}$:
+
+\begin{align*}
+    \text{Let} \quad & \vec{v_1} = P_2 - P_1 = (x_2 - x_1,\, y_2 - y_1) \\
+    \text{Let} \quad & \vec{v_2} = P_3 - P_1 = (x_3 - x_1,\, y_3 - y_1) \\
+    \\
+    \text{The orientation value is:} \quad
+    & \text{val} = \vec{v_1} \times \vec{v_2} \\
+    & \phantom{\text{val}} = (x_2 - x_1)(y_3 - y_1) - (y_2 - y_1)(x_3 - x_1)
+\end{align*}
+
+\begin{itemize}
+    \item $\text{val} > 0 \implies$ CCW (Left turn from $\vec{P_1P_2}$ to $\vec{P_1P_3}$)
+    \item $\text{val} < 0 \implies$ CW (Right turn from $\vec{P_1P_2}$ to $\vec{P_1P_3}$)
+    \item $\text{val} = 0 \implies$ Collinear ($P_1, P_2, P_3$ lie on the same line)
+\end{itemize}
+(Note: If any two points are identical, e.g. $P_1=P_2$, the cross product will be 0, correctly indicating collinearity.)
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.4.orientation}
+Imagine you're an ant walking from $P_1$ towards $P_2$. When you are at $P_1$ and looking at $P_2$, on which side is $P_3$? If $P_3$ is to your left, it's a CCW orientation. If to your right, it's CW. If $P_3$ is directly in front or behind you (on the line $P_1P_2$), it's collinear.
+This value is also twice the signed area of the triangle $\triangle P_1P_2P_3$. A positive area means $P_1, P_2, P_3$ are listed in CCW order (assuming standard Cartesian coordinates).
+This is the workhorse for segment intersection, convex hulls, polygon tests, and much more.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.4.orientation_cases}
+% Three panels illustrating orientation cases:
+\begin{itemize}
+    \item \textbf{Panel 1: Counter-Clockwise (CCW) / Left Turn}
+    \begin{quote}
+        Points $P_1, P_2, P_3$ form a left turn.\\
+        $P_3$ is to the \textbf{left} of the directed line $\vec{P_1P_2}$.\\
+        \textit{Cross product:} $(P_2{-}P_1) \times (P_3{-}P_1) > 0$\\
+        \textbf{Diagram:} Arrow path $P_1 \to P_2 \to P_3$ shows a left turn at $P_2$.
+    \end{quote}
+
+    \item \textbf{Panel 2: Clockwise (CW) / Right Turn}
+    \begin{quote}
+        Points $P_1, P_2, P_3$ form a right turn.\\
+        $P_3$ is to the \textbf{right} of the directed line $\vec{P_1P_2}$.\\
+        \textit{Cross product:} $(P_2{-}P_1) \times (P_3{-}P_1) < 0$\\
+        \textbf{Diagram:} Arrow path $P_1 \to P_2 \to P_3$ shows a right turn at $P_2$.
+    \end{quote}
+
+    \item \textbf{Panel 3: Collinear}
+    \begin{quote}
+        Points $P_1, P_2, P_3$ are collinear.\\
+        \textit{Cross product:} $(P_2{-}P_1) \times (P_3{-}P_1) = 0$\\
+        \textbf{Diagram:} Vectors $\vec{P_1P_2}$ and $\vec{P_1P_3}$ are aligned.\\
+        \textit{Sub-cases:} $P_3$ on segment $P_1P_2$; $P_1$ between $P_2$ and $P_3$; $P_2$ between $P_1$ and $P_3$; $P_1 = P_3$; etc.
+    \end{quote}
+\end{itemize}
+\end{visualexample}
+
+\begin{mathinsight}
+\label{mathinsight:A.1.4.determinant_form}
+The orientation value
+\[
+    (x_2-x_1)(y_3-y_1) - (y_2-y_1)(x_3-x_1)
+\]
+can also be written as the determinant of a matrix:
+\[
+    \text{OrientationValue} =
+    \det \begin{pmatrix}
+        x_2-x_1 & y_2-y_1 \\
+        x_3-x_1 & y_3-y_1
+    \end{pmatrix}
+\]
+\medskip
+
+This is also equivalent to twice the signed area of the triangle $\triangle P_1P_2P_3$. Another common determinant form for this signed area (scaled by 2) is:
+\[
+    \text{TwiceSignedArea}(P_1, P_2, P_3) =
+    \det \begin{vmatrix}
+        x_1 & y_1 & 1 \\
+        x_2 & y_2 & 1 \\
+        x_3 & y_3 & 1
+    \end{vmatrix}
+    = x_1(y_2-y_3) + x_2(y_3-y_1) + x_3(y_1-y_2)
+\]
+\medskip
+
+\noindent
+\emph{These formulations are mathematically equivalent.}
+\end{mathinsight}
+
+\begin{tipsbox}
+\label{tips:A.1.4.integer_arithmetic}
+\textbf{Use Integer Arithmetic for Orientation:}
+If point coordinates are integers, the cross product calculation involves only additions, subtractions, and multiplications. The result will be an exact integer, avoiding all floating-point precision issues that can plague geometric algorithms.
+
+\medskip
+
+\noindent
+\textbf{Tip:} Use \texttt{long long} for the calculation if intermediate products $(x_i y_j)$ might overflow standard \texttt{int}.
+
+\medskip
+
+\noindent
+For coordinates up to $C_{\max}$:
+\begin{itemize}
+    \item $x_2-x_1$ can be $2C_{\max}$.
+    \item The product $(x_2-x_1)(y_3-y_1)$ can be up to $(2C_{\max})^2 = 4C_{\max}^2$.
+    \item The difference can be up to $2 \times ( (C_{\max} - (-C_{\max})) \cdot (C_{\max} - (-C_{\max})) ) = 8C_{\max}^2$ in magnitude.
+    \item More practically, a single term $(X_A Y_B)$ is $C_{\max}^2$.
+    \item The full expression $X_A Y_B - X_B Y_A$ can be $2C_{\max}^2$.
+\end{itemize}
+
+\noindent
+If $C_{\max}=10^9$, then $2 \cdot 10^{18}$ fits in \texttt{long long}. If $C_{\max}=10^5$, $2 \cdot 10^{10}$ also fits.
+\end{tipsbox}
+
+\begin{warning}
+\label{warn:A.1.4.collinear_subcases}
+\textbf{Collinear is Not Enough Detail:}
+When orientation is $0$ (collinear), you often need more information for specific algorithms. For example, for three distinct points $P_1, P_2, P_3$:
+\begin{itemize}
+    \item Does $P_3$ lie on the segment $P_1P_2$? (Is $P_1P_3 + P_3P_2 = P_1P_2$ using distances? Or check $x, y$ ranges.)
+    \item Is $P_1$ between $P_2$ and $P_3$? Is $P_2$ between $P_1$ and $P_3$?
+\end{itemize}
+These sub-cases are typically handled by checking bounding boxes or dot products on the vectors. See Segment Intersection (\Cref{ssec:A.1.5}) and the Point on Segment test (\Cref{alg:A.2.4.point_on_segment_collinear}).
+\end{warning}

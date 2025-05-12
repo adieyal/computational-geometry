@@ -1,0 +1,29 @@
+\clearpage
+\subsection{Rotating Calipers Technique \& Applications}
+\label{ssec:rotating_calipers}
+
+\lstinputlisting[language=C++, caption=Rotating Calipers]{code.cpp}
+
+\begin{complexity}
+\label{comp:rotating_calipers}
+$O(n)$ time.
+\end{complexity}
+Invariant: j advances monotonically around the polygon
+
+\begin{insight}
+The rotating calipers technique is remarkably versatile. Beyond finding the diameter and width of a convex polygon, it can be used to:
+\begin{itemize}
+    \item Find all antipodal pairs of vertices in linear time
+    \item Compute the minimum-area enclosing rectangle
+    \item Find the maximum-area/perimeter inscribed triangle/quadrilateral
+    \item Determine the minimum-area/perimeter enclosing triangle
+    \item Compute the minimum-width annulus containing all points
+\end{itemize}
+All these problems can be solved in $O(n)$ time after computing the convex hull, making rotating calipers one of the most powerful techniques in computational geometry.
+\end{insight}
+
+\subimport{sssec_D_2_5_1_finding_polygon_diameter/}{content}
+\subimport{sssec_D_2_5_2_finding_polygon_width/}{content}
+\subimport{sssec_D_2_5_3_largest_area_perimeter_triangle/}{content}
+\subimport{sssec_D_2_5_4_convex_polygon_intersection/}{content}
+\subimport{sssec_D_2_5_5_min_area_perimeter_rectangle/}{content} 

@@ -1,0 +1,82 @@
+\subsection{Collinear Points and Degenerate Cases}
+\label{ssec:A.3.4}
+
+\begin{intuition}
+\label{intuition:A.3.4.degenerate_common}
+In geometry, "degenerate" cases are special configurations that might break the general logic of an algorithm. Common examples include:
+\begin{itemize}
+    \item Three or more points lying on the same line (collinear points).
+    \item Multiple points at the exact same location (coincident points).
+    \item Segments of zero length (endpoints are coincident).
+    \item Polygons with zero area or self-intersections (if they're supposed to be simple).
+\end{itemize}
+These aren't necessarily "errors" but often require specific handling.
+\end{intuition}
+
+\begin{warning}[Algorithms Assume General Position]
+\label{warn:A.3.4.general_position}
+Many geometric algorithms are first described assuming "general position," meaning no three points are collinear, no two points are coincident, etc. In competitive programming, test cases \textbf{will} include these degenerate configurations. Your code must handle them robustly!
+\end{warning}
+
+\begin{insight}
+\label{insight:A.3.4.collinearity_is_key}
+\textbf{Collinearity is a frequent source of bugs.}
+\begin{itemize}
+    \item \textbf{Orientation Test}: When \texttt{orientation(P1, P2, P3)} (\Cref{alg:A.2.3.orientation_test}) returns 0, points are collinear. What does this imply for your current algorithm?
+        \begin{itemize}
+            \item For segment intersection (\Cref{alg:A.2.4.segment_intersect}), it means you need to check for 1D overlap.
+            \item For convex hull algorithms (e.g., Graham Scan, \crosslink{\Cref{ssec:D.2.1}}), you need a tie-breaking rule for collinear points (e.g., keep farthest, keep closest, or discard middle ones depending on variant).
+            \item For angular sort (\Cref{ssec:A.4.2}), collinear points relative to pivot have the same "angle". Tie-break by distance.
+        \end{itemize}
+    \item \textbf{Coincident Points}: If multiple input points can be at the same location:
+        \begin{itemize}
+            \item Does it affect point counts? (e.g., "N distinct points").
+            \item Can it create zero-length segments or zero-area triangles/polygons?
+            \item Often, pre-processing to remove duplicates or handle them (e.g., by assigning them a count) can simplify later logic.
+        \end{itemize}
+\end{itemize}
+\end{insight}
+
+\begin{tipsbox}
+\label{tips:A.3.4.handling_degeneracies}
+\textbf{Strategies for Handling Degeneracies}:
+\begin{enumerate}
+    \item \textbf{Explicit Checks}: Add \texttt{if} statements to handle collinear/coincident cases separately. This is common for segment intersection.
+    \item \textbf{Robust Primitives}: Ensure your basic functions like orientation and point-on-segment (\Cref{alg:A.2.4.point_on_segment_collinear}) are exact (use integers) and correctly define behavior for coincident points.
+    \item \textbf{Tie-Breaking Rules}: For sorting or selection based on geometric properties (angle, distance), define clear, consistent tie-breaking rules. E.g., if angles are equal, sort by distance. If distances also equal, sort by x-coordinate, then y-coordinate (lexicographical).
+    \item \textbf{Symbolic Perturbation}: An advanced technique (rarely needed in contests unless specified) where coordinates are infinitesimally perturbed to remove degeneracies. This is complex to implement correctly.
+    \item \textbf{Problem Constraints}: Read carefully! Sometimes problems guarantee "no three points are collinear" or "all points are distinct." If not, assume degeneracies exist.
+\end{enumerate}
+\end{tipsbox}
+
+\begin{gotcha}
+\label{gotcha:A.3.4.zero_length_segments}
+\textbf{Zero-Length Segments}: If a segment is defined by $P_1, P_2$ where $P_1=P_2$.
+\begin{itemize}
+    \item Distance from a point $P_0$ to segment $P_1P_1$ is just distance $P_0P_1$. (Your \Cref{alg:A.2.2.dist_sq_point_segment} should handle this if \texttt{norm\_sq\_AB} is 0.)
+    \item Intersection of segment $P_1P_1$ with another segment $P_3P_4$ occurs if point $P_1$ lies on segment $P_3P_4$. (\Cref{alg:A.2.4.segment_intersect} should handle this.)
+    \item Cross products involving vector $\vec{P_1P_1}$ (the zero vector) will be zero.
+\end{itemize}
+Ensure your primitives don't divide by zero or behave unexpectedly when faced with zero-length vectors derived from such segments.
+\end{gotcha}
+
+\begin{debugchecklist}[Degenerate Cases]
+\label{debug:A.3.4.degenerate_checklist}
+    \item What happens if three input points $A, B, C$ are collinear?
+        \begin{itemize}
+            \item $B$ between $A, C$?
+            \item $A$ between $B, C$?
+            \item $A, B, C$ are coincident?
+            \item $A, B$ coincident, $C$ distinct?
+        \end{itemize}
+    \item What if an input segment has zero length ($P_1=P_2$)?
+    \item What if two input segments are collinear and overlap? Collinear and touch at an endpoint? Collinear and disjoint?
+    \item What if an input polygon has collinear vertices? Or repeated vertices?
+    \item Test your code with hand-crafted degenerate inputs. For example, for segment intersection:
+        \begin{itemize}
+            \item \texttt{[(0,0)-(2,2)]} and \texttt{[(1,1)-(3,3)]} (collinear overlap)
+            \item \texttt{[(0,0)-(2,2)]} and \texttt{[(2,2)-(3,3)]} (collinear touch at endpoint)
+            \item \texttt{[(0,0)-(2,2)]} and \texttt{[(1,0)-(0,1)]} (T-junction, endpoint on segment)
+            \item \texttt{[(0,0)-(0,0)]} and \texttt{[(0,0)-(1,1)]} (point segment on segment)
+        \end{itemize}
+\end{debugchecklist}

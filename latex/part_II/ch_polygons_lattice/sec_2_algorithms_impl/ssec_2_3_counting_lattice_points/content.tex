@@ -1,0 +1,15 @@
+% Content for Counting Lattice Points 
+
+\subsection{Counting Lattice Points}
+
+\begin{algorithm}[H]
+\caption{Boundary Points on a Segment}
+\KwInput{$p_1, p_2$}
+$dx \leftarrow |p_2.x - p_1.x|$\;
+$dy \leftarrow |p_2.y - p_1.y|$\;
+\textbf{return} $\gcd(dx, dy) + 1$\;
+\end{algorithm}
+
+\begin{insight}
+The number of lattice points on a segment is related to the GCD of the coordinate differences. This connects geometry to number theory!
+\end{insight} 

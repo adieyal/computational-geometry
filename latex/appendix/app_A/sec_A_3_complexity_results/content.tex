@@ -1,0 +1,40 @@
+% appendix/app_A/sec_A_3_complexity_results/content.tex
+\section{Complexity Results}
+\label{sec:AppA.3}
+
+\begin{longtable}{@{}llll@{}}
+\caption{Algorithm Complexity Summary} \label{tab:complexity_summary}\\
+\toprule
+Algorithm                      & Average Complexity & Worst Case Complexity & Notes                      \\
+\midrule
+\endfirsthead
+% Header for continued table (if it spans pages)
+\multicolumn{4}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\toprule
+Algorithm                      & Average Complexity & Worst Case Complexity & Notes                      \\
+\midrule
+\endhead
+% Footer for all but last page
+\midrule \multicolumn{4}{r}{{Continued on next page}} \\
+\endfoot
+% Footer for last page
+\bottomrule
+\endlastfoot
+% Table Content Starts Here
+Orientation Test & $O(1)$ & $O(1)$ & \\
+Segment Intersection & $O(1)$ & $O(1)$ & \\
+Polygon Area & $O(N)$ & $O(N)$ & $N$ vertices \\
+Point in Polygon (Simple) & $O(N)$ & $O(N)$ & Winding/Ray Casting \\
+Point in Convex Polygon & $O(\log N)$ & $O(\log N)$ & After $O(N)$ preprocessing \\
+Convex Hull (Monotone Chain) & $O(N \log N)$ & $O(N \log N)$ & \\
+Rotating Calipers (Diameter) & $O(N)$ & $O(N)$ & On convex $N$-gon \\
+CHT (Deque, monotonic queries) & Amort. $O(1)$ & Amort. $O(1)$ & Per op, monotonic slopes \\
+Li Chao Tree & $O(\log C)$ & $O(\log C)$ & $C = \text{coord range/distinct}$ \\
+Bentley--Ottmann & $O((N+K)\log N)$ & $O((N+K)\log N)$ & $K$ intersections \\
+Closest Pair (Sweep Line) & $O(N \log N)$ & $O(N \log N)$ & \\
+KD-Tree Range Query (2D) & $O(\sqrt{N}+K)$ & $O(N+K)$ & $K$ points in range \\
+KD-Tree NN Query (2D) & $O(\log N)$ & $O(N)$ & \\
+Half-Plane Intersection & $O(N \log N)$ & $O(N \log N)$ & \\
+% ... Add more rows as per your ToC Appendix A.3 ...
+\end{longtable} 

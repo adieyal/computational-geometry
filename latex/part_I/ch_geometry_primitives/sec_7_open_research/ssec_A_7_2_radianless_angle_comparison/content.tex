@@ -1,0 +1,86 @@
+% part_I/ch_A/sec_A_7_open_research/ssec_A_7_2_radianless_angle_comparison/content.tex
+\subsection{Radian-less Angle Comparison: The Integer Way}
+\label{ssec:A.7.2}
+
+\begin{openquestion}[Radian-less Angle Comparison]
+\label{oq:A.7.2.radianless_compare}
+As discussed in angular sort (\Cref{ssec:A.4.2}), comparing angles or sorting points angularly without explicit angle calculation (i.e., avoiding \texttt{atan2}) can significantly improve robustness (by staying with integers) and sometimes speed.
+The challenge is to create a comparator \texttt{bool compare\_angles(Point P0, Point A, Point B)} that returns true if vector $\vec{P_0A}$ comes before vector $\vec{P_0B}$ in a standard counter-clockwise sweep from the positive x-axis direction, handling all quadrants and collinear cases correctly using only integer arithmetic (assuming integer coordinates).
+
+\textbf{Core Idea}: Partition points by half-planes relative to $P_0$, then use cross-product within half-planes.
+
+\textbf{Detailed Logic for a Robust Comparator Function \texttt{less\_angle(P0, A, B)}}: \\
+Assume $P_0$ is the pivot. We want to determine if angle $\angle X P_0 A < \angle X P_0 B$, where $X$ is a point far along the positive X-axis from $P_0$. \\
+Let $v_A = A - P_0$ and $v_B = B - P_0$. We are comparing vectors $v_A$ and $v_B$.
+
+\begin{enumerate}
+    \item \textbf{Handle Coincidence with Pivot}: If $v_A$ is the zero vector (i.e., $A=P_0$), it usually comes first (or last, depending on convention). If $v_B$ is zero vector and $v_A$ is not, $v_B$ comes first. If both are zero, they are equal.
+    \begin{lstlisting}[language=C++]
+    // bool is_A_zero = (A.x == P0.x && A.y == P0.y);
+    // bool is_B_zero = (B.x == P0.x && B.y == P0.y);
+    // if (is_A_zero && is_B_zero) return false; // Equal, A not strictly less
+    // if (is_A_zero) return true;  // A is P0, B is not, P0 comes first
+    // if (is_B_zero) return false; // B is P0, A is not, A does not come first
+    \end{lstlisting}
+
+    \item \textbf{Determine Half-Planes/Quadrants}: A common way is to check which side of the y-axis (passing through $P_0$) the points $A$ and $B$ lie, and their y-coordinates relative to $P_0$. This helps establish a coarse ordering. \\
+    A point $P$ (relative to $P_0$) is in the ``upper visual field'' if $P.y > P_0.y$, or if $P.y = P_0.y$ and $P.x > P_0.x$. Otherwise, it's in the ``lower visual field'' (assuming it's not $P_0$ itself). \\
+    Let's define a \texttt{quadrant\_group(Point P, Point P0)} function:
+    \begin{itemize}
+        \item Returns 0: $P = P_0$.
+        \item Returns 1: $P$ is on the positive x-axis relative to $P_0$ ($P.y = P_0.y, P.x > P_0.x$) or in upper half-plane ($P.y > P_0.y$). This covers angles in $[0, \pi)$.
+        \item Returns 2: $P$ is on the negative x-axis relative to $P_0$ ($P.y = P_0.y, P.x < P_0.x$) or in lower half-plane ($P.y < P_0.y$). This covers angles in $[\pi, 2\pi)$.
+    \end{itemize}
+    If \texttt{quadrant\_group(A, P0) < quadrant\_group(B, P0)}, then $A$ comes before $B$.
+
+    \begin{lstlisting}[language=C++]
+    // int quad_A = get_quadrant_group(A, P0); // Using a helper like from Impl A.4.2
+    // int quad_B = get_quadrant_group(B, P0);
+    // if (quad_A != quad_B) {
+    //     return quad_A < quad_B;
+    // }
+    \end{lstlisting}
+    The \texttt{get\_half\_plane} function from \Cref{sec:A.4.2} is an example of this partitioning.
+
+    \item \textbf{Cross Product for Same Half-Plane/Region}: If $A$ and $B$ are in the same half-plane (e.g., both \texttt{quadrant\_group} returned 1, or both returned 2), use the orientation test $\text{orientation}(P_0, A, B)$. \\
+    The value is $(A-P_0) \times (B-P_0)$.
+    \begin{itemize}
+        \item If $\text{orientation}(P_0, A, B) > 0$: $A$ is CCW from $P_0$ to $B$. So $A$ comes before $B$. Return \texttt{true}.
+        \item If $\text{orientation}(P_0, A, B) < 0$: $A$ is CW from $P_0$ to $B$. So $B$ comes before $A$. Return \texttt{false}.
+        \item If $\text{orientation}(P_0, A, B) = 0$: $P_0, A, B$ are collinear.
+    \end{itemize}
+
+    \begin{lstlisting}[language=C++]
+    // long long orient_val = orientation_val(P0, A, B); // from Point struct/helper
+    // if (orient_val == 0) { ... handle collinear ... }
+    // return orient_val > 0; // If in upper half, CCW means A is smaller angle
+                               // If in lower half, need to be careful.
+                               // The half-plane logic above simplifies this:
+                               // if quad_A == quad_B, then orient_val > 0 means A < B.
+    \end{lstlisting}
+
+    \item \textbf{Collinear Case Tie-Breaking}: If $P_0, A, B$ are collinear, the one closer to $P_0$ is typically considered to have the ``smaller'' angle if they are in the same direction from $P_0$. If they are in opposite directions, the half-plane check should have already differentiated them. \\
+    Use squared distance: $\|A-P_0\|^2$ vs $\|B-P_0\|^2$. \\
+    If $A, B$ are in the same direction from $P_0$, point closer to $P_0$ comes first.
+    \begin{lstlisting}[language=C++]
+    // if (orient_val == 0) { // Collinear
+    //    return distSq(P0, A) < distSq(P0, B); // Closer first
+    // }
+    \end{lstlisting}
+\end{enumerate}
+
+The comparator from \Cref{impl:A.4.2.full-360-cross-product-sort} provides a concrete C++ implementation of this logic. It correctly handles all cases for a full $360^\circ$ sort around $P_0$, assuming $P_0$ is the reference and angles are measured CCW from the direction $(P_0 \to P_0 + (1,0))$.
+
+\textbf{Considerations for robustness}:
+\begin{itemize}
+    \item \textbf{Pivot Point Handling}: If $A$ or $B$ is $P_0$ itself. Usually $P_0$ comes before any other point.
+    \item \textbf{Integer Overflow}: All cross products and squared norms must use \texttt{long long} if intermediate coordinate products can exceed \texttt{int} limits.
+    \item \textbf{Consistency}: The definition of \texttt{half-plane} and tie-breaking rules must be consistent. The \texttt{get\_half\_plane} logic in \Cref{impl:A.4.2.full-360-cross-product-sort} implicitly defines angles starting from the positive x-axis direction from $P_0$ and sweeping CCW.
+\end{itemize}
+
+This type of comparator is a fundamental building block for algorithms like Graham Scan convex hull (\crosslink{\Cref{ssec:D.2.1}}) where selecting an appropriate pivot (e.g., lowest then leftmost point) simplifies the angular sort to mostly occur within a $180^\circ$ range, making the cross-product comparisons directly applicable without complex half-plane logic.
+
+\end{openquestion}
+
+\section{Full 360 Cross Product Sort}
+\label{impl:A.4.2.full-360-cross-product-sort}

@@ -1,0 +1,42 @@
+% appendix/app_B_master.tex
+\chapter{Problem List (JSON format)}
+\label{ch:AppendixB}
+
+% The content will be directly in this file, or in a content.tex if you prefer
+% For simplicity, including directly:
+
+\section*{Problem List} % Unnumbered section
+\label{sec:AppB.problems} % Label if needed
+
+\begin{verbatim}
+[
+  {
+    "problem_name": "Points and Lines",
+    "source_platform": "Codeforces Gym",
+    "problem_id": "100187B",
+    "problem_url": "https://codeforces.com/gym/100187/problem/B",
+    "relevant_chapters_sections": ["ch:A", "ssec:A.1.3", "ssec:A.1.4"],
+    "brief_description_of_fit": "Direct application of orientation predicate and point-line distance."
+  },
+  {
+    "problem_name": "Polygon",
+    "source_platform": "TopCoder SRM",
+    "problem_id": "144 Div1 Easy",
+    "problem_url": " (Search for TopCoder SRM 144 problem archive) ",
+    "relevant_chapters_sections": ["ch:A", "ssec:A.1.1.4", "ssec:A.4.2"],
+    "brief_description_of_fit": "Sorting points by angle using atan2 or cross product comparison."
+  },
+  % ... more problems in JSON format ...
+  {
+    "problem_name": "Polygon Area",
+    "source_platform": "CSES",
+    "problem_id": "2191",
+    "problem_url": "https://cses.fi/problemset/task/2191",
+    "relevant_chapters_sections": ["ch:B", "ssec:B.2.1"],
+    "brief_description_of_fit": "Direct application of Shoelace formula."
+  }
+]
+\end{verbatim}
+% Note: For a very long JSON, you might consider \usepackage{verbatimfiles} 
+% and putting the JSON in a separate .json file to be included.
+% For now, \begin{verbatim} is fine.

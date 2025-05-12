@@ -1,0 +1,28 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Monotone Chain (Andrew's Algorithm)}
+\KwIn{A set $P$ of $n$ points in the plane}
+\KwOut{The convex hull of $P$ as a sequence of vertices in counterclockwise order}
+
+Sort points by $x$-coordinate (breaking ties by $y$-coordinate)\;
+Initialize empty lower and upper hulls\;
+
+\textbf{Build lower hull:}\\
+\For{each point $p$ from left to right}{
+    \While{lower hull contains at least 2 points AND the last 3 points don't make a left turn}{
+        Remove the middle of the last 3 points from the lower hull\;
+    }
+    Add $p$ to the lower hull\;
+}
+
+\textbf{Build upper hull:}\\
+\For{each point $p$ from right to left}{
+    \While{upper hull contains at least 2 points AND the last 3 points don't make a left turn}{
+        Remove the middle of the last 3 points from the upper hull\;
+    }
+    Add $p$ to the upper hull\;
+}
+
+Remove the duplicate endpoints from both hulls\;
+\Return{concatenated lower and upper hulls}\;
+\end{algorithm}

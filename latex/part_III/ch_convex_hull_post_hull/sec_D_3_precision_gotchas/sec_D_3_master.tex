@@ -1,0 +1,25 @@
+\clearpage
+\section{Precision Gotchas}
+\label{sec:precision_gotchas}
+\begin{warning}
+Convex hull algorithms are particularly sensitive to numerical precision issues due to their geometric nature. Common issues include:
+\begin{itemize}
+    \item Incorrectly determining if three points are collinear
+    \item Errors in orientation tests leading to non-convex "hulls"
+    \item Sorting issues when points have similar polar angles
+\end{itemize}
+\end{warning}
+
+\begin{implementation}
+For competitive programming, consider these approaches to mitigate precision issues:
+\begin{itemize}
+    \item Use integer coordinates with cross products rather than angles
+    \item Add a small epsilon when comparing floating-point values
+    \item Implement robust predicates for critical geometric operations
+\end{itemize}
+\end{implementation}
+
+% \subimport{ssec_D_3_1_collinear_points/}{content}
+% \subimport{ssec_D_3_2_degenerate_hulls/}{content}
+% \subimport{ssec_D_3_3_floating_point/}{content}
+% \subimport{ssec_D_3_4_rotating_calipers_robustness/}{content} 

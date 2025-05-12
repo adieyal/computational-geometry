@@ -1,0 +1,27 @@
+\subsection{Robustly Templating Geometry for Integers vs. Floats}
+\label{ssec:A.7.1}
+
+\begin{openquestion}[Consistent Template Handling of Integer vs. Floating-Point Geometry]
+\label{oq:A.7.1.template_consistency}
+As seen in our \texttt{Point<T>} struct (\cref{code:A.5.1.point_vector_struct}), designing C++ templates for geometric structures that seamlessly and correctly handle both integer types (\texttt{int}, \texttt{long long}) and floating-point types (\texttt{double}, \texttt{long double}) presents several challenges. The goal is to write generic code that behaves intuitively and correctly for both, minimizing boilerplate or error-prone specializations.
+
+\textbf{Key Challenges}:
+\begin{itemize}
+    \item \textbf{EPS Comparisons}: Floating-point equality needs \texttt{EPS} (\cref{def:A.3.1.eps}); integers use direct \texttt{==}. How do you make \texttt{operator==} or functions like \texttt{is\_zero(value)} generic? \texttt{if constexpr (std::is\_floating\_point\_v<T>)} (C++17) is the modern solution for this, allowing compile-time dispatch to different code paths.
+    \item \textbf{Division}: Integer division truncates (e.g., \texttt{Point<int>(5,5) / 2} becomes \texttt{(2,2)}). Floating-point division is fractional. If \texttt{Point::operator/(T scalar)} is defined, its behavior differs. Sometimes, integer division is desired; other times, a promotion to float is implicitly expected.
+    \item \textbf{Return Types of Mixed Operations}: Functions like \texttt{norm()} (calculating $\sqrt{x^2+y^2}$) almost always return a \texttt{double}, even if input \texttt{Point<T>} has \texttt{T=long long}, because \texttt{sqrt} operates on and returns doubles. This means \texttt{Point<long long> p; auto len = p.norm();} makes \texttt{len} a \texttt{double}. This is usually fine but needs awareness. In contrast, \texttt{norm\_sq()} can safely return \texttt{T} (or a wider integer type like \texttt{long long} if \texttt{T} is \texttt{int} to prevent overflow of $x^2+y^2$).
+    \item \textbf{Functions Involving Transcendental Operations}: Operations like \texttt{rotate(angle\_rad)} (\cref{code:A.5.1.point_vector_struct}) or \texttt{angle()} (using \texttt{atan2}) inherently involve \texttt{double}s for angles and trigonometric functions. If you have \texttt{Point<long long> p;}, should \texttt{p.rotate(theta)} return \texttt{Point<double>} (as in our example, which is common) or attempt to round back to \texttt{Point<long long>} (losing precision and generally a bad idea)?
+    \item \textbf{Type Promotion}: When combining \texttt{Point<int>} with \texttt{Point<double>}, or a \texttt{Point<int>} with a \texttt{double} scalar, what should the resulting type be? C++ default promotion rules apply, but consistent library design might want more explicit control.
+\end{itemize}
+
+\textbf{Potential Design Patterns and Compromises}:
+\begin{itemize}
+    \item \textbf{\texttt{if constexpr}} (C++17 and later): This is the cleanest way to handle many differences, as it allows for compile-time selection of code paths based on type traits like \texttt{std::is\_floating\_point\_v<T>} or \texttt{std::is\_integral\_v<T>}. Used in \cref{code:A.5.1.point_vector_struct} for \texttt{operator==}.
+    \item \textbf{Policy-Based Design}: Define \texttt{policy} classes that encapsulate behaviors differing by type (e.g., an \texttt{EqualityPolicy} with different implementations for int/float). The \texttt{Point} struct could then be templated on the coordinate type \texttt{T} and also a \texttt{MathPolicy<T>}. This offers high customization but increases complexity.
+    \item \textbf{Tag Dispatching}: Use overloaded functions that take an extra \texttt{tag} argument (e.g., \texttt{struct float\_tag \{\}; struct int\_tag \{\};}) to manually dispatch to different implementations. \texttt{foo(point, int\_tag\{\})} vs \texttt{foo(point, float\_tag\{\})}. Can be verbose.
+    \item \textbf{CRTP (Curiously Recurring Template Pattern)}: Can be used to add type-specific functionality from a base template. Less common for simple Point structs.
+    \item \textbf{Separate Structs}: Simply define \texttt{PointInt}, \texttt{PointLL}, \texttt{PointDouble} as distinct, non-templated structs. This is the simplest approach, avoids template complexities, but means some code duplication if many operations are identical in logic. Conversions between them must be explicit. This is often a pragmatic choice in timed contests if full template generality isn't crucial.
+    \item \textbf{Careful Method Naming and Return Types}: Be explicit. For example, \texttt{norm\_sq()} returns \texttt{T} (or \texttt{long long}), while \texttt{norm()} returns \texttt{double}. \texttt{rotate\_exact\_90()} returns \texttt{Point<T>}, while \texttt{rotate\_angle(double ang)} returns \texttt{Point<double>}.
+\end{itemize}
+Achieving a perfectly consistent, intuitive, and efficient templated geometry library that handles all integer/float nuances elegantly remains a design art. For competitive programming, a well-thought-out \texttt{Point<T>} with \texttt{if constexpr} for critical differences, and careful use of \texttt{PointLL} and \texttt{PointD} typedefs, strikes a good balance.
+\end{openquestion}

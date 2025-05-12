@@ -1,0 +1,25 @@
+\clearpage
+\subsection{Divide-and-Conquer Convex Hull}
+\label{ssec:divide_and_conquer_convex_hull}
+
+\subimport{./}{algorithm.tex}
+\label{algorithm:divide_and_conquer_convex_hull}
+
+\begin{intuition}
+The divide-and-conquer approach recursively splits the problem into smaller subproblems, solves them independently, and then combines the results. The key challenge is the merge step, where we need to find the upper and lower "bridges" connecting the two sub-hulls.
+\end{intuition}
+
+\lstinputlisting[language=C++, caption=Divide-and-Conquer Convex Hull]{code.cpp}
+
+\begin{complexity}
+\label{comp:divide_and_conquer}
+$O(n \log n)$ time, which is optimal in the comparison model.
+\end{complexity}
+
+
+\subimport{./}{visualexample.tex}
+\label{visualexample:divide_and_conquer_visualexample}
+
+\begin{implementation}
+The merge step requires finding the two tangent lines between the left and right hulls. This can be done in linear time by walking along the hulls, similar to the merge step in mergesort. Pay careful attention to the handling of the upper and lower bridges to ensure the final hull is correctly constructed.
+\end{implementation}

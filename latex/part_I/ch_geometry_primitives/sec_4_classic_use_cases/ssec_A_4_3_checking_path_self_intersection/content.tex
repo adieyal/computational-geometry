@@ -1,0 +1,82 @@
+% part_I/ch_A/sec_A_4_classic_use_cases/ssec_A_4_3_checking_path_self_intersection/content.tex
+\subsection{Checking Path Self-Intersection: Untangling Spaghetti}
+\label{ssec:A.4.3}
+
+A common problem is to determine if a path, defined by a sequence of connected line segments, crosses itself. This is crucial for validating if a sequence of vertices forms a "simple" polygon boundary.
+
+\begin{pattern}[Path/Polygon Self-Intersection]
+\label{pattern:A.4.3.self_intersection}
+\textbf{Archetype}: Given a path $P_0, P_1, \ldots, P_{N-1}$ (forming segments $[P_0,P_1], [P_1,P_2], \ldots, [P_{N-2},P_{N-1}]$), determine if any two non-adjacent segments intersect.
+\textbf{Key Tool}: Segment Intersection Test (\Cref{ssec:A.1.5}, \Cref{alg:A.2.4.segment_intersect}).
+\end{pattern}
+
+\begin{definition}[Path Self-Intersection]
+\label{def:A.4.3.path_self_intersection}
+A path $P_0, \ldots, P_{N-1}$ \textbf{self-intersects} if there exist two non-adjacent segments $[P_i, P_{i+1}]$ and $[P_j, P_{j+1}]$ that intersect.
+"Non-adjacent" means the segments do not share an endpoint due to path ordering. That is, $i \neq j$, $i \neq j+1$, and $i+1 \neq j$. A common practical condition is $|i-j| > 1$.
+Adjacent segments like $[P_i, P_{i+1}]$ and $[P_{i+1}, P_{i+2}]$ share $P_{i+1}$ by definition. This is typically not considered a "problematic" self-intersection unless stated otherwise (e.g., if $P_i, P_{i+1}, P_{i+2}$ are collinear and the segments improperly overlap, creating a "spike" or retracing).
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.4.3.path_self_intersection}
+Imagine drawing the path segment by segment. If your pen crosses a line it has already drawn (and not just at the point where you finished the previous segment), then it's a self-intersection.
+The brute-force approach is to simply check every possible pair of non-adjacent segments.
+\end{intuition}
+
+\begin{algorithm}[H]
+\caption{Brute-Force Path Self-Intersection Check}
+\label{alg:A.4.3.path_self_intersect}
+\KwInput{Path: a list of $N$ points $P_0, P_1, \ldots, P_{N-1}$}
+\KwOutput{Boolean: True if path self-intersects, False otherwise}
+\If{$N < 4$} { \Return{\textbf{False}} } \Comment{Need at least 2 non-adjacent segments; path $P_0P_1P_2P_3$ has segments $(P_0P_1, P_2P_3)$}
+
+\For{$i \leftarrow 0$ \textbf{to} $N-2$} { \Comment{Iterate through first segment $S_i = [P_i, P_{i+1}]$}
+    \For{$j \leftarrow i+2$ \textbf{to} $N-2$} { \Comment{Iterate through second segment $S_j = [P_j, P_{j+1}]$}
+        \Comment{Ensure $S_j$ is non-adjacent to $S_i$: $j \neq i+1$. Here $j \ge i+2$ ensures this.}
+        \If{segments\_intersect($P_i, P_{i+1}, P_j, P_{j+1}$)} {
+             \Comment{Use \Cref{alg:A.2.4.segment_intersect}}
+             \Comment{Need to define what "intersect" means. Usually proper intersection.}
+             \Return{\textbf{True}} \Comment{Self-intersection found}
+        }
+    }
+}
+\Return{\textbf{False}} \Comment{No self-intersections found}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.4.3.path_self_intersect}
+Time: There are $O(N^2)$ pairs of segments. Each segment intersection test is $O(1)$ (using \Cref{alg:A.2.4.segment_intersect}). Total time complexity: $O(N^2)$.
+Space: $O(N)$ for storing points, or $O(1)$ if points are processed on the fly.
+\end{complexity}
+
+\begin{gotcha}
+\label{gotcha:A.4.3.proper_intersection_definition}
+\textbf{Definition of "Intersection" Matters}:
+For a path to be "simple" (not self-intersecting), usually we care about \textbf{proper intersections} between non-adjacent segments. A proper intersection is when segments cross at a point interior to both.
+\begin{itemize}
+    \item If segment $S_i$ and $S_j$ (non-adjacent) share an endpoint (e.g., $P_i = P_j$ or $P_i = P_{j+1}$ etc.), this means the path revisits a vertex. This is a form of self-intersection. The general \texttt{segments\_intersect} from \Cref{alg:A.2.4.segment_intersect} will detect this.
+    \item If an endpoint of $S_i$ lies on the interior of $S_j$ (or vice-versa), this is also a self-intersection.
+    \item If segments $S_i$ and $S_j$ are collinear and overlap in their interiors, this is a self-intersection.
+\end{itemize}
+The \Cref{alg:A.2.4.segment_intersect} typically detects any shared point. For polygon simplicity, any intersection between non-adjacent edges is usually disallowed.
+Sometimes, problems might only care about "crossings" where segments pass through each other, not just "touching". The standard segment intersection test handles all touches. If you need to distinguish, you'd analyze the orientations $o1, o2, o3, o4$ more deeply (see \Cref{gotcha:A.1.5.proper_vs_improper}). For path self-intersection, usually any touch of non-adjacent segments (not at a shared path vertex that connects them) is bad.
+The condition $|i-j|>1$ for segments $[P_i, P_{i+1}]$ and $[P_j, P_{j+1}]$ correctly identifies non-adjacent segments. $S_i = [P_i, P_{i+1}]$, $S_{i+1} = [P_{i+1}, P_{i+2}]$. These are adjacent.
+The loop structure \texttt{for j from i+2 ...} ensures $P_j$ is at least $P_{i+2}$, so segment $[P_j, P_{j+1}]$ starts at least at $P_{i+2}$. So it cannot share $P_{i+1}$ with $[P_i, P_{i+1}]$. It also cannot share $P_i$.
+\end{gotcha}
+
+\begin{problemexample}[Problem: "Segments" - Timus Online Judge 1401]
+\label{probex:A.4.3.timus_segments}
+\textit{Why}: This problem directly asks to count intersections among a given set of general segments. Checking path self-intersection is a special case where segments are connected end-to-end.
+\textbf{Problem Description}: Given $N$ line segments (not necessarily forming a path), count the total number of intersection points among them.
+\textbf{Solution Strategy for Path Variant}:
+If the problem were to check self-intersection of a polygonal chain $P_0, \dots, P_{N-1}$:
+1. Iterate through all pairs of segments $([P_i, P_{i+1}], [P_j, P_{j+1}])$ such that $j > i+1$. (This ensures non-adjacency).
+2. For each pair, use the robust segment intersection test (\Cref{alg:A.2.4.segment_intersect}).
+3. If any such pair intersects, the path self-intersects.
+The Timus problem is more general (any pair of segments, not just non-adjacent from a path) and asks for count, typically requiring a sweep-line algorithm for $O(N \log N + K \log N)$ where $K$ is number of intersections. For just detecting *if* a path self-intersects, the $O(N^2)$ approach is often sufficient if $N$ is small (e.g., $N \le 2000-5000$).
+\textbf{URL}: \url{https://acm.timus.ru/problem.aspx?space=1&num=1401} (This Timus problem itself is harder, usually solved with sweep line for $N$ up to $10^5$. The $O(N^2)$ self-intersection check is for smaller $N$).
+\end{problemexample}
+
+\begin{insight}
+\label{insight:A.4.3.sweep_line_for_large_N}
+For a large number of segments ($N > 5000$ or so), an $O(N^2)$ check for intersections is too slow. More advanced algorithms like the Bentley-Ottmann sweep-line algorithm (\crosslink{Chapter X on Sweep Line}) can find all $K$ intersections among $N$ segments in $O((N+K)\log N)$ time or detect if any intersection exists in $O(N \log N)$ time.
+\end{insight}

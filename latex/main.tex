@@ -1,0 +1,53 @@
+\documentclass[11pt, oneside]{book}
+
+% Input preamble with all packages and custom commands
+\input{preamble.tex}
+
+% ---------------- Document Start ----------------
+\begin{document}
+
+% ---------------- Title Page ----------------
+\title{Advanced Computational Geometry for Olympiad \& Competitive Programming}
+\author{Your Name Here} % Replace with your name
+\date{\today}
+\maketitle
+
+% ---------------- Front Matter ----------------
+\frontmatter % Roman numerals for page numbers before main content
+
+\subimport{frontmatter/}{preface.tex}
+\cleardoublepage
+
+\subimport{frontmatter/}{introduction.tex}
+\cleardoublepage
+
+% ---------------- Table of Contents ----------------
+\tableofcontents
+\cleardoublepage
+
+% ---------------- Main Content ----------------
+\mainmatter % Arabic numerals for page numbers for main content
+
+% ---------------- PARTS ----------------
+\subimport{part_I/}{part_I_master.tex}
+\subimport{part_II/}{part_II_master.tex}
+\subimport{part_III/}{part_III_master.tex}
+% \subimport{part_III/}{part_III_master.tex}
+% \subimport{part_IV/}{part_IV_master.tex}
+% \subimport{part_V/}{part_V_master.tex}
+% \subimport{part_VI/}{part_VI_master.tex}
+
+% % ---------------- Appendices ----------------
+% \appendix
+% \subimport{appendix/}{app_A_master.tex} % Cheat Sheet
+% \subimport{appendix/}{app_B_master.tex} % Problem List
+
+% ---------------- Bibliography ----------------
+\input{bibliography.tex} % Contains the thebibliography environment
+
+% ---------------- Index (Optional but Recommended) ----------------
+% \makeindex % Run this command line tool if you use \index{} commands
+% \printindex % Requires makeindex to be run:
+% % pdflatex main.tex; makeindex main.idx; pdflatex main.tex; pdflatex main.tex
+
+\end{document}

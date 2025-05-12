@@ -1,0 +1,73 @@
+% part_I/ch_A/sec_A_2_canonical_algorithms/ssec_A_2_4_segment_intersect_test_pseudo/content.tex
+\subsection{Segment Intersection Test in Pseudocode}
+\label{ssec:A.2.4}
+
+This algorithm determines if two segments $[P_1,P_2]$ and $[P_3,P_4]$ intersect, covering general, collinear, and endpoint cases, as discussed in \Cref{ssec:A.1.5}.
+
+\begin{algorithm}[H]
+\caption{Helper: Point on Segment (Collinear Case)}
+\label{alg:A.2.4.point_on_segment_collinear}
+\KwInput{Point $P_k$, Segment endpoints $P_i, P_j$. It's \textbf{known} that $P_i, P_j, P_k$ are collinear.}
+\KwOutput{Boolean: True if $P_k$ lies on segment $P_iP_j$ (inclusive of endpoints), False otherwise.}
+\Comment{Check if $P_k$'s coordinates are between $P_i$'s and $P_j$'s coordinates along both axes.}
+\Return{($P_k.x \ge \min(P_i.x, P_j.x)$ \textbf{and} $P_k.x \le \max(P_i.x, P_j.x)$ \textbf{and} \\
+         $P_k.y \ge \min(P_i.y, P_j.y)$ \textbf{and} $P_k.y \le \max(P_i.y, P_j.y)$)}
+\end{algorithm}
+\begin{intuition}
+\label{intuition:A.2.4.point_on_segment_collinear}
+If we already know three points are on the same line, the middle point must have its x-coordinate between the other two x-coordinates (inclusive) AND its y-coordinate between the other two y-coordinates (inclusive). This forms a bounding box check.
+This function is only called when collinearity is already established by an orientation test returning 0.
+\end{intuition}
+
+\begin{algorithm}[H]
+\caption{Segment Intersection Test: $S_1=[P_1,P_2]$ and $S_2=[P_3,P_4]$}
+\label{alg:A.2.4.segment_intersect}
+\KwInput{Endpoints $P_1, P_2$ of segment $S_1$. Endpoints $P_3, P_4$ of segment $S_2$.}
+\KwOutput{Boolean: True if segments intersect, False otherwise.}
+
+o1 $\leftarrow \text{orientation}(P_1, P_2, P_3)$\; \Comment{Orientation of $P_1P_2P_3$}
+o2 $\leftarrow \text{orientation}(P_1, P_2, P_4)$\; \Comment{Orientation of $P_1P_2P_4$}
+o3 $\leftarrow \text{orientation}(P_3, P_4, P_1)$\; \Comment{Orientation of $P_3P_4P_1$}
+o4 $\leftarrow \text{orientation}(P_3, P_4, P_2)$\; \Comment{Orientation of $P_3P_4P_2$}
+
+\Comment{General case: segments cross each other (proper intersection)}
+\If{$o1 \neq 0$ \textbf{and} $o2 \neq 0$ \textbf{and} $o3 \neq 0$ \textbf{and} $o4 \neq 0$} {
+    \If{($o1 \neq o2$) \textbf{and} ($o3 \neq o4$)} { \Comment{Signs differ for both pairs}
+        \Return{\textbf{True}}
+    }
+    \Return{\textbf{False}} \Comment{No intersection if all non-zero but signs don't differ correctly}
+}
+
+\Comment{Special Cases: Collinear scenarios and endpoint touching}
+\Comment{If $o1=0$, $P_3$ is collinear with $P_1, P_2$. Check if $P_3$ lies on segment $P_1P_2$.}
+\If{$o1 = 0$ \textbf{and} \text{point\_on\_segment\_collinear($P_3, P_1, P_2$)}} { \Return{\textbf{True}} }
+
+\Comment{If $o2=0$, $P_4$ is collinear with $P_1, P_2$. Check if $P_4$ lies on segment $P_1P_2$.}
+\If{$o2 = 0$ \textbf{and} \text{point\_on\_segment\_collinear($P_4, P_1, P_2$)}} { \Return{\textbf{True}} }
+
+\Comment{If $o3=0$, $P_1$ is collinear with $P_3, P_4$. Check if $P_1$ lies on segment $P_3P_4$.}
+\If{$o3 = 0$ \textbf{and} \text{point\_on\_segment\_collinear($P_1, P_3, P_4$)}} { \Return{\textbf{True}} }
+
+\Comment{If $o4=0$, $P_2$ is collinear with $P_3, P_4$. Check if $P_2$ lies on segment $P_3P_4$.}
+\If{$o4 = 0$ \textbf{and} \text{point\_on\_segment\_collinear($P_2, P_3, P_4$)}} { \Return{\textbf{True}} }
+
+\Return{\textbf{False}} \Comment{No intersection based on above conditions}
+\end{algorithm}
+\begin{complexity}
+\label{comp:A.2.4.segment_intersect}
+$O(1)$ time. It involves four orientation tests and up to four point-on-segment tests (if orientations are zero). Each of these sub-operations is $O(1)$.
+\end{complexity}
+\begin{insight}
+\label{insight:A.2.4.proper_vs_improper_intersect}
+The "General case" check in \Cref{alg:A.2.4.segment_intersect} (where $o1, o2, o3, o4$ are all non-zero, $o1 \neq o2$, and $o3 \neq o4$) specifically detects \textbf{proper intersection}. The subsequent checks for $o_i=0$ handle \textbf{improper intersections} (endpoint of one segment lies on the other, or collinear overlap). The algorithm as a whole detects \textit{any} intersection.
+\end{insight}
+\begin{warning}
+\label{warn:A.2.4.segment_intersect_degenerate}
+\textbf{Degenerate Segments (Points)}: If a segment is actually a point (e.g., $P_1=P_2$), the \texttt{orientation} function should still behave correctly (e.g., $orientation(P1, P1, P3)$ will be 0 if $P_1, P_3$ are distinct, indicating collinearity). The $point_on_segment_collinear(Pk, Pi, Pi)$ should correctly check if $P_k=P_i$.
+If $P_1=P_2$ and $P_3=P_4$ (two points), they intersect if $P_1=P_3$.
+If $P_1=P_2$ (segment $S_1$ is a point), it intersects $S_2=[P_3,P_4]$ if $P_1$ lies on segment $[P_3,P_4]$. The algorithm covers this: $o1$ and $o2$ would be based on $P_1,P_1,P_3$ and $P_1,P_1,P_4$. These are not well-defined by the standard $P_1,P_2,P_k$ orientation interpretation.
+A robust implementation should perhaps handle point-segments as a pre-check or ensure orientation function $(P_A, P_A, P_B)$ gives 0. If $P_1=P_2$, then $o1 = \text{orientation}(P_1,P_1,P_3)$ and $o2 = \text{orientation}(P_1,P_1,P_4)$. Both will be 0. Then $o3 = \text{orientation}(P_3,P_4,P_1)$ and $o4 = \text{orientation}(P_3,P_4,P_1)$, so $o3=o4$. The general case fails. Then it falls to special cases: Is $P_3$ on segment $P_1P_1$? Yes if $P_3=P_1$. Correct. Is $P_1$ on segment $P_3P_4$? Yes if $S_1$ (a point) is on $S_2$. Correct.
+The logic seems to hold.
+\end{warning}
+
+\lstinputlisting[language=C++, caption=Segment intersection in C++ (using integer PointLL and orientation from \Cref{code:A.2.3.orientation_test})]{code.cpp}

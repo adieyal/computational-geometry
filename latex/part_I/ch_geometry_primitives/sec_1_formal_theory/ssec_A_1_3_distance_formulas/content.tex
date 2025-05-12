@@ -1,0 +1,89 @@
+% part_I/ch_A/sec_A_1_formal_theory/ssec_A_1_3_distance_formulas/content.tex
+\subsection{Distance Formulas: Measuring Separation}
+\label{ssec:A.1.3}
+
+Calculating distances between geometric objects is a frequent task.
+
+\begin{definition}[Point-Point Distance]
+\label{def:A.1.3.point_point_dist}
+The distance between two points $P_1(x_1, y_1)$ and $P_2(x_2, y_2)$ is the norm of the vector $\vec{P_1P_2}$:
+$$ d(P_1, P_2) = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2} $$
+The squared distance is $(x_2-x_1)^2 + (y_2-y_1)^2$.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.3.point_point_dist}
+This is just the Pythagorean theorem. As mentioned in \Cref{tips:A.1.1.norm_sq_compare}, prefer comparing squared distances to avoid \texttt{sqrt}.
+\end{intuition}
+
+\begin{definition}[Point-Line Distance]
+\label{def:A.1.3.point_line_dist}
+The distance from a point $P_0(x_0, y_0)$ to a line $L$ is the length of the perpendicular segment from $P_0$ to $L$.
+\begin{itemize}
+    \item If line $L$ passes through points $A$ and $B$ (where $A \neq B$):
+    $$ d(P_0, L) = \frac{|\vec{AP_0} \times \vec{AB}|}{|\vec{AB}|} = \frac{|(P_0-A) \times (B-A)|}{|B-A|} $$
+    The numerator is the magnitude of the 2D cross product, which is the area of the parallelogram formed by $\vec{AP_0}$ and $\vec{AB}$. Dividing by the base length $|\vec{AB}|$ gives the height.
+    \item If line $L$ is given by $ax+by+c=0$:
+    $$ d(P_0, L) = \frac{|ax_0 + by_0 + c|}{\sqrt{a^2+b^2}} $$
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.3.point_line_dist}
+The cross product method is very elegant: area of parallelogram divided by base length equals height. This is often preferred in code with a Point struct.
+The implicit form formula is also direct. The term $ax_0+by_0+c$ tells you something about which side of the line $P_0$ is on (if normal $(a,b)$ is consistently chosen) and its magnitude is proportional to distance. $\sqrt{a^2+b^2}$ is the magnitude of the normal vector $(a,b)$.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.3.point_line_dist}
+% Description of diagram:
+% A line L (defined by points A and B). A point P0 not on L.
+% A perpendicular segment from P0 to L, meeting L at point Q.
+% The distance d(P0,L) is the length of P0Q.
+% Vectors AP0 and AB shown. Parallelogram formed by AP0 and AB outlined. Area of this parallelogram is |(P0-A) x (B-A)|. Base is |B-A|. Height is d(P0,L).
+Line $L$ (passing through $A, B$). Point $P_0$ off the line. Perpendicular from $P_0$ to $L$ meets $L$ at $Q$. Length $P_0Q$ is the distance. Vectors $\vec{AP_0}$ and $\vec{AB}$ are shown. The parallelogram interpretation is shown with its area being the numerator of the distance formula.
+\end{visualexample}
+
+\begin{mathinsight}
+\label{mathinsight:A.1.3.point_line_rejection}
+The point-line distance is also the magnitude of the rejection of vector $\vec{AP_0}$ from vector $\vec{AB}$ (i.e., $|\text{rej}_{\vec{AB}} \vec{AP_0}| = |\vec{AP_0} - \text{proj}_{\vec{AB}} \vec{AP_0}|$). The closest point $Q$ on the line $AB$ to $P_0$ is $A + \text{proj}_{\vec{AB}} \vec{AP_0}$. This is the foot of the perpendicular.
+\end{mathinsight}
+
+\begin{definition}[Point-Segment Distance]
+\label{def:A.1.3.point_segment_dist}
+The distance from a point $P_0$ to a segment $S=[A,B]$ is the shortest distance from $P_0$ to any point on $S$.
+Let $L$ be the infinite line containing segment $AB$.
+\begin{enumerate}
+    \item Calculate $t = \frac{\vec{AP_0} \cdot \vec{AB}}{|\vec{AB}|^2} = \frac{(P_0-A)\cdot(B-A)}{|B-A|^2}$. This $t$ determines where the projection $Q$ of $P_0$ onto line $L$ lies relative to segment $AB$ (where $Q = A + t(B-A)$).
+    \item If $0 \le t \le 1$: The projection $Q$ lies on segment $AB$. The distance $d(P_0, S)$ is the point-line distance $d(P_0, L)$.
+    \item If $t < 0$: The projection $Q$ lies on line $L$ outside segment $AB$, on the side of $A$. The closest point on $S$ to $P_0$ is $A$. So $d(P_0, S) = d(P_0, A)$.
+    \item If $t > 1$: The projection $Q$ lies on line $L$ outside segment $AB$, on the side of $B$. The closest point on $S$ to $P_0$ is $B$. So $d(P_0, S) = d(P_0, B)$.
+\end{enumerate}
+If $A=B$ (segment is a point), distance is $d(P_0,A)$. This case implies $|\vec{AB}|^2=0$, so $t$ calculation needs care.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.3.point_segment_dist}
+Imagine "dropping" the point $P_0$ perpendicularly onto the line containing segment $AB$.
+If it lands *on* the segment (projection parameter $t \in [0,1]$), that's your shortest distance (point-to-line distance).
+If it lands *off* the segment (e.g., $t<0$ means it's "before" $A$, $t>1$ means it's "after" $B$), then the closest point on the segment is simply the nearer endpoint ($A$ or $B$).
+The dot product helps determine $t$: $(P_0-A)\cdot(B-A)$ tells us how much $P_0-A$ "goes along" $B-A$. Normalizing by $|B-A|^2$ gives the parametric position $t$.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.3.point_segment_dist}
+% Description of diagram:
+% Segment AB. Three points P0, P0', P0''.
+% 1. P0: Projection Q onto line AB falls within segment AB (0<=t<=1). Distance is P0Q (point-line distance).
+% 2. P0': Projection Q' onto line AB falls outside segment, beyond A (t<0). Distance is P0'A (distance to endpoint A).
+% 3. P0'': Projection Q'' onto line AB falls outside segment, beyond B (t>1). Distance is P0''B (distance to endpoint B).
+Segment $AB$.
+Case 1: Point $P_a$. Projection $Q_a$ of $P_a$ onto line $AB$ lies on segment $AB$. Parameter $t_a \in [0,1]$. Distance is $P_aQ_a$.
+Case 2: Point $P_b$. Projection $Q_b$ lies on line $AB$ but outside segment, past $A$. Parameter $t_b < 0$. Distance is $P_bA$.
+Case 3: Point $P_c$. Projection $Q_c$ lies on line $AB$ but outside segment, past $B$. Parameter $t_c > 1$. Distance is $P_cB$.
+\end{visualexample}
+
+\begin{warning}
+\label{warn:A.1.3.segment_is_point}
+\textbf{Degenerate Segment}: If the segment $AB$ is actually a point (i.e., $A=B$), then $|\vec{AB}|^2 = 0$. The formula for $t$ would involve division by zero. Handle this as a base case: the point-segment distance is simply the distance from $P_0$ to $A$ (or $B$).
+\end{warning}

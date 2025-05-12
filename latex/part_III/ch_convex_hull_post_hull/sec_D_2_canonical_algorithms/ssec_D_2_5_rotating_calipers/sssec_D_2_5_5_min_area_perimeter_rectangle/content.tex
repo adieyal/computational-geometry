@@ -1,0 +1,48 @@
+Given a convex polygon, find the minimum-area (or minimum-perimeter) rectangle that encloses it.
+
+\begin{insight}
+A key insight is that the minimum-area enclosing rectangle must have at least one side flush with an edge of the convex polygon. This allows us to use rotating calipers to consider only $O(n)$ potential rectangles.
+\end{insight}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Minimum Area Enclosing Rectangle}
+\KwIn{A convex polygon $P$ with vertices in counterclockwise order}
+\KwOut{The minimum-area rectangle enclosing $P$}
+
+Initialize four support lines (left, right, top, bottom)\;
+Initialize $minArea = \infty$, $bestRect = \emptyset$\;
+
+\For{each edge $e$ of $P$}{
+    Update the support lines to be parallel/perpendicular to $e$ and touching $P$\;
+    Compute the area of the resulting rectangle\;
+    \If{area < minArea}{
+        $minArea = area$\;
+        $bestRect = $ current rectangle\;
+    }
+    Determine which support line should advance next\;
+    Advance that support line to the next vertex\;
+}
+\Return{$bestRect$}\;
+\end{algorithm}
+
+\begin{visualexample}
+Create a sequence of diagrams showing:
+1. A convex polygon with a rectangle enclosing it
+2. The rectangle rotating to align with different edges of the polygon
+3. The support lines advancing during rotation
+4. The final minimum-area rectangle
+\end{visualexample}
+
+\begin{implementation}
+When implementing this algorithm, it's important to:
+\begin{itemize}
+    \item Correctly determine which support line to advance at each step
+    \item Handle parallel edges in the polygon
+    \item Account for numerical precision issues when computing areas
+\end{itemize}
+\end{implementation}
+
+\begin{complexity}
+The algorithm runs in $O(n)$ time where $n$ is the number of vertices in the polygon.
+\end{complexity}

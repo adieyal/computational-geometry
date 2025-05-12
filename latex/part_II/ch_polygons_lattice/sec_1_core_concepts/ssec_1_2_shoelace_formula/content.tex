@@ -1,0 +1,12 @@
+\subsection{The Shoelace Formula}
+\label{ssec:shoelace_formula}
+
+\begin{theorem}[Shoelace Formula]
+For a simple polygon with vertices $(x_1,y_1), ..., (x_n,y_n)$ listed in order:
+$$\text{Area} = \frac{1}{2}\left|\sum_{i=1}^{n} (x_i y_{i+1} - x_{i+1} y_i)\right|$$
+where indices wrap around: $(x_{n+1}, y_{n+1}) = (x_1, y_1)$.
+\end{theorem}
+
+\begin{intuition}
+Imagine lacing a shoe - you create triangular sections as you cross the laces. The formula sums signed areas of triangles formed by each edge with the origin.
+\end{intuition} 

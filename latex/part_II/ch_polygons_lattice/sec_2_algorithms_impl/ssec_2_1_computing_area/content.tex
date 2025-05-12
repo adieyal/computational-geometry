@@ -1,0 +1,35 @@
+% Content for Computing Area 
+
+\subsection{Computing Polygon Area}
+
+\begin{algorithm}[H]
+\caption{Shoelace Algorithm}
+\KwInput{$vertices$}
+\KwOutput{Area of the polygon}
+$n \gets vertices.size()$\;
+$area \gets 0$\;
+\For{$i \gets 0$ \KwTo $n-1$}{
+    $j \gets (i+1) \bmod n$\;
+    $area \gets area + vertices[i].x \times vertices[j].y$\;
+    $area \gets area - vertices[j].x \times vertices[i].y$\;
+}
+\Return{$|area| / 2$}
+\end{algorithm}
+
+\begin{complexity}
+\begin{itemize}
+\item \textbf{Time:} $O(n)$ where $n$ is the number of vertices
+\item \textbf{Space:} $O(1)$ additional space
+\item \textbf{When to use:} Always for simple polygons; works for both convex and non-convex
+\end{itemize}
+\end{complexity}
+
+\begin{implementation}
+\begin{tipsbox}
+\begin{itemize}
+\item \textbf{Overflow:} For large coordinates, intermediate products can overflow. Use \texttt{long long} or \texttt{\_\_int128}.
+\item \textbf{Sign:} The raw result's sign indicates orientation (CW/CCW). Take absolute value for area.
+\item \textbf{Precision:} For integer coordinates, the result before division by 2 is always even.
+\end{itemize}
+\end{tipsbox}
+\end{implementation} 

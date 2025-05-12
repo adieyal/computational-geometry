@@ -1,0 +1,61 @@
+\subsection{Convex Set, Convex Combination}
+\label{sec:convex-set-convex-combination}
+
+We begin with the core definitions.
+
+\begin{definition}[Convex Set]
+\label{def:convex-set}
+A set $S$ in the Euclidean plane is called \textbf{convex} if for any two points $p, q \in S$, the entire line segment connecting $p$ and $q$ also lies in $S$.
+\end{definition}
+
+\begin{intuition}
+Imagine a shape. If you can draw a straight line between any two points inside the shape, and that line stays *completely* within the shape, then the shape is convex. Think of it like this: a convex set has no "dents" or "caves." It's like a perfectly smooth surface.
+\end{intuition}
+
+Let's see some examples and non-examples.
+
+\begin{visualexample}
+\label{vis:convex-examples}
+Draw four diagrams.
+1.  A circle, labeled "Convex"
+2.  A triangle, labeled "Convex"
+3.  A rectangle, labeled "Convex"
+4.  A star shape with inward corners, labeled "Non-Convex"
+\end{visualexample}
+
+Next, let's define the concept of convex combination.
+
+\begin{definition}[Convex Combination]
+A \textbf{convex combination} of points $p_1, p_2, \ldots, p_n$ is a linear combination $\sum_{i=1}^{n} \lambda_i p_i$ where:
+\begin{itemize}
+    \item Each coefficient $\lambda_i \ge 0$ (non-negative).
+    \item The sum of all coefficients equals 1: $\sum_{i=1}^{n} \lambda_i = 1$.
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+A convex combination represents a weighted average of points. Each point contributes to the 'average' based on its weight ($\lambda_i$). These weights must be non-negative, meaning no point can "cancel out" another. Furthermore, because the weights add up to 1, the combination will always fall *inside* or *on the boundary of* the shape formed by the points.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:convex-combination}
+Draw a diagram with 3 points, $p_1, p_2, p_3$ that form a triangle.
+1.  Show a point that is a convex combination of the three points, and label the point. The diagram should illustrate how it is a weighted average.
+2.   Show the same points, $p_1, p_2, p_3$, and a point outside the triangle that is *not* a convex combination of the three points. Highlight the weights of this "combination", and demonstrate why they do not add up to 1.
+\end{visualexample}
+
+Here are a couple of crucial cases:
+
+*   If $\lambda_1 = 1$ and all other $\lambda_i = 0$, the convex combination equals $p_1$ (a vertex).
+*   If $\lambda_1 = \lambda_2 = 0.5$ and all other $\lambda_i = 0$, the convex combination equals the midpoint of $p_1$ and $p_2$.
+
+A fundamental property ties convex sets and convex combinations together:
+
+\begin{theorem}
+A set is convex if and only if it contains all convex combinations of its points.
+\label{thm:convex-comb-equivalence}
+\end{theorem}
+
+\begin{mathinsight}
+This theorem provides an alternative way to define convexity. If we can show that all convex combinations of points within a set also lie within that set, we've proven that the set is convex. This is extremely useful in proofs and helps to solidify the intuition around what "convex" truly means.
+\end{mathinsight}

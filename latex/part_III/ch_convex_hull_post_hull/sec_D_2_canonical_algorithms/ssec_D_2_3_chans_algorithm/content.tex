@@ -1,0 +1,23 @@
+\clearpage
+\subsection{Chan's Algorithm}
+\label{ssec:chans_algorithm}
+
+\subimport{./}{algorithm.tex}
+\label{algorithm:chans_algorithm}
+
+\begin{insight}
+Chan's algorithm is a breakthrough in convex hull computation, achieving an optimal output-sensitive time complexity of $O(n \log h)$, where $n$ is the number of input points and $h$ is the number of points on the convex hull. The core idea is to iteratively "guess" the hull size and combine the strengths of divide-and-conquer and gift-wrapping approaches. By carefully balancing these phases, the algorithm efficiently adapts to the actual output size.
+\end{insight}
+
+\begin{mathinsight}
+The $O(n \log h)$ complexity arises as follows: For each guess $m \geq h$, the algorithm spends $O(n \log m)$ time computing mini-hulls (using a method like Graham's scan) and $O(m \cdot n/m) = O(n)$ time in the gift-wrapping phase to merge them. Since $m$ doubles each iteration, the total work across all guesses is $O(n \log h)$. This makes Chan's algorithm the first to match the lower bound for output-sensitive convex hull algorithms.
+\end{mathinsight}
+
+\lstinputlisting[language=C++, caption=Chan's Algorithm]{code.cpp}
+
+\begin{complexity}
+\label{comp:chans_algorithm}
+Time complexity: $O(n \log h)$, where $n$ is the number of input points and $h$ is the number of points on the convex hull.
+\end{complexity}
+
+\textbf{Note:} This is the optimal output-sensitive algorithm for the convex hull problem.

@@ -1,0 +1,76 @@
+% part_I/ch_A/sec_A_2_canonical_algorithms/ssec_A_2_2_dist_computations_pseudo/content.tex
+\subsection{Distance Computations in Pseudocode}
+\label{ssec:A.2.2}
+
+These algorithms build upon basic vector operations. We usually compute squared distances first and take \texttt{sqrt} only if the actual distance is needed.
+
+\begin{algorithm}[H]
+\caption{Squared Distance from Point $P_0$ to Line defined by $A, B$}
+\label{alg:A.2.2.dist_sq_point_line}
+\KwInput{Point $P_0$, Point $A$ on line, Point $B$ on line ($A \neq B$)}
+\KwOutput{Squared distance from $P_0$ to line $AB$}
+vec\_AP0 $\leftarrow P_0 - A$\;
+vec\_AB $\leftarrow B - A$\;
+norm\_sq\_AB $\leftarrow \text{norm\_sq}(\text{vec\_AB})$\;
+\If{norm\_sq\_AB is 0 (or very close for floats)} { \Return{$\text{norm\_sq}(\text{vec\_AP0})$} } \Comment{$A,B$ are same point, return dist\_sq to A}
+cross\_prod\_val $\leftarrow \text{cross\_product\_2d}(\text{vec\_AP0}, \text{vec\_AB})$\;
+\Return{$(\text{cross\_prod\_val} \cdot \text{cross\_prod\_val}) / \text{norm\_sq\_AB}$}
+\end{algorithm}
+\begin{intuition}
+\label{intuition:A.2.2.dist_sq_point_line}
+This comes from $d = \frac{|\vec{AP_0} \times \vec{AB}|}{|\vec{AB}|}$, so $d^2 = \frac{(\vec{AP_0} \times \vec{AB})^2}{|\vec{AB}|^2}$.
+Using squared distance avoids one \texttt{sqrt} call in the numerator and one in the denominator compared to calculating $d$ directly. If you need $d$, take \texttt{sqrt} of the result.
+\end{intuition}
+\begin{complexity}
+\label{comp:A.2.2.dist_sq_point_line}
+$O(1)$ time. Involves point subtractions, cross product, norm squared, one multiplication, one division.
+\end{complexity}
+\begin{gotcha}
+\label{gotcha:A.2.2.dist_point_line_AB_coincident}
+If $A$ and $B$ are coincident ($norm\_sq\_AB = 0$), the line is undefined. The algorithm returns distance to point $A$. Problem context usually ensures $A \neq B$.
+\end{gotcha}
+
+\begin{algorithm}[H]
+\caption{Squared Distance from Point $P_0$ to Segment $AB$}
+\label{alg:A.2.2.dist_sq_point_segment}
+\KwInput{Point $P_0$, Segment endpoint $A$, Segment endpoint $B$}
+\KwOutput{Squared distance from $P_0$ to segment $AB$}
+vec\_AP0 $\leftarrow P_0 - A$\;
+vec\_AB $\leftarrow B - A$\;
+norm\_sq\_AB $\leftarrow \text{norm\_sq}(\text{vec\_AB})$\;
+
+\If{norm\_sq\_AB is 0 (or very close for floats)} { \Return{$\text{norm\_sq}(\text{vec\_AP0})$} } \Comment{Segment is a point A, dist is to A}
+
+dot\_prod $\leftarrow \text{dot\_product}(\text{vec\_AP0}, \text{vec\_AB})$\;
+
+\If{dot\_prod $< 0$ (or $dot\_prod < -EPS$ for floats)} { \Comment{Closest point on line is outside segment, past A}
+    \Return{$\text{norm\_sq}(\text{vec\_AP0})$} \Comment{Squared distance to A}
+}
+\ElseIf{dot\_prod $>$ norm\_sq\_AB (or $dot\_prod > norm\_sq\_AB + EPS$ for floats)} { \Comment{Closest point on line is outside segment, past B}
+    vec\_BP0 $\leftarrow P_0 - B$\;
+    \Return{$\text{norm\_sq}(\text{vec\_BP0})$} \Comment{Squared distance to B}
+}
+\Else { \Comment{Closest point (projection) is on segment. Use point-line distance squared.}
+    cross\_prod\_val $\leftarrow \text{cross\_product\_2d}(\text{vec\_AP0}, \text{vec\_AB})$\;
+    \Return{$(\text{cross\_prod\_val} \cdot \text{cross\_prod\_val}) / \text{norm\_sq\_AB}$}
+}
+\end{algorithm}
+\begin{intuition}
+\label{intuition:A.2.2.dist_sq_point_segment}
+The conditions $dot_prod < 0$ and $dot_prod > norm_sq_AB$ correspond to the projection parameter $t = \text{dot\_prod} / \text{norm\_sq\_AB}$ being $t<0$ and $t>1$ respectively (\Cref{intuition:A.1.3.point_segment_dist}).
+If $0 \leq t \leq 1$, the closest point on the segment $AB$ is the projection $Q = A + t \vec{AB}$ of $P_0$ onto $AB$; thus, the distance is the perpendicular distance from $P_0$ to $AB$.
+\end{intuition}
+\begin{complexity}
+\label{comp:A.2.2.dist_sq_point_segment}
+$O(1)$ time. A few vector operations, dot/cross products, comparisons.
+\end{complexity}
+\begin{implementation}
+\label{impl:A.2.2.dist_point_segment_closest_point}
+To find the actual closest point $Q$ on segment $AB$ to $P_0$:
+\begin{itemize}
+    \item If $dot\_prod < 0$: $Q=A$.
+    \item If $dot\_prod > norm\_sq\_AB$: $Q=B$.
+    \item Else: $t = dot\_prod / norm\_sq\_AB$. $Q = A + t \cdot \vec{AB}$.
+\end{itemize}
+This is useful for \Cref{ex:A.6}.
+\end{implementation}

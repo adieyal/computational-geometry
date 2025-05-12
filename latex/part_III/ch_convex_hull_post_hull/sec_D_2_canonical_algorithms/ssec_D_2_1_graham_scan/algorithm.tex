@@ -1,0 +1,17 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\caption{Graham Scan}
+\KwIn{A set $P$ of $n$ points in the plane}
+\KwOut{The convex hull of $P$ as a sequence of vertices in counterclockwise order}
+
+Find the point $p_0$ with the lowest $y$-coordinate (leftmost in case of ties)\;
+Sort the remaining points by polar angle around $p_0$\;
+Initialize stack $S$ with $p_0$ and the first sorted point\;
+\For{each remaining point $p_i$ in sorted order}{
+    \While{$S$ contains at least 2 points AND the last 3 points in $S$ don't make a left turn}{
+        Pop the middle of the last 3 points from $S$\;
+    }
+    Push $p_i$ onto $S$\;
+}
+\Return{$S$}\;
+\end{algorithm}

@@ -1,0 +1,449 @@
+% ==============================================================================
+% Advanced Computational Geometry for Olympiad & Competitive Programming
+% LaTeX Preamble Documentation and Configuration
+% ==============================================================================
+
+% ---------------- CORE PACKAGES ----------------
+% Font and Encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{lipsum}
+
+% Page Layout
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{needspace}
+
+% Mathematics
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{mathtools}
+
+% Graphics and Color
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathreplacing,arrows.meta}
+
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+
+% Tables
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+% Code Listings
+\usepackage{listings}
+
+% Algorithms
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\SetKwInput{KwInput}{Input}
+\SetKwInput{KwOutput}{Output}
+\SetKwComment{Comment}{$\triangleright$\ }{}
+\DontPrintSemicolon
+
+% Box Environments
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+
+% Cross-referencing
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+% Utilities
+\usepackage{import}
+\usepackage{tocbibind}
+
+% Inconsolata font
+\usepackage{inconsolata}
+
+% ---------------- COLOR DEFINITIONS ----------------
+% Code syntax highlighting colors
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{magenta}{rgb}{0.58,0,0.82}
+
+
+% Environment box colors
+\definecolor{tipcolor}{RGB}{0,100,0}
+\definecolor{warningcolor}{RGB}{139,0,0}
+\definecolor{codecolor}{RGB}{0,0,139}
+\definecolor{patterncolor}{RGB}{75,0,130}
+\definecolor{problemcolor}{RGB}{128,0,128}
+
+% ---------------- HYPERREF CONFIGURATION ----------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Advanced Computational Geometry for Olympiad \& Competitive Programming},
+    pdfpagemode=UseOutlines,
+    bookmarksopen=true,
+    bookmarksnumbered=true
+}
+
+% ---------------- CLEVEREF CONFIGURATION ----------------
+\Crefname{problemexample}{Problem Example}{Problem Examples}
+\Crefname{gotcha}{Gotcha}{Gotchas}
+\Crefname{furtherreading}{Further Reading Item}{Further Reading Items}
+\Crefname{openquestion}{Open Question/Trick}{Open Questions/Tricks}
+\Crefname{definition}{Definition}{Definitions}
+\Crefname{theorem}{Theorem}{Theorems}
+\Crefname{lemma}{Lemma}{Lemmas}
+\Crefname{corollary}{Corollary}{Corollaries}
+\Crefname{proposition}{Proposition}{Propositions}
+\Crefname{lstlisting}{Listing}{Listings}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+
+% ---------------- NUMBERING CONFIGURATION ----------------
+\setcounter{tocdepth}{3}      % Include subsubsections in ToC
+\setcounter{secnumdepth}{3}   % Number subsubsections
+
+% ==============================================================================
+% CUSTOM ENVIRONMENTS AND COMMANDS DOCUMENTATION
+% ==============================================================================
+
+% ---------------- CODE ENVIRONMENTS ----------------
+% Usage: For C++ code snippets throughout the book
+% \lstset{style=cppstyle}
+
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\scriptsize,
+    aboveskip=0.5em,
+    belowskip=0.5em,
+    lineskip=-0.5pt,
+    breakatwhitespace=false,
+    breaklines=true,
+    keepspaces=true,
+    numbers=left,
+    numbersep=4pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    xleftmargin=0.5em,
+    framexleftmargin=0em,
+    framexrightmargin=0em,
+    framextopmargin=0em,
+    framexbottommargin=0em,
+}
+
+% Set the default style for all listings to cppstyle
+\lstset{style=cppstyle}
+
+% Environment for C++ code blocks
+% Usage: \begin{cppcode} ... \end{cppcode}
+% \newenvironment{cppcode}
+% {\begin{lstlisting}[language=C++]}
+% {\end{lstlisting}{et{#1}
+% }[1][]{%
+% ---------------- THEOREM-LIKE ENVIRONMENTS ----------------
+% All theorem-like environments are numbered per section
+
+% Mathematical theorems and proofs
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% Definitions and examples
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{problemexample}{Problem Example}[section]
+
+% Remarks and notes
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}        % Unnumbered
+\newtheorem*{note}{Note}            % Unnumbered
+
+% ---------------- EDUCATIONAL BOX ENVIRONMENTS ----------------
+
+% Chapter introduction box
+% Usage: At the beginning of each chapter to set context
+\newenvironment{chapterintro}{
+    \begin{tcolorbox}[
+        colback=blue!2,
+        colframe=blue!30,
+        boxrule=0pt,
+        sharp corners,
+        before skip=1em,
+        after skip=2em
+    ]
+}{\end{tcolorbox}}
+
+% Chapter roadmap
+% Usage: After introduction to show chapter structure
+\newenvironment{roadmap}{
+    \begin{center}
+    \textbf{Chapter Roadmap}\\[1em]
+}{\end{center}}
+
+% Intuition box
+% Usage: To provide intuitive explanations of complex concepts
+\newenvironment{intuition}{
+    \begin{mdframed}[
+        backgroundcolor=blue!5,
+        linewidth=1pt,
+        linecolor=blue!50,
+        innertopmargin=5pt,
+        innerbottommargin=5pt,
+        innerrightmargin=7pt,
+        innerleftmargin=7pt
+    ]
+    \textbf{Intuition:} 
+}{\end{mdframed}}
+
+% Visual example environment
+% Usage: For figures and diagrams
+\newenvironment{visualexample}{
+    \begin{figure}[H]
+    \centering
+}{\end{figure}}
+
+% Complexity analysis box
+% Usage: To discuss time/space complexity of algorithms
+\newenvironment{complexity}{
+    \begin{tcolorbox}[
+        colback=gray!5,
+        colframe=gray!50,
+        title={\textbf{Complexity Analysis}},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+}{\end{tcolorbox}}
+
+% Implementation notes box
+% Usage: For implementation-specific details
+\newenvironment{implementation}{
+    \begin{mdframed}[
+        backgroundcolor=green!5,
+        linecolor=green!50,
+        linewidth=1pt
+    ]
+    \textbf{Implementation Notes:}
+}{\end{mdframed}}
+
+% Tips box
+% Usage: For helpful tips and best practices
+\newenvironment{tipsbox}{
+    \begin{tcolorbox}[
+        colback=green!5,
+        colframe=green!40,
+        title={\textbf{Tips}},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+}{\end{tcolorbox}}
+
+% Warning box
+% Usage: For important warnings and common mistakes
+\newenvironment{warning}[1][]{
+    \begin{tcolorbox}[
+        colback=red!5,
+        colframe=red!40,
+        title={Warning\ifx&#1&\else: #1\fi},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+}{\end{tcolorbox}}
+
+% Insight box
+% Usage: For key insights and "aha!" moments
+\newenvironment{insight}{
+    \begin{tcolorbox}[
+        colback=blue!5,
+        colframe=blue!40,
+        title={\textbf{Insight}},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+}{\end{tcolorbox}}
+
+% Mathematical insight box
+% Usage: For mathematical insights specifically
+\newenvironment{mathinsight}{
+    \Needspace{6\baselineskip}
+    \begin{mdframed}[
+        backgroundcolor=purple!5,
+        linecolor=purple!50,
+        linewidth=1pt
+    ]
+    \textbf{Mathematical Insight:} 
+}{\end{mdframed}}
+
+% Debug checklist
+% Usage: For debugging guidelines and checklists
+\newenvironment{debugchecklist}[1][]{
+    \begin{tcolorbox}[
+        colback=yellow!5,
+        colframe=yellow!50,
+        title={\textbf{Debug Checklist\ifx&#1&\else: #1\fi}},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+    \begin{itemize}[leftmargin=*]
+}{\end{itemize}\end{tcolorbox}}
+
+% ---------------- PROBLEM-RELATED ENVIRONMENTS ----------------
+
+% Problem pattern box
+% Usage: To describe common problem patterns
+\newenvironment{pattern}[1][]{
+    \begin{tcolorbox}[
+        colback=patterncolor!5,
+        colframe=patterncolor!40,
+        fonttitle=\bfseries,
+        title={#1}
+    ]
+    % No itemize here; user can write anything inside
+}{
+    \end{tcolorbox}
+}
+
+% Individual problem environment
+% Usage: For detailed problem discussions
+\newenvironment{problemenv}[1][]{
+    \begin{tcolorbox}[
+        colback=problemcolor!5,
+        colframe=problemcolor!40,
+        title={#1},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+    \begin{itemize}[leftmargin=*,label={}]
+}{\end{itemize}\end{tcolorbox}}
+
+% Problem set container
+% Usage: To contain a list of practice problems
+\newenvironment{problemset}{
+    \begin{center}
+}{\end{center}}
+
+% Problem list
+% Usage: Inside problemset for listing problems
+\newenvironment{problemlist}{
+    \begin{enumerate}[leftmargin=*]
+}{\end{enumerate}}
+
+% Problem item command
+% Usage: \problem{Difficulty}{Platform}{Problem Name}{Key Concepts}
+\newcommand{\problem}[4]{
+    \item \textbf{#1} - \textit{#2} - #3 \hfill \textcolor{gray}{[#4]}
+}
+
+% ---------------- GOTCHA ENVIRONMENT ----------------
+% Usage: For common pitfalls and mistakes
+\newtheorem{gotcha}{Gotcha}[section]
+
+% ---------------- REFERENCE AND ADVANCED CONTENT ----------------
+
+% Summary card
+% Usage: Quick reference cards at end of chapters
+\newenvironment{summarycard}{
+    \begin{center}
+}{\end{center}}
+
+% Advanced topics box
+% Usage: For advanced or optional material
+\newenvironment{advanced}{
+    \begin{tcolorbox}[
+        colback=gray!5,
+        colframe=gray!60,
+        title={\textbf{Advanced Topics}},
+        coltitle=black,
+        fonttitle=\bfseries
+    ]
+}{\end{tcolorbox}}
+
+% Further reading environment
+\newtheorem{furtherreading}{Further Reading}[section]
+
+% Open questions environment
+\newtheorem{openquestion}{Open Question/Trick}[section]
+
+% ---------------- EXERCISES ----------------
+
+% Exercises environment
+% Usage: For end-of-chapter exercises
+\newenvironment{exercises}{
+    \begin{enumerate}[leftmargin=*]
+}{\end{enumerate}}
+
+% Exercise command
+% Usage: \exercise{Exercise description}
+\newcommand{\exercise}[1]{\item #1}
+
+% ---------------- UTILITY COMMANDS ----------------
+
+% Cross-linking command
+% Usage: \crosslink{\Cref{ch:convexhull}}
+\newcommand{\crosslink}[1]{\textit{(see #1)}}
+
+% LaTeX code display
+% Usage: \latexcode{section}
+\newcommand{\latexcode}[1]{\texttt{\textbackslash #1}}
+
+% Placeholder for formulas
+% Usage: \placeholderformula{Area = 1/2 * base * height}
+\newcommand{\placeholderformula}[1]{\texttt{#1}}
+
+% Pseudocode placeholder
+% Usage: \pseudocode{Sort points by x-coordinate}
+\newcommand{\pseudocode}[1]{\texttt{#1}}
+
+% ==============================================================================
+% USAGE GUIDE
+% ==============================================================================
+% 
+% CHAPTER STRUCTURE:
+% 1. \begin{chapterintro} - Opening hook and motivation
+% 2. \begin{roadmap} - Visual overview with TikZ diagram
+% 3. Main content sections using appropriate environments
+% 4. \begin{summarycard} - Quick reference
+% 5. \begin{exercises} - End of chapter problems
+%
+% SECTION STRUCTURE:
+% - \begin{definition} for formal definitions
+% - \begin{theorem}, \begin{lemma} for mathematical results
+% - \begin{intuition} for intuitive explanations
+% - \begin{visualexample} for diagrams
+% - \begin{algorithm} for pseudocode
+% - \begin{cppcode} for C++ implementations
+% - \begin{complexity} for complexity analysis
+% - \begin{implementation}, \begin{tipsbox} for practical advice
+% - \begin{warning} for common mistakes
+% - \begin{gotcha} for tricky edge cases
+%
+% PROBLEM SECTIONS:
+% - \begin{pattern} for problem patterns
+% - \begin{problemenv}[Problem Name] for individual problems
+% - \begin{problemset} with \begin{problemlist} for practice sets
+% - Use \problem{Difficulty}{Platform}{Name}{Concepts} within problemlist
+%
+% ADVANCED CONTENT:
+% - \begin{advanced} for optional advanced material
+% - \begin{furtherreading} for references
+% - \begin{openquestion} for research topics
+%
+% CROSS-REFERENCES:
+% - Use \label{} and \Cref{} for smart references
+% - Use \crosslink{\Cref{}} for explicit cross-references
+% ==============================================================================

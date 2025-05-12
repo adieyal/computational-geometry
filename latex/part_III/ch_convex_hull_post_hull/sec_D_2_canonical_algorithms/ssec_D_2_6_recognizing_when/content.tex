@@ -1,0 +1,31 @@
+\begin{pattern}
+\textbf{Recognizing When to Apply Convex Hull}
+
+A problem likely requires convex hull when:
+\begin{itemize}
+    \item It involves finding the extreme points of a set in a plane
+    \item It asks for the smallest enclosing shape of a set of points
+    \item There's a need to discard "interior" points that don't contribute to a solution
+    \item The problem mentions finding the "boundary" or "outline" of a point set
+    \item There's a geometric optimization problem involving a point set (finding maximum distance, minimum enclosing area, etc.)
+    \item The problem involves line of sight, visibility, or covering
+\end{itemize}
+
+\textbf{Convex Hull + Rotating Calipers Pattern}
+This powerful combination is especially useful when:
+\begin{itemize}
+    \item Finding the diameter (maximum distance between any two points)
+    \item Finding the width (minimum distance between parallel supporting lines)
+    \item Computing the minimum-area or minimum-perimeter enclosing rectangle
+    \item Finding all antipodal pairs of vertices (pairs that admit parallel supporting lines)
+\end{itemize}
+
+\textbf{When to Choose Each Algorithm}
+\begin{itemize}
+    \item \textbf{Graham Scan}: General-purpose, easy to implement, good when the entire hull is needed
+    \item \textbf{Monotone Chain}: More numerically stable, suitable when points can be sorted by x-coordinate
+    \item \textbf{Chan's Algorithm}: When the output size might be much smaller than the input size
+    \item \textbf{Divide-and-Conquer}: When parallelization is available or for educational purposes
+    \item \textbf{Rotating Calipers}: When you need to solve a post-hull optimization problem
+\end{itemize}
+\end{pattern}

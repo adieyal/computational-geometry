@@ -1,0 +1,20 @@
+\clearpage
+\subsection{Monotone Chain (Andrew's Algorithm)}
+\label{ssec:monotone_chain}
+
+\subimport{./}{algorithm.tex}
+
+\begin{intuition}
+The Monotone Chain algorithm constructs the convex hull of a set of points in two sweeps: first, it builds the lower hull from left to right, then the upper hull from right to left. Unlike the Graham Scan, which sorts points by polar angle and sweeps from the lowest point, Monotone Chain only requires sorting by $x$-coordinate (breaking ties by $y$-coordinate). This makes the approach conceptually simpler and easier to implement, as it avoids angle calculations and instead uses straightforward coordinate comparisons.
+\end{intuition}
+
+\begin{insight}
+A key advantage of the Monotone Chain algorithm is its numerical stability. Sorting points by $x$-coordinate is generally more robust and less error-prone than sorting by polar angle, especially when dealing with floating-point coordinates. As a result, the implementation is cleaner and less susceptible to subtle bugs caused by floating-point inaccuracies.
+\end{insight}
+
+\lstinputlisting[language=C++, caption=Monotone Chain]{code.cpp}
+
+\begin{complexity}
+\label{comp:monotone_chain}
+The overall time complexity is $O(n \log n)$, dominated by the initial sorting step. The construction of the hull itself is linear in the number of points.
+\end{complexity}

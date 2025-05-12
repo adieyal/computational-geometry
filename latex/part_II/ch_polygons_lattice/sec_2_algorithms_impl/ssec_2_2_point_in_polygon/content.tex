@@ -1,0 +1,27 @@
+% Content for Point in Polygon 
+
+\subsection{Point-in-Polygon Testing}
+
+\begin{algorithm}[H]
+\caption{Ray Casting Algorithm}
+\KwInput{$point, polygon$}
+\KwOutput{True if inside, False otherwise}
+$crossings \leftarrow 0$\;
+$n \leftarrow polygon.size()$\;
+\For{$i \leftarrow 0$ \KwTo $n-1$}{
+    $j \leftarrow (i+1) \bmod n$\;
+    \If{ray from $point$ to $+\infty$ crosses edge $(i,j)$}{
+        $crossings \leftarrow crossings + 1$\;
+    }
+}
+\textbf{return} $crossings \bmod 2 = 1$\;
+\end{algorithm}
+
+\begin{warning}
+Edge cases require careful handling:
+\begin{itemize}
+\item Ray passing through a vertex
+\item Ray overlapping with a horizontal edge
+\item Point exactly on polygon boundary
+\end{itemize}
+\end{warning} 

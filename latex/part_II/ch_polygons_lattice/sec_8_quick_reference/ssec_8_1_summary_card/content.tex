@@ -1,0 +1,32 @@
+\subsection{Chapter Summary Card}
+
+\begin{summarycard}
+\begin{center}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\textbf{Polygon \& Lattice Geometry Reference}
+
+\textbf{Key Formulas:}
+\begin{itemize}
+\item Shoelace: $\text{Area} = \frac{1}{2}|\sum_{i=1}^{n} (x_i y_{i+1} - x_{i+1} y_i)|$
+\item Pick's: $\text{Area} = I + \frac{B}{2} - 1$
+\item Boundary points on segment: $\gcd(|x_2-x_1|, |y_2-y_1|) + 1$
+\end{itemize}
+
+\textbf{Complexity:}
+\begin{tabular}{ll}
+Polygon area & $O(n)$ \\
+Point-in-polygon & $O(n)$ \\
+Point-in-convex-polygon & $O(\log n)$ \\
+\end{tabular}
+
+\textbf{Common Pitfalls:}
+\begin{itemize}
+\item Integer overflow with large coordinates
+\item Edge cases in point-in-polygon
+\item Vertex ordering assumptions
+\end{itemize}
+\end{minipage}
+}
+\end{center}
+\end{summarycard}

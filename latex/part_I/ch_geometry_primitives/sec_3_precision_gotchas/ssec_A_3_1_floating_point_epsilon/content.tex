@@ -1,0 +1,60 @@
+\subsection{Floating-Point Arithmetic and Epsilon (\texttt{EPS})}
+\label{ssec:A.3.1}
+
+\begin{intuition}
+\label{intuition:A.3.1.floats_are_approx}
+Computers cannot represent all real numbers perfectly. Floating-point numbers (\texttt{float}, \texttt{double}, \texttt{long double} in C++) are approximations. This means that calculations that should yield exact results (like \texttt{0.1 + 0.2} resulting in \texttt{0.3}) might produce something slightly off (e.g., \texttt{0.30000000000000004}). This is a fundamental limitation. Think of it like trying to measure a precise length with a ruler that only has markings every millimeter – you can get close, but not perfectly exact for all lengths.
+\end{intuition}
+
+\begin{warning}[Direct Equality Comparison for Floats]
+\label{warn:A.3.1.float_equality}
+\textbf{Never use \texttt{==} to compare floating-point numbers for equality!}
+Because \texttt{a=(1.0/3.0) * 3.0} might not be exactly \texttt{1.0}.
+Instead, check if their absolute difference is within a small tolerance, called epsilon (\texttt{EPS}):
+\texttt{if (std::abs(a - b) < EPS)}
+\end{warning}
+
+\begin{definition}[Epsilon \texttt{EPS}]
+\label{def:A.3.1.eps}
+\textbf{Epsilon} (\texttt{EPS}) is a small positive constant used as a tolerance for floating-point comparisons. Typical values in competitive programming are $10^{-7}$ to $10^{-12}$ (e.g., \texttt{const double EPS = 1e-9;}).
+\begin{itemize}
+    \item To check if $a \approx b$ (i.e., $a$ is "equal" to $b$): \texttt{std::abs(a - b) < EPS}
+    \item To check if $a \le b$: \texttt{a < b + EPS} or, more robustly, \texttt{a - b < EPS}
+    \item To check if $a < b$: \texttt{a < b - EPS} or, more robustly, \texttt{a - b < -EPS}
+    \item To check if $a \ge b$: \texttt{a > b - EPS} or, more robustly, \texttt{a - b > -EPS}
+    \item To check if $a > b$: \texttt{a > b + EPS} or, more robustly, \texttt{a - b > EPS}
+    \item To check if $a \approx 0$: \texttt{std::abs(a) < EPS}
+\end{itemize}
+The forms like \texttt{a - b < EPS} are generally preferred because they are less susceptible to issues when \texttt{a} and \texttt{b} are very large (this relates to relative vs. absolute error, though for typical contest coordinate ranges, \texttt{a < b + EPS} usually works).
+\end{definition}
+
+\begin{tipsbox}
+\label{tips:A.3.1.choose_eps}
+\textbf{Choosing \texttt{EPS}}:
+\begin{itemize}
+    \item \textbf{Too small}: Might fail to identify numbers that \textit{should} be equal but differ due to accumulated precision errors (false negatives for equality).
+    \item \textbf{Too large}: Might incorrectly identify distinct numbers as equal (false positives for equality), potentially merging points or lines that should be separate.
+    \item A common choice for \texttt{double} in competitive programming is \texttt{1e-9}. This often works well when input coordinates are integers and intermediate calculations don't magnify errors too much.
+    \item If problem constraints involve very small differences or require high precision, \texttt{1e-12} or even smaller might be needed (use \texttt{long double} then). Conversely, if coordinates are small (e.g., up to $\pm 1000$) and operations are simple, \texttt{1e-7} might suffice.
+    \item \textbf{Problem Specifics}: The required precision can depend on the problem statement (e.g., "output to 6 decimal places" might guide your \texttt{EPS}). Sometimes, the problem setters will specify the \texttt{EPS} to use or the tolerance for checking answers.
+    \item \textbf{Relative \texttt{EPS}}: For advanced use, a relative epsilon (\texttt{std::abs(a-b) < EPS * std::max(1.0, std::abs(a), std::abs(b))}) is more robust across different magnitudes of numbers, but this is rarely needed in typical contest settings.
+\end{itemize}
+\end{tipsbox}
+
+\begin{gotcha}
+\label{gotcha:A.3.1.eps_accumulation}
+\textbf{Error Accumulation}: Repeated floating-point operations can cause errors to accumulate. A small error in one step can become a large error after many calculations. For example, rotating a point many times might cause it to drift. This is a strong argument for using integer arithmetic (\Cref{tips:A.1.4.integer_arithmetic}) whenever possible, especially for predicates like orientation.
+\end{gotcha}
+
+It's often useful to have a comparison function for doubles:
+\lstinputlisting[language=C++, caption=Comparison function for doubles using EPS,label=code:A.3.1.cmp_function_double]{code.cpp}
+This \texttt{dcmp} function encapsulates the epsilon logic and makes comparisons cleaner. For example, \texttt{dcmp(val, 0) > 0} means \texttt{val} is significantly positive.
+
+\begin{debugchecklist}[Floating-Point Arithmetic]
+\label{debug:A.3.1.fp_checklist}
+    \item Am I using \texttt{==} with floats? (Change to \texttt{std::abs(a-b) < EPS} or \texttt{dcmp}).
+    \item Is my \texttt{EPS} value appropriate for the problem's scale and precision requirements?
+    \item Could errors be accumulating over many operations? (Consider integer arithmetic if possible).
+    \item Am I dividing by a float that could be very close to zero? (Check \texttt{std::abs(denominator) < EPS} first).
+    \item Are trigonometric functions (\texttt{sin}, \texttt{cos}, \texttt{tan}, \texttt{acos}, \texttt{asin}, \texttt{atan}) behaving as expected? (\texttt{acos(1.000000001)} is NaN!). Ensure arguments are in valid ranges, e.g., for \texttt{acos}, clamp argument to \texttt{[-1.0, 1.0]}.
+\end{debugchecklist}

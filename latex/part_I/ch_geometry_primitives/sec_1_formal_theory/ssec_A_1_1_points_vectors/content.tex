@@ -1,0 +1,285 @@
+% part_I/ch_A/sec_A_1_formal_theory/ssec_A_1_1_points_vectors/content.tex
+\subsection{Points and Vectors: The Atoms of Geometry}
+\label{ssec:A.1.1}
+
+Everything in 2D geometry starts with points and vectors. They might seem simple, but understanding them deeply is key.
+
+\subsubsection{Definitions: What Are They?}
+\label{sssec:A.1.1.1}
+
+\begin{definition}[Point]
+\label{def:A.1.1.point}
+A \textbf{point} in 2D Euclidean space represents a specific location. It is typically defined by a pair of coordinates $(x, y)$ relative to an origin in a Cartesian coordinate system.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.point}
+Think of a point as a pinprick on a map. It has no size or dimension, just a position. In code, you'll usually represent a point as a struct or class with two members, \texttt{x} and \texttt{y}.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.point}
+% Description of diagram:
+% A 2D Cartesian coordinate system (x-axis, y-axis, origin O).
+% Three distinct points P1, P2, P3 are plotted with their coordinates labeled, e.g., P1(2,3), P2(-1,1), P3(0,-2).
+A simple diagram showing a 2D Cartesian grid with the origin O, and a few points like $P(3,2)$ and $Q(-1,4)$ plotted and labeled with their coordinates.
+\end{visualexample}
+
+\begin{definition}[Vector]
+\label{def:A.1.1.vector}
+A \textbf{vector} in 2D Euclidean space represents a quantity possessing both magnitude (length) and direction. It can be visualized as a directed line segment.
+If $A=(x_A, y_A)$ and $B=(x_B, y_B)$ are two points, the vector $\vec{AB}$ (from $A$ to $B$) is given by $(x_B - x_A, y_B - y_A)$. A vector can also be defined simply as a pair of components $(v_x, v_y)$ representing displacement from an implicit origin or some starting point.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.vector}
+A vector is like an instruction: "Go this far, in this direction." If a point is a destination, a vector is the journey. Crucially, vectors don't have a fixed position; the vector $(1,1)$ is the same whether it starts at $(0,0)$ and ends at $(1,1)$, or starts at $(5,5)$ and ends at $(6,6)$. It's all about the displacement.
+In code, vectors are often represented using the same struct/class as points, since both are pairs of numbers. The meaning (position vs. displacement) comes from context.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.vector}
+% Description of diagram:
+% 1. Point A and Point B. An arrow drawn from A to B, labeled $\vec{AB}$. Coordinates of A and B shown, and components of $\vec{AB}$ calculated.
+% 2. A separate vector V, shown as an arrow starting from the origin, labeled with its components $(v_x, v_y)$.
+% 3. Another instance of the same vector V shown starting from a different point P, demonstrating position-independence.
+Diagram shows two points $A$ and $B$. An arrow is drawn from $A$ to $B$, labeled $\vec{AB}$. Below this, the components of $\vec{AB}$ are shown as $(x_B-x_A, y_B-y_A)$. Separately, a vector $\mathbf{v}=(v_x, v_y)$ is shown as an arrow from the origin.
+\end{visualexample}
+
+\subsubsection{Vector Operations: The Algebra of Arrows}
+\label{sssec:A.1.1.2}
+
+Just like numbers, vectors can be added, subtracted, and scaled.
+
+\begin{definition}[Vector Addition, Subtraction, Scalar Multiplication]
+\label{def:A.1.1.vector_ops}
+Let $\mathbf{u} = (u_x, u_y)$ and $\mathbf{v} = (v_x, v_y)$ be two vectors, and $k$ be a scalar (a real number).
+\begin{itemize}
+    \item \textbf{Addition}: $\mathbf{u} + \mathbf{v} = (u_x + v_x, u_y + v_y)$.
+    \item \textbf{Subtraction}: $\mathbf{u} - \mathbf{v} = (u_x - v_x, u_y - v_y)$. This is equivalent to $\mathbf{u} + (-\mathbf{v})$, where $-\mathbf{v} = (-v_x, -v_y)$.
+    \item \textbf{Scalar Multiplication}: $k \cdot \mathbf{u} = (k \cdot u_x, k \cdot u_y)$.
+\end{itemize}
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.vector_ops}
+\begin{itemize}
+    \item \textbf{Addition}: Think "tip-to-tail". To add $\mathbf{u}$ and $\mathbf{v}$, place the tail of $\mathbf{v}$ at the tip of $\mathbf{u}$. The sum is the vector from the tail of $\mathbf{u}$ to the tip of $\mathbf{v}$. (Parallelogram law also works).
+    \item \textbf{Subtraction}: $\mathbf{u} - \mathbf{v}$ is the vector that goes from the tip of $\mathbf{v}$ to the tip of $\mathbf{u}$ if they share the same origin. Or, it's $\mathbf{u} + (-\mathbf{v})$.
+    \item \textbf{Scalar Multiplication}: $k \cdot \mathbf{u}$ scales the length of $\mathbf{u}$ by $|k|$. If $k>0$, direction is preserved. If $k<0$, direction is reversed. If $k=0$, it becomes the zero vector $(0,0)$.
+\end{itemize}
+A common operation: if $P, Q$ are points, $Q-P$ gives vector $\vec{PQ}$. If $P$ is a point and $\mathbf{v}$ is a vector, $P+\mathbf{v}$ gives a new point.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.vector_ops}
+% Description of diagram:
+% Three panels:
+% 1. Vector Addition: Vectors u and v shown. u+v shown using tip-to-tail method and as diagonal of parallelogram formed by u and v.
+% 2. Vector Subtraction: Vectors u and v from same origin. u-v shown as vector from tip of v to tip of u. Also u + (-v).
+% 3. Scalar Multiplication: Vector u shown. Then 2u (same direction, twice length) and -0.5u (opposite direction, half length) shown.
+Panel 1: Vectors $\mathbf{u}$ and $\mathbf{v}$ originating from the same point. $\mathbf{u}+\mathbf{v}$ shown by completing the parallelogram.
+Panel 2: Vector $\mathbf{u}$ and $\mathbf{v}$. $\mathbf{u}-\mathbf{v}$ shown as $\mathbf{u} + (-\mathbf{v})$.
+Panel 3: Vector $\mathbf{u}$. Then $2\mathbf{u}$ (longer, same direction) and $-1\mathbf{u}$ (same length, opposite direction) are shown.
+\end{visualexample}
+
+\subsubsection{Dot Product: How Aligned Are They?}
+\label{sssec:A.1.1.3}
+
+\begin{definition}[Dot Product]
+\label{def:A.1.1.dot_product}
+The \textbf{dot product} (or scalar product) of two vectors $\mathbf{a}=(a_x, a_y)$ and $\mathbf{b}=(b_x, b_y)$ is a scalar value defined as:
+$$ \mathbf{a} \cdot \mathbf{b} = a_x b_x + a_y b_y $$
+Geometrically, it is also given by:
+$$ \mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos(\theta) $$
+where $|\mathbf{a}|$ and $|\mathbf{b}|$ are the magnitudes (lengths) of the vectors, and $\theta$ is the angle between them ($0 \le \theta \le \pi$).
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.dot_product}
+The dot product tells you how much one vector "goes in the direction of" another.
+\begin{itemize}
+    \item If $\mathbf{a} \cdot \mathbf{b} > 0$: The angle $\theta$ is acute ($< 90^\circ$). They point in roughly the same direction.
+    \item If $\mathbf{a} \cdot \mathbf{b} < 0$: The angle $\theta$ is obtuse ($> 90^\circ$). They point in roughly opposite directions.
+    \item If $\mathbf{a} \cdot \mathbf{b} = 0$: The angle $\theta$ is $90^\circ$ (or one/both vectors are zero). They are \textbf{orthogonal} (perpendicular). This is a super useful property!
+\end{itemize}
+Also, $\mathbf{a} \cdot \mathbf{a} = |\mathbf{a}|^2$. This gives a way to find squared length without \texttt{sqrt}.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.dot_product_cases}
+% Description of diagram:
+% Three scenarios with vectors a and b originating from the same point:
+% 1. Acute angle $\theta$: a . b > 0 shown.
+% 2. Obtuse angle $\theta$: a . b < 0 shown.
+% 3. Right angle $\theta$: a . b = 0 shown, with a right angle symbol.
+Panel 1: Vectors $\mathbf{a}, \mathbf{b}$ with acute angle $\theta$. Text: "$\mathbf{a} \cdot \mathbf{b} > 0$".
+Panel 2: Vectors $\mathbf{a}, \mathbf{b}$ with obtuse angle $\theta$. Text: "$\mathbf{a} \cdot \mathbf{b} < 0$".
+Panel 3: Vectors $\mathbf{a}, \mathbf{b}$ orthogonal. Text: "$\mathbf{a} \cdot \mathbf{b} = 0$".
+\end{visualexample}
+
+\begin{theorem}[Properties of Dot Product]
+\label{thm:A.1.1.dot_product_props}
+For any vectors $\mathbf{u}, \mathbf{v}, \mathbf{w}$ and scalar $k$:
+\begin{enumerate}
+    \item Commutative: $\mathbf{u} \cdot \mathbf{v} = \mathbf{v} \cdot \mathbf{u}$
+    \item Distributive over addition: $\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}$
+    \item Bilinear: $(k\mathbf{u}) \cdot \mathbf{v} = \mathbf{u} \cdot (k\mathbf{v}) = k(\mathbf{u} \cdot \mathbf{v})$
+    \item $\mathbf{u} \cdot \mathbf{u} = |\mathbf{u}|^2 \ge 0$, and $\mathbf{u} \cdot \mathbf{u} = 0 \iff \mathbf{u} = \mathbf{0}$ (zero vector)
+\end{enumerate}
+\end{theorem}
+
+\begin{mathinsight}
+\label{mathinsight:A.1.1.angle_from_dot}
+You can find the angle $\theta$ between two non-zero vectors using:
+$$ \cos(\theta) = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|} $$
+$$ \theta = \operatorname{acos}\left(\frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|}\right) $$
+Be careful with floating point precision when the fraction is very close to 1 or -1. Using \texttt{atan2} (see \Cref{def:A.4.2.atan2}) is often more robust for finding angles if you also have cross product information.
+\end{mathinsight}
+
+\subsubsection{Cross Product (2D): Turning and Area}
+\label{sssec:A.1.1.4}
+
+\begin{definition}[2D Cross Product]
+\label{def:A.1.1.cross_product_2d}
+The \textbf{2D cross product} (often called "perp dot product" or "outer product" in 2D context) of two vectors $\mathbf{a}=(a_x, a_y)$ and $\mathbf{b}=(b_x, b_y)$ is a scalar value defined as:
+$$ \mathbf{a} \times \mathbf{b} = a_x b_y - a_y b_x $$
+Geometrically, it is related to the angle $\theta$ from $\mathbf{a}$ to $\mathbf{b}$ (measured counter-clockwise):
+$$ \mathbf{a} \times \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \sin(\theta) $$
+The value $\mathbf{a} \times \mathbf{b}$ is also the signed area of the parallelogram formed by vectors $\mathbf{a}$ and $\mathbf{b}$ placed at the origin. The area of the triangle formed by origin, $\mathbf{a}$, and $\mathbf{b}$ is $\frac{1}{2} (\mathbf{a} \times \mathbf{b})$.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.cross_product_2d}
+The 2D cross product is incredibly powerful for determining orientation:
+\begin{itemize}
+    \item If $\mathbf{a} \times \mathbf{b} > 0$: Vector $\mathbf{b}$ is counter-clockwise (CCW) from vector $\mathbf{a}$ (if they share an origin). Think "left turn" from $\mathbf{a}$ to get to $\mathbf{b}$.
+    \item If $\mathbf{a} \times \mathbf{b} < 0$: Vector $\mathbf{b}$ is clockwise (CW) from vector $\mathbf{a}$. Think "right turn".
+    \item If $\mathbf{a} \times \mathbf{b} = 0$: Vectors $\mathbf{a}$ and $\mathbf{b}$ are \textbf{collinear} (point in the same or exactly opposite directions, or one/both are zero).
+\end{itemize}
+This is the basis for the crucial "orientation test" (\Cref{ssec:A.1.4}).
+Unlike the 3D cross product which yields a vector, the 2D version (as defined for geometry) gives a scalar. This scalar can be thought of as the z-component of the 3D cross product if $\mathbf{a}$ and $\mathbf{b}$ were in the xy-plane.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.cross_product_2d_cases}
+% Description of diagram:
+% Three scenarios with vectors a and b originating from the same point O:
+% 1. Vector b is CCW from a. Parallelogram OACB shown (C=a+b). Text: "a x b > 0 (CCW turn from a to b). Area(OACB) = a x b."
+% 2. Vector b is CW from a. Parallelogram OACB shown. Text: "a x b < 0 (CW turn from a to b). Area(OACB) = |a x b|. Signed area is negative."
+% 3. Vectors a and b are collinear. Text: "a x b = 0 (collinear)."
+Panel 1: Vectors $\mathbf{a}, \mathbf{b}$ from origin $O$. $\mathbf{b}$ is CCW from $\mathbf{a}$. Text: "$\mathbf{a} \times \mathbf{b} > 0$ (CCW)". Shaded parallelogram.
+Panel 2: Vectors $\mathbf{a}, \mathbf{b}$ from origin $O$. $\mathbf{b}$ is CW from $\mathbf{a}$. Text: "$\mathbf{a} \times \mathbf{b} < 0$ (CW)". Shaded parallelogram.
+Panel 3: Vectors $\mathbf{a}, \mathbf{b}$ from origin $O$, collinear. Text: "$\mathbf{a} \times \mathbf{b} = 0$".
+\end{visualexample}
+
+\begin{theorem}[Properties of 2D Cross Product]
+\label{thm:A.1.1.cross_product_props}
+For any 2D vectors $\mathbf{u}, \mathbf{v}, \mathbf{w}$ and scalar $k$:
+\begin{enumerate}
+    \item Anti-commutative: $\mathbf{u} \times \mathbf{v} = -(\mathbf{v} \times \mathbf{u})$
+    \item Distributive over addition: $\mathbf{u} \times (\mathbf{v} + \mathbf{w}) = \mathbf{u} \times \mathbf{v} + \mathbf{u} \times \mathbf{w}$
+    \item Bilinear: $(k\mathbf{u}) \times \mathbf{v} = \mathbf{u} \times (k\mathbf{v}) = k(\mathbf{u} \times \mathbf{v})$
+    \item $\mathbf{u} \times \mathbf{u} = 0$
+\end{enumerate}
+\end{theorem}
+
+\begin{mathinsight}
+\label{mathinsight:A.1.1.cross_product_3points}
+For three points $P_1, P_2, P_3$, the cross product $(P_2 - P_1) \times (P_3 - P_1)$ gives twice the signed area of triangle $P_1P_2P_3$. Its sign determines if $P_1 \to P_2 \to P_3$ is a CCW turn (positive), CW turn (negative), or if the points are collinear (zero). This is fundamental!
+\end{mathinsight}
+
+\subsubsection{Norm (Magnitude) and Norm Squared: Measuring Length}
+\label{sssec:A.1.1.5}
+
+\begin{definition}[Norm and Norm Squared]
+\label{def:A.1.1.norm}
+The \textbf{norm} (or magnitude, length) of a vector $\mathbf{v}=(v_x, v_y)$ is denoted $|\mathbf{v}|$ or $||\mathbf{v}||$ and is given by:
+$$ |\mathbf{v}| = \sqrt{v_x^2 + v_y^2} $$
+The \textbf{norm squared} (or squared magnitude) is:
+$$ |\mathbf{v}|^2 = v_x^2 + v_y^2 $$
+The distance between two points $P_1$ and $P_2$ is the norm of the vector $\vec{P_1P_2}$: $d(P_1, P_2) = |\vec{P_1P_2}| = |P_2 - P_1|$.
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.norm}
+The norm is just what it sounds like: the length of the vector arrow, calculated using the Pythagorean theorem.
+The norm squared is often used in competitive programming to avoid \texttt{sqrt()} calls, which can be slow and introduce floating-point errors. If you only need to compare distances (e.g., "is $d_1 < d_2$?"), you can compare squared distances ("is $d_1^2 < d_2^2$?"), provided distances are non-negative (which they always are).
+\end{intuition}
+
+\begin{tipsbox}
+\label{tips:A.1.1.norm_sq_compare}
+\textbf{Compare Squared Distances}: To check if distance $A$ is less than distance $B$, compare $A^2 < B^2$. This avoids \texttt{sqrt} and is safer with integers (prevents float conversion) and faster. Only take the \texttt{sqrt} if you need the actual distance value.
+\end{tipsbox}
+
+\subsubsection{Vector Projection and Rejection: Decomposing Vectors}
+\label{sssec:A.1.1.6}
+%(This is often less directly used in basic contest problems but good to know for understanding distances and some advanced algorithms.)
+
+\begin{definition}[Vector Projection and Rejection]
+\label{def:A.1.1.projection_rejection}
+Let $\mathbf{a}$ and $\mathbf{b}$ be two vectors, with $\mathbf{b} \neq \mathbf{0}$.
+The \textbf{vector projection} of $\mathbf{a}$ onto $\mathbf{b}$ (denoted $\text{proj}_{\mathbf{b}} \mathbf{a}$) is the component of $\mathbf{a}$ that lies in the direction of $\mathbf{b}$.
+$$ \text{proj}_{\mathbf{b}} \mathbf{a} = \left(\frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|^2}\right) \mathbf{b} $$
+The scalar $\frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|}$ is the signed length of this projection.
+
+The \textbf{vector rejection} of $\mathbf{a}$ from $\mathbf{b}$ (denoted $\text{rej}_{\mathbf{b}} \mathbf{a}$) is the component of $\mathbf{a}$ orthogonal to $\mathbf{b}$.
+$$ \text{rej}_{\mathbf{b}} \mathbf{a} = \mathbf{a} - \text{proj}_{\mathbf{b}} \mathbf{a} $$
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.projection_rejection}
+Imagine shining a light perpendicularly onto the line containing vector $\mathbf{b}$. The shadow of vector $\mathbf{a}$ on this line is $\text{proj}_{\mathbf{b}} \mathbf{a}$.
+The rejection is what's "left over" of $\mathbf{a}$ after you subtract its shadow component; it's perpendicular to $\mathbf{b}$.
+Together, $\text{proj}_{\mathbf{b}} \mathbf{a} + \text{rej}_{\mathbf{b}} \mathbf{a} = \mathbf{a}$. This decomposes $\mathbf{a}$ into two orthogonal parts, one parallel to $\mathbf{b}$ and one perpendicular.
+This is key for finding the closest point on a line to another point, and thus for point-line distance.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.projection_rejection}
+% Description of diagram:
+% Vectors a and b shown from origin O. Line L along b extends infinitely.
+% A perpendicular dropped from tip of a to line L, meeting at point P.
+% Vector OP is proj_b a. Vector from P to tip of a is rej_b a.
+% Labels clearly indicate proj_b a and rej_b a.
+% Right angle symbol shown between proj_b a and rej_b a.
+Two vectors $\mathbf{a}$ and $\mathbf{b}$ share an origin. A dashed line extends along $\mathbf{b}$. A perpendicular is dropped from the tip of $\mathbf{a}$ to this line. The vector from the origin to the foot of the perpendicular is $\text{proj}_{\mathbf{b}} \mathbf{a}$. The vector from the foot of the perpendicular to the tip of $\mathbf{a}$ is $\text{rej}_{\mathbf{b}} \mathbf{a}$.
+\end{visualexample}
+
+\subsubsection{Vector Rotation: Spinning Around}
+\label{sssec:A.1.1.7}
+
+\begin{definition}[2D Vector Rotation]
+\label{def:A.1.1.rotation}
+To rotate a vector $\mathbf{v}=(x, y)$ counter-clockwise (CCW) by an angle $\theta$ around the origin, the new vector $\mathbf{v}'=(x', y')$ is given by:
+$$ x' = x \cos\theta - y \sin\theta $$
+$$ y' = x \sin\theta + y \cos\theta $$
+This can be represented by multiplication with a rotation matrix:
+$$ \begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} $$
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.1.rotation}
+This is like taking a vector and spinning it around its tail (if tail is at origin) by a certain angle.
+Special cases are very handy:
+\begin{itemize}
+    \item \textbf{Rotate 90$^\circ$ CCW}: $(x,y) \to (-y,x)$. (Since $\cos(90^\circ)=0, \sin(90^\circ)=1$)
+    \item \textbf{Rotate 90$^\circ$ CW}: $(x,y) \to (y,-x)$. (Since $\cos(-90^\circ)=0, \sin(-90^\circ)=-1$)
+\end{itemize}
+These 90-degree rotations are super fast as they only involve swapping coordinates and changing a sign, no trig functions needed!
+Using complex numbers: If $v = x+iy$, then $v' = v \cdot (\cos\theta + i\sin\theta) = v \cdot e^{i\theta}$.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.1.rotation}
+% Description of diagram:
+% Vector v=(x,y) shown from origin.
+% Rotated vector v' shown after CCW rotation by angle theta. Original and new coordinates labeled.
+% Separate small diagram showing v rotated 90 deg CCW to v_90ccw = (-y,x).
+A vector $\mathbf{v}=(x,y)$ shown. An arc indicates rotation by $\theta$ CCW to a new vector $\mathbf{v}'=(x',y')$. Formulas for $x', y'$ are displayed. A small inset shows the special case: $\mathbf{v}$ rotated $90^\circ$ CCW to $(-y,x)$.
+\end{visualexample}
+
+\begin{tipsbox}
+\label{tips:A.1.1.rotation_90_deg}
+\textbf{Quick 90-Degree Rotations}: Remember $(x,y) \xrightarrow{90^\circ CCW} (-y,x)$ and $(x,y) \xrightarrow{90^\circ CW} (y,-x)$. These are invaluable for quickly finding perpendicular vectors. For example, if you have a line segment represented by vector $\mathbf{d}$, then $\mathbf{d}_{\perp CCW}$ is a normal vector to the line.
+\end{tipsbox}

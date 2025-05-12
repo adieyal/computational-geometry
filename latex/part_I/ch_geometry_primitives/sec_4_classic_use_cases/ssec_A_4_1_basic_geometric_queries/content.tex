@@ -1,0 +1,59 @@
+% part_I/ch_A/sec_A_4_classic_use_cases/ssec_A_4_1_basic_geometric_queries/content.tex
+\subsection{Basic Geometric Queries: The Q\&A}
+\label{ssec:A.4.1}
+
+Many competitive programming problems boil down to answering a series of simple geometric questions. These often serve as subroutines within larger, more complex algorithms.
+
+\begin{pattern}[Point-Line/Segment Relationship]
+\label{pattern:A.4.1.point_line_rel}
+\textbf{Archetype}: Given a point $P$ and a line $L$ (or segment $S$), determine their spatial relationship.
+\textbf{Common Queries}:
+\begin{itemize}
+    \item \textbf{Is point $P$ on line $L$?}
+        \begin{itemize}
+            \item Defined by $A, B$: Check if $\text{orientation}(A, B, P) = 0$ (\Cref{alg:A.2.3.orientation_test}).
+            \item Defined by $ax+by+c=0$: Check if $a \cdot P.x + b \cdot P.y + c = 0$ (use \texttt{EPS} for floats, exact for integers).
+        \end{itemize}
+    \item \textbf{Is point $P$ on segment $S=[A,B]$?}
+        \begin{itemize}
+            \item First, check if $\text{orientation}(A, B, P) = 0$.
+            \item If collinear, then check if $P$ lies within the bounding box of $A,B$ using \texttt{point\_on\_segment\_collinear(P, A, B)} (\Cref{alg:A.2.4.point_on_segment_collinear}).
+        \end{itemize}
+    \item \textbf{To which side of directed line $\vec{AB}$ does point $P$ lie?}
+        \begin{itemize}
+            \item Directly given by $\text{orientation}(A, B, P)$: $>0$ is Left (CCW), $<0$ is Right (CW).
+        \end{itemize}
+    \item \textbf{Distance from point $P$ to line $L$ or segment $S$?}
+        \begin{itemize}
+            \item Use formulas from \Cref{ssec:A.1.3} and algorithms from \Cref{ssec:A.2.2} (e.g., \Cref{alg:A.2.2.dist_sq_point_line}, \Cref{alg:A.2.2.dist_sq_point_segment}). Remember to take $\sqrt{\cdot}$ if actual distance is needed, otherwise use squared distances for comparisons.
+        \end{itemize}
+    \item \textbf{Closest point on line $L$ (or segment $S$) to point $P$?}
+        \begin{itemize}
+            \item For line $L$ through $A,B$: $Q = A + \operatorname{proj}_{\vec{AB}} \vec{AP}$ (see \Cref{mathinsight:A.1.3.point_line_rejection}).
+            \item For segment $S=[A,B]$: Find projection parameter $t$ (see \Cref{def:A.1.3.point_segment_dist}). If $t \in [0,1]$, closest point is $A + t \cdot \vec{AB}$. If $t<0$, closest point is $A$. If $t>1$, closest point is $B$. (See also \Cref{impl:A.2.2.dist_point_segment_closest_point}).
+        \end{itemize}
+    \end{itemize}
+\end{pattern}
+
+\begin{problemexample}[Problem: "Points and Lines" - Codeforces Gym 100187B (Typical)]
+\label{probex:A.4.1.cf_points_lines}
+\textit{Why}: This type of problem directly tests your understanding and implementation of the fundamental queries listed above.
+\textbf{Problem Description (General Idea)}: You are often given a set of points and a set of lines/segments. You then need to answer queries like "how many points lie on segment $S_i$?", "which line is closest to point $P_j$?", or "do segments $S_a$ and $S_b$ intersect?".
+\textbf{Solution Strategy}: Implement robust functions for each required primitive (orientation, point-on-segment, distance calculations, segment intersection). Then, iterate through the queries and apply the appropriate function. Pay close attention to integer overflow (\Cref{ssec:A.3.2}) and, if using floats, epsilon comparisons (\Cref{ssec:A.3.1}). Collinear and degenerate cases (\Cref{ssec:A.3.4}) are usually heavily tested.
+\textbf{URL}: A specific problem like this is common in regional contests or online judge gyms. For example, Codeforces Gym 100187 (NWERC 2012 Practice) Problem B "Point Probe" asks for point-polygon relationship, which builds on these primitives. A simpler variant would just ask point-line/segment type queries.
+(A general link for practice: \url{https://codeforces.com/gyms}, search for sets with "geometry" tags).
+\end{problemexample}
+
+\begin{insight}
+\label{insight:A.4.1.primitives_as_building_blocks}
+Mastering these basic queries is crucial. More complex algorithms, like finding intersections of many segments or computing convex hulls, rely heavily on these primitives performing correctly and efficiently. If your \texttt{orientation} function has a bug, everything built on top of it will crumble!
+\end{insight}
+
+\begin{debugchecklist}[Basic Geometric Queries]
+\label{debug:A.4.1.checklist}
+    \item \textbf{Orientation}: Test with CCW, CW, and various collinear cases (point between, point outside, coincident points). Use integers if possible.
+    \item \textbf{Point on Segment}: Ensure it correctly handles endpoints and rejects points that are collinear but outside the segment.
+    \item \textbf{Distance Calculations}: Test point-line and point-segment distances. For point-segment, verify all three cases: projection on segment, projection off towards $A$, projection off towards $B$. Check degenerate segment (point) case.
+    \item \textbf{Floating Point}: If using floats, are \texttt{EPS} comparisons consistent? Are you handling \texttt{NaN} from \texttt{sqrt} of negative (due to precision error) or \texttt{acos} of value $>1$?
+    \item \textbf{Integer Overflow}: Are all intermediate products in \texttt{long long} if necessary?
+\end{debugchecklist}

@@ -1,0 +1,124 @@
+% part_I/ch_A/sec_A_1_formal_theory/ssec_A_1_5_segment_intersection_predicate/content.tex
+\subsection{Segment Intersection Predicate: Do They Cross?}
+\label{ssec:A.1.5}
+
+Determining if two line segments intersect is another cornerstone predicate, built upon orientation tests.
+
+\begin{definition}[Segment Intersection]
+\label{def:A.1.5.segment_intersection}
+Two line segments $S_1 = [P_1, P_2]$ and $S_2 = [P_3, P_4]$ \textbf{intersect} if they share at least one common point.
+The intersection can be:
+\begin{itemize}
+    \item \textbf{Proper Intersection}: The intersection point is in the interior of both segments (i.e., not an endpoint of either).
+    \item \textbf{Improper Intersection}: The intersection point is an endpoint of at least one segment. This includes cases where an endpoint of one segment lies on the other segment, or segments overlap along a line (collinear intersection).
+\end{itemize}
+Unless specified, "intersection" usually means any common point (proper or improper).
+\end{definition}
+
+\begin{intuition}
+\label{intuition:A.1.5.segment_intersection_orientation}
+The primary way to check for intersection uses orientation tests:
+\textbf{General Case (Non-Collinear)}:
+Segments $[P_1, P_2]$ and $[P_3, P_4]$ intersect if and only if $P_1$ and $P_2$ lie on opposite sides of the infinite line containing $P_3P_4$, AND $P_3$ and $P_4$ lie on opposite sides of the infinite line containing $P_1P_2$.
+"Opposite sides" means:
+\begin{enumerate}
+    \item $\text{orientation}(P_3, P_4, P_1)$ and $\text{orientation}(P_3, P_4, P_2)$ have different non-zero signs.
+    \textbf{AND}
+    \item $\text{orientation}(P_1, P_2, P_3)$ and $\text{orientation}(P_1, P_2, P_4)$ have different non-zero signs.
+\end{enumerate}
+This specific condition tests for \textit{proper} intersection.
+
+\textbf{Handling Endpoint Touching and Collinearity}:
+If one of the orientation tests yields zero (e.g., $\text{orientation}(P_3, P_4, P_1) = 0$), it means $P_1$ is collinear with $P_3$ and $P_4$. For an intersection to occur in this case, $P_1$ must lie \textit{on the segment} $[P_3, P_4]$. This "point on segment" check is crucial for improper intersections.
+If all four points are collinear (all four orientation tests $o(P_1,P_2,P_3)$, $o(P_1,P_2,P_4)$, $o(P_3,P_4,P_1)$, $o(P_3,P_4,P_2)$ are zero), then the segments intersect if and only if their 1D projections onto an axis overlap. This is typically checked by seeing if an endpoint of one segment lies on the other.
+\end{intuition}
+
+\begin{visualexample}
+\label{vis:A.1.5.segment_intersection_cases}
+\begin{flushleft}
+Panel 1: \\
+  Two segments $S_1 = [P_1, P_2]$ and $S_2 = [P_3, P_4]$ cross at an interior point. \\
+  Orientations $o(P_1, P_2, P_3)$ and $o(P_1, P_2, P_4)$ differ; \\
+  $o(P_3, P_4, P_1)$ and $o(P_3, P_4, P_2)$ differ. \\
+  \textbf{Proper Intersection}.
+\\
+Panel 2: \\
+  $S_1$ and $S_2$ meet at $P_3$, which is an endpoint of $S_2$ and lies on $S_1$ (but not as an endpoint of $S_1$). \\
+  $o(P_1, P_2, P_3) = 0$; $P_3$ is on segment $[P_1, P_2]$. \\
+  \textbf{Improper Intersection (Endpoint on Segment)}.
+\\
+Panel 3: \\
+  $S_1$ and $S_2$ are collinear and overlap. \\
+  All four main orientations are zero. \\
+  \textbf{Improper Intersection (Collinear Overlap)}.
+\\
+Panel 4: \\
+  $S_1$ and $S_2$ do not intersect (e.g., they are parallel and separate, or skew and far apart). \\
+  \textbf{No Intersection}.
+\\
+Panel 5: \\
+  $S_1$ and $S_2$ are collinear but do not overlap (e.g., $P_1$-$P_2$ ... $P_3$-$P_4$). \\
+  \textbf{No Intersection (Collinear, Disjoint)}.
+\end{flushleft}
+\end{visualexample}
+
+% --- Segment Intersection Theorem ---
+
+\begin{theorem}[Segment Intersection Criterion using Orientations]
+\label{thm:A.1.5.intersection_criterion}
+
+Let $S_1 = [P_1, P_2]$ and $S_2 = [P_3, P_4]$.
+
+Let
+\[
+    o_1 = \text{orientation}(P_1, P_2, P_3), \quad
+    o_2 = \text{orientation}(P_1, P_2, P_4), \quad
+    o_3 = \text{orientation}(P_3, P_4, P_1), \quad
+    o_4 = \text{orientation}(P_3, P_4, P_2)
+\]
+
+The segments $S_1$ and $S_2$ intersect if and only if:
+\begin{enumerate}
+    \item \textbf{General Case (Proper Intersection)}: \\
+        ($o_1 \neq 0$, $o_2 \neq 0$, $o_3 \neq 0$, $o_4 \neq 0$) \textbf{AND} ($o_1 \neq o_2$) \textbf{AND} ($o_3 \neq o_4$). \\
+        This means $o_1 \cdot o_2 < 0$ and $o_3 \cdot o_4 < 0$.
+    \item \textbf{Special Cases (Improper/Collinear Intersection)}:
+        \begin{itemize}
+            \item $o_1 = 0$ and $P_3$ lies on segment $[P_1, P_2]$ (see \Cref{alg:A.2.4.point_on_segment_collinear}).
+            \item $o_2 = 0$ and $P_4$ lies on segment $[P_1, P_2]$.
+            \item $o_3 = 0$ and $P_1$ lies on segment $[P_3, P_4]$.
+            \item $o_4 = 0$ and $P_2$ lies on segment $[P_3, P_4]$.
+        \end{itemize}
+        If any of these conditions (General or Special) is met, the segments intersect.
+\end{enumerate}
+
+A full algorithm is detailed in \Cref{alg:A.2.4.segment_intersect}. Note that the conditions in item 2 cover all collinear overlap cases as well as endpoint-touching cases. For instance, if $P_1, P_2, P_3, P_4$ are collinear and $S_1, S_2$ overlap, then $o_1 = o_2 = o_3 = o_4 = 0$. Then, for example, $P_3$ must lie on $[P_1, P_2]$ (if $S_1$ contains $P_3$), satisfying one of the conditions.
+
+\end{theorem}
+
+% --- Gotcha: Proper vs Improper Intersection ---
+
+\begin{gotcha}
+\label{gotcha:A.1.5.proper_vs_improper}
+\textbf{Distinguishing Intersection Types}:
+\begin{itemize}
+    \item \textbf{Proper Intersection}: $o_1, o_2, o_3, o_4$ are all non-zero, AND $o_1 \neq o_2$ AND $o_3 \neq o_4$.
+    \item \textbf{Endpoint of one on Interior of other}: e.g., $o_1 = 0$ (so $P_3$ is on line $P_1P_2$), $P_3$ is strictly between $P_1, P_2$, and $o_3, o_4$ are non-zero and different.
+    \item \textbf{Shared Endpoint}: e.g., $P_1 = P_3$. Then $o_3 = 0$. If $P_2, P_4$ are on opposite sides of line $P_1P_x$ (where $P_x$ is some other point defining the line with $P_1$), they touch at $P_1$.
+    \item \textbf{Collinear Overlap}: $o_1 = o_2 = o_3 = o_4 = 0$, and their 1D intervals overlap.
+\end{itemize}
+The specific definition of "intersection" needed (any touch, or only proper crossing) varies by problem. The conditions in \Cref{thm:A.1.5.intersection_criterion} detect \textit{any} intersection.
+\end{gotcha}
+
+% --- Insight: Bounding Box Optimization ---
+
+\begin{insight}
+\label{insight:A.1.5.bounding_box_opt}
+A quick pre-check: if the axis-aligned bounding boxes (AABBs) of the two segments do not overlap, they cannot intersect.
+
+The AABB of segment $[(x_a, y_a), (x_b, y_b)]$ is the rectangle defined by $[\min(x_a, x_b), \max(x_a, x_b)]$ and $[\min(y_a, y_b), \max(y_a, y_b)]$.
+
+Two rectangles intersect if their x-intervals overlap and their y-intervals overlap.
+
+This is an $O(1)$ check that can quickly prune many non-intersecting pairs, especially if you are checking many pairs of segments (e.g., in a sweep-line algorithm). However, AABBs overlapping does \textbf{not} guarantee segment intersection (e.g., two non-parallel segments whose AABBs overlap but the segments themselves "miss" each other).
+\end{insight}

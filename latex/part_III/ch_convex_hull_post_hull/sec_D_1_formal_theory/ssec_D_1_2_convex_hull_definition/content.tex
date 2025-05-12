@@ -1,0 +1,37 @@
+\subsection{Convex Hull Definition}
+\label{sec:convex-hull-definition}
+% (Smallest convex set containing points; Intersection of all half-planes)
+
+Now, let's define the central concept of this chapter.
+
+\begin{definition}[Convex Hull]
+The \textbf{convex hull} of a set of points $P$ can be defined in several equivalent ways:
+
+\begin{enumerate}
+    \item The smallest convex set containing all points in $P$.
+    \item The intersection of all convex sets containing $P$.
+    \item The intersection of all half-planes containing $P$.
+    \item The set of all convex combinations of points in $P$.
+\end{enumerate}
+\end{definition}
+
+\begin{intuition}
+Think of the convex hull as the "skin" that wraps tightly around a set of points. It's the smallest convex shape that can enclose all the given points. Imagine the elastic band stretched around nails (as we saw in the chapter introduction). The shape the band forms is the convex hull.
+\end{intuition}
+
+For practical algorithmic purposes, Definitions 1 and 3 are particularly helpful.
+
+\begin{visualexample}
+\label{vis:convex-hull-definitions}
+Draw four different diagrams representing the same set of points.
+1.  In the first, illustrate the smallest convex set containing all the points (Definition 1).
+2.  In the second, show the intersection of multiple half-planes, whose borders are lines connecting pairs of points from the original set. Highlight the intersection, as it forms the convex hull (Definition 3).
+3.  In the third, show the convex hull again and label all the vertices as coming from the original point set.
+4.  In the fourth, show a convex hull and a point that is not in the original set.
+\end{visualexample}
+
+In competitive programming, we primarily work with finite sets of points. The convex hull for a finite set of points will always be a convex polygon. The vertices of this polygon will be a subset of the original points.
+
+\begin{insight}
+The concept of half-planes is crucial. Each edge of the convex hull corresponds to a half-plane whose boundary line contains that edge, with all other points lying inside the half-plane.
+\end{insight}

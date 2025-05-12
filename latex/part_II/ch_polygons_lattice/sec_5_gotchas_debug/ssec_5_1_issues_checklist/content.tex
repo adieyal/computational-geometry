@@ -1,0 +1,24 @@
+% Content for Issues Checklist 
+
+\subsection{Common Issues and Debug Checklist}
+
+\begin{gotcha}
+\textbf{Issue:} Integer overflow in area calculation
+\textbf{Symptom:} Wrong answers for large coordinates
+\textbf{Fix:} Use \texttt{long long} or \texttt{\_\_int128}
+\textbf{Prevention:} Always check max coordinate range; $(10^6)^2 > \text{int}$
+\end{gotcha}
+
+\begin{gotcha}
+\textbf{Issue:} Wrong vertex ordering (CW vs CCW)
+\textbf{Symptom:} Negative area or wrong orientation tests
+\textbf{Fix:} Take absolute value of area; be consistent with ordering
+\textbf{Prevention:} Document your convention; test with known examples
+\end{gotcha}
+
+\begin{debugchecklist}[Polygons]
+\item Verify polygon is simple (no self-intersections)
+\item Check edge cases: collinear points, duplicate vertices
+\item Test with triangles and squares to verify area calculation
+\item For Pick's theorem: manually count points on small examples
+\end{debugchecklist} 
