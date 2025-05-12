@@ -16,16 +16,45 @@ jobs:
         uses: teatimeguest/setup-texlive-action@v3
         with:
           packages: |
-            scheme-full
+            scheme-medium
             latexmk
+            lmodern
+            xcolor
+            pgf
+            subcaption
+            float
+            caption
+            booktabs
+            longtable
+            multirow
+            tabularx
+            listings
+            algorithm2e
+            mdframed
+            tcolorbox
+            enumitem
+            hyperref
+            cleveref
+            import
+            tocbibind
+            inconsolata
+            needspace
+            mathtools
+            bm
+            amsthm
+            amssymb
+            amsmath
 
       - name: Build PDF
         run: make pdf
 
-      - name: Upload PDF to pdf branch
+      - name: Prepare public directory
+        run: |
+          mkdir -p public
+          cp ./build/main.pdf ./public/
+
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          publish_branch: pdf
-          keep_files: true
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./public
