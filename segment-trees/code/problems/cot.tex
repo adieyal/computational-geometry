@@ -1,0 +1,49 @@
+\begin{programmingproblem}{Count on a Tree}{1 second}{256 megabytes}{C}{prob:cot}
+    \problemdescription{
+        You are given a tree with \mathvar{N} nodes, numbered from 1 to \mathvar{N}. Each node has an integer weight.\\
+        You will be asked to perform several queries of the following type: given two nodes \mathvar{u} and \mathvar{v}, and an integer \mathvar{k}, find the \mathvar{k}-th minimum weight among all nodes on the path from \mathvar{u} to \mathvar{v} (inclusive).
+    }
+    
+    \probleminput{
+        The first line contains two integers \mathvar{N} and \mathvar{M} (\mathvar{1 \leq N, M \leq 10^5}) --- the number of nodes and the number of queries.\\
+        The second line contains \mathvar{N} integers, where the \mathvar{i}-th integer denotes the weight of the \mathvar{i}-th node.\\
+        Each of the next \mathvar{N-1} lines contains two integers \mathvar{u} and \mathvar{v} (\mathvar{1 \leq u, v \leq N}), describing an edge between nodes \mathvar{u} and \mathvar{v}.\\
+        Each of the next \mathvar{M} lines contains three integers \mathvar{u}, \mathvar{v}, and \mathvar{k} (\mathvar{1 \leq u, v \leq N}, \mathvar{1 \leq k \leq N}), describing a query as above.
+    }
+    
+    \problemoutput{
+        For each query, print a single integer --- the answer to the query, on a separate line.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            8 5\\
+            105 2 9 3 8 5 7 7\\
+            1 2\\
+            1 3\\
+            1 4\\
+            3 5\\
+            3 6\\
+            3 7\\
+            4 8\\
+            2 5 1\\
+            2 5 2\\
+            2 5 3\\
+            2 5 4\\
+            7 8 2
+        }{
+            2\\
+            8\\
+            9\\
+            105\\
+            7
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        The path from node \mathvar{u} to node \mathvar{v} is the unique sequence of nodes starting at \mathvar{u} and ending at \mathvar{v}, such that each consecutive pair of nodes in the sequence is connected by an edge.\\
+        The \mathvar{k}-th minimum weight is the \mathvar{k}-th smallest value among the weights of the nodes on the path.\\
+        In the last query of the example, the path from node 7 to node 8 is: 7, 3, 1, 4, 8, with weights 7, 9, 105, 3, 7. The sorted weights are 3, 7, 7, 9, 105, so the 2nd minimum is 7.
+    }
+\end{programmingproblem}

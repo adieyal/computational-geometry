@@ -1,0 +1,23 @@
+\caption{Persistent Segment Tree Update}
+\KwIn{Previous root node \texttt{prev}, range $[l, r]$, update position \texttt{pos}, new value \texttt{val}}
+\KwOut{New root node for the updated version}
+\SetKwFunction{FUpdate}{Update}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\FUpdate{prev, l, r, pos, val}}{
+    Create a new node \texttt{node}\;
+    \If{$l = r$}{
+        \texttt{node.value} $\gets$ \texttt{val}\;
+        \Return \texttt{node}\;
+    }
+    $mid \gets \lfloor (l + r) / 2 \rfloor$\;
+    \eIf{\texttt{pos} $\leq$ \texttt{mid}}{
+        \texttt{node.left} $\gets$ \FUpdate(\texttt{prev.left}, $l$, $mid$, \texttt{pos}, \texttt{val})\;
+        \texttt{node.right} $\gets$ \texttt{prev.right}\tcp*{reuse unchanged subtree}
+    }{
+        \texttt{node.left} $\gets$ \texttt{prev.left}\tcp*{reuse unchanged subtree}
+        \texttt{node.right} $\gets$ \FUpdate(\texttt{prev.right}, $mid+1$, $r$, \texttt{pos}, \texttt{val})\;
+    }
+    \texttt{node.value} $\gets$ \texttt{node.left.value} $+$ \texttt{node.right.value}\;
+    \Return \texttt{node}\;
+}
+

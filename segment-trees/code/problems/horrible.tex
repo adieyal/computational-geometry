@@ -1,0 +1,45 @@
+\begin{programmingproblem}{Horrible Queries}{1 second}{256 megabytes}{C}{prob:horrible}
+    \problemdescription{
+        The world is getting more evil and it's getting tougher to get into the Evil League of Evil. Since the legendary Bad Horse has retired, now you have to correctly answer the evil questions of Dr. Horrible, who has a PhD in horribleness (but not in Computer Science).\\
+        You are given an array of \mathvar{N} elements, which are initially all 0. After that you will be given \mathvar{C} commands. They are:
+        \begin{itemize}
+            \item \texttt{0 p q v} --- you have to add \mathvar{v} to all numbers in the range of \mathvar{p} to \mathvar{q} (inclusive), where \mathvar{p} and \mathvar{q} are two indexes of the array.
+            \item \texttt{1 p q} --- output a line containing a single integer which is the sum of all the array elements between \mathvar{p} and \mathvar{q} inclusive.
+        \end{itemize}
+    }
+    
+    \probleminput{
+        The first line contains integer \mathvar{T} --- the number of test cases.\\
+        Each test case starts with two integers \mathvar{N} (\mathvar{1 \leq N \leq 10^5}) and \mathvar{C} (\mathvar{1 \leq C \leq 10^5}). Each of the next \mathvar{C} lines contains a command in one of the following formats:
+        \begin{itemize}
+            \item \texttt{0 p q v} (\mathvar{1 \leq p \leq q \leq N}, \mathvar{1 \leq v \leq 10^7})
+            \item \texttt{1 p q} (\mathvar{1 \leq p \leq q \leq N})
+        \end{itemize}
+    }
+    
+    \problemoutput{
+        For each query of type \texttt{1 p q}, print the answer on a single line.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            1\\
+            8 6\\
+            0 2 4 26\\
+            0 4 8 80\\
+            0 4 5 20\\
+            1 8 8\\
+            0 5 7 14\\
+            1 4 8
+        }{
+            80\\
+            508
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        For the first query of type \texttt{1 8 8}, the value at index 8 is 80.\\
+        For the second query of type \texttt{1 4 8}, the sum of values at indices 4 to 8 is 508.
+    }
+\end{programmingproblem}

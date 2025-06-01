@@ -1,0 +1,57 @@
+\begin{programmingproblem}{Range Queries and Copies}{1 second}{512 megabytes}{C}{prob:range-queries-and-copies}
+    \problemdescription{
+        Your task is to maintain a list of arrays which initially has a single array. You have to process the following types of queries:
+        \begin{itemize}
+            \item Set the value $a$ in array $k$ to $x$.
+            \item Calculate the sum of values in range $[a, b]$ in array $k$.
+            \item Create a copy of array $k$ and add it to the end of the list.
+        \end{itemize}
+    }
+    
+    \probleminput{
+        The first input line has two integers $n$ and $q$: the array size and the number of queries.\\
+        The next line has $n$ integers $t_1, t_2, \ldots, t_n$: the initial contents of the array.\\
+        Finally, there are $q$ lines describing the queries. The format of each line is one of the following:
+        \begin{itemize}
+            \item \texttt{1 k a x}
+            \item \texttt{2 k a b}
+            \item \texttt{3 k}
+        \end{itemize}
+    }
+    
+    \problemoutput{
+        Print the answer to each sum query.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            5 6\\
+            2 3 1 2 5\\
+            3 1\\
+            2 1 1 5\\
+            2 2 1 5\\
+            1 2 2 5\\
+            2 1 1 5\\
+            2 2 1 5
+        }{
+            13\\
+            13\\
+            13\\
+            15
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        \textbf{Constraints:}\\
+        $1 \leq n, q \leq 2 \cdot 10^5$\\
+        $1 \leq t_i, x \leq 10^9$\\
+        $1 \leq a \leq b \leq n$\\
+        The queries are:
+        \begin{itemize}
+            \item \texttt{1 k a x}: Set $a$-th value in array $k$ to $x$.
+            \item \texttt{2 k a b}: Output the sum of values in array $k$ from $a$ to $b$ (inclusive).
+            \item \texttt{3 k}: Create a copy of array $k$ and add it to the end of the list.
+        \end{itemize}
+    }
+\end{programmingproblem}

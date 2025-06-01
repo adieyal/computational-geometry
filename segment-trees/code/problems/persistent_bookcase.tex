@@ -1,0 +1,66 @@
+\begin{programmingproblem}{Persistent Bookcase}{2 seconds}{512 megabytes}{C++}{prob:persistent_bookcase}
+    \problemdescription{
+        Alina has just learned about persistent data structures at school. Inspired, she decided to invent her own using her bookcase at home. The bookcase consists of $n$ shelves, each with $m$ positions for books. Initially, the bookcase is empty.\\
+        Alina wrote down $q$ operations to perform on the bookcase. Each operation is one of four types:
+        \begin{itemize}
+            \item \textbf{1 $i$ $j$} --- Place a book at position $j$ on shelf $i$ if there is no book there.
+            \item \textbf{2 $i$ $j$} --- Remove the book from position $j$ on shelf $i$ if there is a book there.
+            \item \textbf{3 $i$} --- Invert all positions on shelf $i$: every position with a book becomes empty, and every empty position gets a book.
+            \item \textbf{4 $k$} --- Restore the bookcase to the state it was in after the $k$-th operation (or to the initial state if $k=0$).
+        \end{itemize}
+        After each operation, Alina wants to know how many books are currently in the bookcase.
+    }
+
+    \probleminput{
+        The first line contains three integers $n$, $m$, and $q$ ($1 \leq n, m \leq 10^3$, $1 \leq q \leq 10^5$) --- the number of shelves, the number of positions per shelf, and the number of operations.\\
+        The next $q$ lines each describe an operation in one of the four formats above. It is guaranteed that all indices are valid, and in each operation of the fourth type, $k$ refers to a previous operation or $0$.
+    }
+
+    \problemoutput{
+        For each operation, print the number of books in the bookcase after applying it, each on a separate line, in chronological order.
+    }
+
+    \begin{problemexamples}
+        \begin{example}{
+            2 3 3\\
+            1 1 1\\
+            3 2\\
+            4 0
+        }{
+            1\\
+            4\\
+            0
+        }
+        \end{example}
+        \begin{example}{
+            4 2 6\\
+            3 2\\
+            2 2 2\\
+            3 3\\
+            3 2\\
+            2 2 2\\
+            3 2
+        }{
+            2\\
+            1\\
+            3\\
+            3\\
+            2\\
+            4
+        }
+        \end{example}
+        \begin{example}{
+            2 2 2\\
+            3 2\\
+            2 2 1
+        }{
+            2\\
+            1
+        }
+        \end{example}
+    \end{problemexamples}
+
+    \problemnotes{
+        For the second example, the state of the bookcase after each operation is illustrated in the problem description.
+    }
+\end{programmingproblem}

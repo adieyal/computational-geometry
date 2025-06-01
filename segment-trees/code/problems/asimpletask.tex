@@ -1,0 +1,55 @@
+\begin{programmingproblem}{A Simple Task}{5 seconds}{512 megabytes}{E}{prob:asimpletask}
+    \problemdescription{
+        This task is very simple. Given a string $S$ of length $n$ and $q$ queries, each query is of the format $i\ j\ k$ which means sort the substring consisting of the characters from $i$ to $j$ in non-decreasing order if $k = 1$ or in non-increasing order if $k = 0$.\\
+        Output the final string after applying the queries.
+    }
+    
+    \probleminput{
+        The first line will contain two integers $n,\,q$ ($1 \leq n \leq 10^5$, $0 \leq q \leq 50\,000$), the length of the string and the number of queries respectively.\\
+        The next line contains a string $S$ itself. It contains only lowercase English letters.\\
+        The next $q$ lines will contain three integers each $i,\,j,\,k$ ($1 \leq i \leq j \leq n$).
+    }
+    
+    \problemoutput{
+        Output one line, the string $S$ after applying the queries.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            10 5\\
+            abacdabcda\\
+            7 10 0\\
+            5 8 1\\
+            1 4 0\\
+            3 6 0\\
+            7 10 1
+        }{
+            cbcaaaabdd
+        }
+        \end{example}
+        \begin{example}{
+            10 1\\
+            agjucbvdfk\\
+            1 10 1
+        }{
+            abcdfgjkuv
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        \textbf{First sample test explanation:}\\
+        (No explanation provided in the original statement.)
+    }
+\end{programmingproblem}
+
+
+
+
+
+
+
+
+
+
+

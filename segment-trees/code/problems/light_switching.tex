@@ -1,0 +1,40 @@
+\begin{programmingproblem}{Light Switching}{1 second}{256 megabytes}{C}{prob:light_switching}
+    \problemdescription{
+        Farmer John tries to keep the cows sharp by letting them play with intellectual toys. One of the larger toys is the lights in the barn. Each of the $n$ ($2 \leq n \leq 100,\!000$) cow stalls conveniently numbered from $1$ to $n$ has a colorful light above it.\\
+        At the beginning of the evening, all the lights are off. The cows control the lights with a set of $n$ pushbutton switches that toggle the lights; pushing switch $i$ changes the state of light $i$ from off to on or from on to off.\\
+        The cows read and execute a list of $m$ ($1 \leq m \leq 100,\!000$) operations expressed as one of two integers ($0 \leq \text{operation} \leq 1$).\\
+        The first kind of operation (denoted by a $0$ command) includes two subsequent integers $S_i$ and $E_i$ ($1 \leq S_i \leq E_i \leq n$) that indicate a starting switch and ending switch. They execute the operation by pushing each pushbutton from $S_i$ through $E_i$ inclusive exactly once.\\
+        The second kind of operation (denoted by a $1$ command) asks the cows to count how many lights are on in the range given by two integers $S_i$ and $E_i$ ($1 \leq S_i \leq E_i \leq n$) which specify the inclusive range in which the cows should count the number of lights that are on.\\
+        Help Farmer John ensure the cows are getting the correct answer by processing the list and producing the proper counts.
+    }
+    
+    \probleminput{
+        The first line contains two space-separated integers $n$ and $m$.\\
+        Each of the next $m$ lines represents an operation with three space-separated integers: $\text{operation}$, $S_i$ and $E_i$.
+    }
+    
+    \problemoutput{
+        For each operation of the second kind, print the answer as an integer on a single line.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            4\ 5\\
+            0\ 1\ 2\\
+            0\ 2\ 4\\
+            1\ 2\ 3\\
+            0\ 2\ 4\\
+            1\ 1\ 4
+        }{
+            1\\
+            2
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        Initially, all lights are off.\\
+        Each toggle operation flips the state of the lights in the given range.\\
+        Each query operation asks for the number of lights that are currently on in the given range.
+    }
+\end{programmingproblem}

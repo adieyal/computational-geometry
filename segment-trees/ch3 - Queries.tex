@@ -1,0 +1,238 @@
+\label{chap:queries_point_updates}
+
+With our segment tree built, we can now perform its two core operations: querying a range for an aggregate value\index{range query} and updating a single element\index{point update}. This chapter breaks down both operations, covers recursive and iterative implementations\index{recursion}\index{iteration}, analyzes complexity\index{complexity}, and highlights practical implementation considerations.
+
+\section{Understanding Range Queries Through Recursion}
+\label{sec:query_recursion_intuition}
+
+The recursive query approach provides the most intuitive understanding of how segment trees\index{segment tree} decompose range queries\index{range query!recursive} into manageable pieces. The recursive function \texttt{query(node, seg\_L, seg\_R, q\_L, q\_R)}\index{query function} traverses the tree, combining results from nodes that cover portions of the query range $[q_L, q_R]$.
+
+At each node, we encounter one of three possible relationships between the current node's segment $[seg\_L, seg\_R]$ and the query range. These cases form the foundation of segment tree query logic.
+
+\subsection{No Overlap Case}
+
+When the current segment lies entirely outside the query range, we encounter the no overlap scenario\index{no overlap}. This occurs when \texttt{seg\_R < q\_L} or \texttt{seg\_L > q\_R}. Since this segment contributes nothing to our query, we return the identity value\index{identity element} for our operation—$0$ for sum queries, $+\infty$ for minimum queries, or $-\infty$ for maximum queries.
+
+\begin{marginfigure}
+\scalebox{0.5}{
+\subimport{graphics/chapter 3/}{no-overlap.tex}
+}
+\caption{No overlap: the segment lies entirely outside the query range, contributing nothing to the result.}
+\label{fig:no-overlap}
+\end{marginfigure}
+
+\subsection{Total Overlap Case}
+
+The most efficient case occurs when the query range completely contains the current segment: $q_L \leq seg_L$ and $seg_R \leq q_R$. Here we can return the precomputed \texttt{tree[node]} value\index{precomputed value} directly without any recursion. This represents the power of segment trees—we've already computed the aggregate for this exact segment during construction.
+
+\begin{marginfigure}
+\scalebox{0.5}{
+\subimport{graphics/chapter 3/}{total-overlap.tex}
+}
+\caption{Total overlap: the query range completely contains the segment, allowing us to use the precomputed value.}
+\label{fig:total-overlap}
+\end{marginfigure}
+
+\subsection{Partial Overlap Case}
+
+When neither total nor no overlap applies, we have partial overlap\index{partial overlap}. The query range intersects with, but doesn't completely contain, the current segment. This requires recursing on both children and combining their results using our merge operation\index{merge operation}.
+
+\begin{marginfigure}
+\scalebox{0.5}{
+\subimport{graphics/chapter 3/}{partial-overlap.tex}
+}
+\caption{Partial overlap: the query range partially intersects the segment, requiring recursion into both children.}
+\label{fig:partial-overlap}
+\end{marginfigure}
+
+\marginnote{Each query decomposes the range into $\bigO{\log N}$ "canonical" segments. The recursive logic ensures we visit only relevant nodes. See Listing~\ref{lst:query_recursion} for a complete implementation.}
+
+The elegance of this approach lies in its selective traversal\index{selective traversal}. When querying a range, the recursive process starts at the root\index{root node} and explores only those nodes whose segments overlap with the query interval. Because the segment tree has height $\bigO{\log N}$\index{logarithmic height}, any query visits only a logarithmic number of nodes, making the operation highly efficient.
+
+\section{Point Updates: Propagating Changes Upward}
+\label{sec:point_update_recursion}
+
+Point updates\index{point update!recursive} modify a single element in the original array, requiring us to update all segment tree nodes that include this position. The recursive approach naturally follows the path from root to the target leaf\index{leaf node}, then updates all ancestors on the return journey.
+
+\begin{marginlisting}[0pt]{language=Python, caption=Recursive Point Update}
+\begin{lstlisting}
+def update(node, seg_l, seg_r, pos, val):
+    if seg_l == seg_r:
+        tree[node] = val  # Found leaf
+    else:
+        mid = seg_l + (seg_r - seg_l) // 2
+        if pos <= mid:
+            update(2*node+1, seg_l, mid, pos, val)
+        else:
+            update(2*node+2, mid+1, seg_r, pos, val)
+        tree[node] = merge(tree[2*node+1], 
+                          tree[2*node+2])
+\end{lstlisting}
+\end{marginlisting}
+
+To update element at position $i$, we traverse to the leaf covering $i$, update the leaf's value, then recalculate all ancestors' values on the path back to the root. This ensures that every segment containing the updated position reflects the new value.
+
+\begin{algorithm}[H]
+\If{$\texttt{seg\_L} = \texttt{seg\_R}$}{
+$\texttt{tree[node]} \leftarrow \texttt{new\_value}$ \tcp*{Found leaf}
+}
+\Else{
+$\texttt{mid} \leftarrow \texttt{seg\_L} + (\texttt{seg\_R} - \texttt{seg\_L}) // 2$ \\
+\lIf{$i \leq \texttt{mid}$}{recurse left}
+\lElse{recurse right}
+$\texttt{tree[node]} \leftarrow \texttt{merge}(\texttt{left\_child}, \texttt{right\_child})$ \tcp*{Update parent}
+}
+\caption{Recursive update algorithm}
+\end{algorithm}
+
+The key insight is efficiency: because the segment tree has height $\bigO{\log N}$, only a logarithmic number of nodes need updating. Each updated position affects exactly one path from leaf to root, making point updates very fast even for large arrays.
+
+\section{Iterative Implementation: The Al.Cash Method}
+\label{sec:iterative_al_cash}
+
+While recursion provides intuitive understanding, iterative implementations\index{iteration!segment tree} often perform better in practice due to improved memory access patterns and reduced function call overhead. The "Al.Cash" method\index{Al.Cash method} uses 1-based indexing\index{1-based indexing} with leaves positioned at $[N, 2N-1]$ in the tree array.
+
+\subsection{Iterative Point Updates}
+
+The iterative approach directly manipulates array indices\index{array index} rather than using recursive calls. After updating the target leaf, we walk upward through parent nodes, recalculating values until reaching the root.
+
+\begin{marginlisting}[0pt]{language=Python, caption=Iterative Point Update}
+\begin{lstlisting}
+def update(pos, val):
+    pos += N  # Move to leaf position
+    tree[pos] = val
+    while pos > 1:
+        pos //= 2
+        tree[pos] = merge(tree[2*pos], 
+                         tree[2*pos+1])
+\end{lstlisting}
+\end{marginlisting}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{Index $i$ to update, new value $v$}
+\KwData{Segment tree array \texttt{tree} of size $2N$ (1-based), $N$ is the number of leaves}
+$pos \leftarrow i + N$\;
+$\texttt{tree}[pos] \leftarrow v$\;
+\While{$pos > 1$}{
+$pos \leftarrow pos // 2$\;
+$\texttt{tree}[pos] \leftarrow \texttt{merge}(\texttt{tree}[2*pos],\ \texttt{tree}[2*pos+1])$\;
+}
+\caption{Iterative point update in a 1-based segment tree}
+\end{algorithm}
+
+When changing a value at a single position, only the segments that cover this position need updating. In the array-based representation, these correspond to the ancestors of the updated leaf node. Starting at the leaf and moving upward to the root ensures all range queries including this position return correct results.
+
+\subsection{Iterative Range Queries}
+
+The iterative query method efficiently decomposes the query interval into non-overlapping segments\index{canonical segment} corresponding to tree nodes. By moving left and right pointers up the tree, we identify segments that lie entirely within the query range.
+
+\begin{marginlisting}[0pt]{language=Python, caption=Iterative Range Query}
+\begin{lstlisting}
+def query(l, r):  # Query range [l, r)
+    l += N
+    r += N
+    res = IDENTITY
+    while l < r:
+        if l % 2 == 1:  # l is right child
+            res = merge(res, tree[l])
+            l += 1
+        if r % 2 == 1:  # r is right child
+            r -= 1
+            res = merge(res, tree[r])
+        l //= 2
+        r //= 2
+    return res
+\end{lstlisting}
+\end{marginlisting}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{Range $[l, r)$ to query}
+\KwData{Segment tree array \texttt{tree} of size $2N$ (1-based), $N$ is the number of leaves}
+$l \leftarrow l + N$\;
+$r \leftarrow r + N$\;
+$\texttt{res} \leftarrow$ identity\_element\;
+\While{$l < r$}{
+\If{$l$ is a right child (i.e., $l \bmod 2 = 1$)}{
+$\texttt{res} \leftarrow \texttt{merge}(\texttt{res},\ \texttt{tree}[l])$\;
+$l \leftarrow l + 1$\;
+}
+\If{$r$ is a right child (i.e., $r \bmod 2 = 1$)}{
+$r \leftarrow r - 1$\;
+$\texttt{res} \leftarrow \texttt{merge}(\texttt{res},\ \texttt{tree}[r])$\;
+}
+$l \leftarrow l // 2$\;
+$r \leftarrow r // 2$\;
+}
+\Return \texttt{res}\;
+\caption{Iterative range query in a 1-based segment tree}
+\end{algorithm}
+
+\marginnote{The tree structure allows us to cover any range with a minimal set of canonical segments, each representing a power-of-two-sized interval. This decomposition property ensures we visit at most $2\log N$ nodes per query.}
+
+At each step, if a pointer refers to a segment entirely within the range, we include its value in the result and advance the pointer. This process visits at most $2\log N$ nodes, achieving the same logarithmic complexity as the recursive approach while offering better practical performance.
+
+\section{Complexity Analysis: Why Logarithmic Time?}
+\label{sec:complexity_proofs}
+
+The logarithmic time complexity of segment tree operations stems from the tree's structural properties and the intelligent way queries decompose ranges.
+
+\subsection{Tree Height Foundation}
+
+The segment tree height is $\lceil \log_2 N \rceil$\index{tree height}, where $N$ represents the number of elements. This logarithmic height directly bounds the complexity of operations that traverse from leaves to root or vice versa.
+
+\subsection{Point Update Complexity}
+
+Point updates modify exactly one leaf plus all its ancestors on the path to the root. Since the tree height is $\bigO{\log N}$, we update exactly $\log_2 N + 1$ nodes, giving us $\bigO{\log N}$ complexity.
+
+\subsection{Range Query Decomposition}
+
+Range queries achieve logarithmic complexity through an elegant decomposition property. Any query range can be represented as the union of at most $\bigO{\log N}$ disjoint segments that correspond to nodes in the tree.
+
+\marginnote{The key insight is that query ranges split at segment boundaries, limiting the number of active nodes at each level. At each tree level, at most two segments can be "partially covered" by the query range, leading to the $2\log N$ bound.}
+
+The recursive approach visits at most two nodes per tree level—one for the leftmost partially covered segment and one for the rightmost. The iterative approach makes this explicit by maintaining left and right pointers that converge toward a common ancestor.
+
+This decomposition property ensures that even the most complex range queries require examining only a logarithmic number of precomputed segments, making segment trees remarkably efficient for range operations.
+
+\section{Implementation Considerations and Common Pitfalls}
+\label{sec:indexing_mid_calc_pitfalls}
+
+Successful segment tree implementation requires attention to several subtle but crucial details that frequently cause bugs in competitive programming submissions.
+
+\subsection{Indexing Consistency}
+
+One of the most common sources of errors involves inconsistent indexing schemes\index{indexing scheme}. Choose either $0$-based or $1$-based indexing and maintain it throughout your implementation. For $0$-based indexing, the children of node $i$ are at positions $2i+1$ and $2i+2$. For $1$-based indexing, they're at $2i$ and $2i+1$. Mixing these schemes leads to subtle off-by-one errors\index{off-by-one error} that can be difficult to debug.
+
+\subsection{Safe Midpoint Calculation}
+
+Always calculate midpoints using \texttt{mid = L + (R - L) // 2}\index{midpoint calculation} rather than \texttt{(L + R) // 2}. The latter approach can cause integer overflow\index{integer overflow} when $L$ and $R$ are large, leading to incorrect results or runtime errors. This consideration becomes crucial in competitive programming where coordinate ranges can be very large.
+
+\begin{marginlisting}[0pt]{language=C++, caption=Safe vs Unsafe Midpoint}
+\begin{lstlisting}
+// Safe: avoids overflow
+int mid = left + (right - left) / 2;
+
+// Unsafe: may overflow with large values
+int mid = (left + right) / 2;
+\end{lstlisting}
+\end{marginlisting}
+
+\subsection{Identity Element Selection}
+
+Each operation requires its appropriate identity element\index{identity element}. Using the wrong identity element leads to incorrect results that may not be immediately obvious, especially for edge cases\index{edge case} involving empty ranges or single-element queries.
+
+\subsection{Edge Case Testing}
+
+Thoroughly test your implementation with edge cases that commonly reveal bugs: single-element updates and queries, full-range queries that span the entire array, updates at boundary indices like $0$ and $N-1$, and queries on single elements. These cases often expose indexing errors or incorrect boundary handling.
+
+\subsection{Range Convention Clarity}
+
+Establish whether your queries use inclusive ranges $[L,R]$\index{inclusive range} or half-open ranges $[L,R)$\index{half-open range} and maintain this convention consistently. Mixing conventions leads to off-by-one errors that can be particularly troublesome when adapting code between different problem contexts.
+
+\marginnote{When debugging segment tree implementations, start with small examples and trace through the algorithm step by step. Most errors become obvious when you visualize exactly which nodes are being visited and what values they contain.}
+
+Understanding and avoiding these pitfalls significantly improves the reliability of your segment tree implementations. The time invested in careful implementation pays dividends in competitive programming, where subtle bugs can waste precious contest time and lead to incorrect submissions.
+
+The combination of solid conceptual understanding, careful attention to implementation details, and thorough testing creates robust segment tree solutions that work reliably across diverse problem types and constraints.

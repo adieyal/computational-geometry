@@ -1,0 +1,29 @@
+\begin{tikzpicture}[
+    level distance=2.2cm,
+    level 2/.style={sibling distance=1.5cm},
+    sibling distance=10em, 
+    level distance=3.5em,
+    every node/.style={
+        shape=rectangle, 
+        rounded corners,
+        draw, 
+        align=center,
+        minimum height=1.2em,
+        font=\scriptsize
+    },
+    edge from parent/.style={draw,-latex}]
+]
+\node {$[0,3]$\\sum=15}
+    child { 
+        node {$[0,1]$\\sum=7}
+        child { node {$0$\\sum=1} }
+        child {
+            node {$1$\\sum=6}
+        } 
+    }
+    child { 
+        node {$[2,3]$\\sum=8}
+        child { node {$2$\\sum=3} }
+        child { node {$3$\\sum=5} } 
+    };
+\end{tikzpicture}

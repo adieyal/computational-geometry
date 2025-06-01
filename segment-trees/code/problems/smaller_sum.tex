@@ -1,0 +1,65 @@
+\begin{programmingproblem}{Smaller Sum}{3.5 seconds}{1024 megabytes}{C}{prob:smaller_sum}
+    \problemdescription{
+        You are given a sequence $A = (A_1, A_2, \ldots, A_N)$ of length $N$.\\
+        Answer the following $Q$ queries. The $i$-th query is as follows:\\
+        Find the sum of the elements among $A_{L_i}, A_{L_i+1}, \ldots, A_{R_i}$ that are not greater than $X_i$.\\
+        Here, you need to answer these queries \textbf{online}. That is, only after you answer the current query is the next query revealed.\\
+        For this reason, instead of the $i$-th query itself, you are given encrypted inputs $\alpha_i, \beta_i, \gamma_i$ for the query. Restore the original $i$-th query using the following steps and then answer it.\\
+        Let $B_0 = 0$ and $B_i = $ (the answer to the $i$-th query).\\
+        Then, the query can be decrypted as follows:
+        \[
+        L_i = \alpha_i \oplus B_{i-1}
+        \]
+        \[
+        R_i = \beta_i \oplus B_{i-1}
+        \]
+        \[
+        X_i = \gamma_i \oplus B_{i-1}
+        \]
+        Here, $x \oplus y$ denotes the bitwise XOR of $x$ and $y$.
+    }
+    
+    \probleminput{
+        The first line contains an integer $N$ ($1 \leq N \leq 2 \times 10^5$).\\
+        The second line contains $N$ integers $A_1, A_2, \ldots, A_N$ ($0 \leq A_i \leq 10^9$).\\
+        The third line contains an integer $Q$ ($1 \leq Q \leq 2 \times 10^5$).\\
+        Each of the next $Q$ lines contains three integers $\alpha_i, \beta_i, \gamma_i$ ($0 \leq \alpha_i, \beta_i, \gamma_i \leq 10^{18}$).
+    }
+    
+    \problemoutput{
+        Print $Q$ lines.\\
+        The $i$-th line should contain the answer to the $i$-th query.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            8\\
+            2\ 0\ 2\ 4\ 0\ 2\ 0\ 3\\
+            5\\
+            1\ 8\ 3\\
+            10\ 12\ 11\\
+            3\ 3\ 2\\
+            3\ 6\ 5\\
+            12\ 0\ 11
+        }{
+            9\\
+            2\\
+            0\\
+            8\\
+            5
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        For the first query, $B_0 = 0$.\\
+        $L_1 = 1 \oplus 0 = 1$, $R_1 = 8 \oplus 0 = 8$, $X_1 = 3 \oplus 0 = 3$.\\
+        The sum of elements in $A_1$ to $A_8$ not greater than $3$ is $2+0+2+0+2+0+3=9$.\\
+        This becomes $B_1$.\\
+        For the second query, $B_1 = 9$.\\
+        $L_2 = 10 \oplus 9 = 3$, $R_2 = 12 \oplus 9 = 5$, $X_2 = 11 \oplus 9 = 2$.\\
+        The sum of elements in $A_3$ to $A_5$ not greater than $2$ is $2+0=2$.\\
+        This becomes $B_2$.\\
+        The process continues similarly for the remaining queries.
+    }
+\end{programmingproblem}

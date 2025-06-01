@@ -1,0 +1,37 @@
+\begin{programmingproblem}{Xenia and Bit Operations}{2 seconds}{256 megabytes}{C}{prob:xenia}
+    \problemdescription{
+        Xenia the beginner programmer has a sequence $\sequence{a_1, a_2, \ldots, a_{2^n}}$ of $2^n$ non-negative integers. Xenia is currently studying bit operations. To better understand how they work, Xenia decided to calculate some value $v$ for $a$.\\
+        Namely, it takes several iterations to calculate value $v$. At the first iteration, Xenia writes a new sequence $a_1 \text{ or } a_2,\, a_3 \text{ or } a_4,\, \ldots,\, a_{2^n-1} \text{ or } a_{2^n}$, consisting of $2^n-1$ elements. In other words, she writes down the bitwise OR of adjacent elements of sequence $a$. At the second iteration, Xenia writes the bitwise exclusive OR of adjacent elements of the sequence obtained after the first iteration. At the third iteration, Xenia writes the bitwise OR of the adjacent elements of the sequence obtained after the second iteration. And so on; the operations of bitwise exclusive OR and bitwise OR alternate. In the end, she obtains a sequence consisting of one element, and that element is $v$.\\
+        Let's consider an example. Suppose that sequence $a = (1,\, 2,\, 3,\, 4)$. Then let's write down all the transformations: $(1,\, 2,\, 3,\, 4) \rightarrow (1 \text{ or } 2 = 3,\, 3 \text{ or } 4 = 7) \rightarrow (3 \text{ xor } 7 = 4)$. The result is $v = 4$.\\
+        You are given Xenia's initial sequence. But to calculate value $v$ for a given sequence would be too easy, so you are given additional $m$ queries. Each query is a pair of integers $p,\, b$. Query $p,\, b$ means that you need to perform the assignment $a_p = b$. After each query, you need to print the new value $v$ for the new sequence $a$.
+    }
+
+    \probleminput{
+        The first line contains two integers $n$ and $m$ ($1 \leq n \leq 17$, $1 \leq m \leq 10^5$). The next line contains $2^n$ integers $a_1,\, a_2,\, \ldots,\, a_{2^n}$ ($0 \leq a_i < 2^{30}$). Each of the next $m$ lines contains queries. The $i$-th line contains integers $p_i,\, b_i$ ($1 \leq p_i \leq 2^n$, $0 \leq b_i < 2^{30}$) — the $i$-th query.
+    }
+
+    \problemoutput{
+        Print $m$ integers — the $i$-th integer denotes value $v$ for sequence $a$ after the $i$-th query.
+    }
+
+    \begin{problemexamples}
+        \begin{example}{
+            2 4\\
+            1 6 3 5\\
+            1 4\\
+            3 4\\
+            1 2\\
+            1 2
+        }{
+            1\\
+            3\\
+            3\\
+            3
+        }
+        \end{example}
+    \end{problemexamples}
+
+    \problemnotes{
+        For more information on the bit operations, you can follow this link: \url{http://en.wikipedia.org/wiki/Bitwise_operation}
+    }
+\end{programmingproblem}

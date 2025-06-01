@@ -1,0 +1,26 @@
+\caption{Lazy Segment Tree Structure (Range Add)}
+\KwIn{Array $arr$ of size $n$}
+\KwOut{Supports range add and sum queries in $\mathcal{O}(\log n)$}
+
+\SetKwFunction{Build}{build}
+\SetKwFunction{Push}{push}
+
+\textbf{Initialize:} \\
+\Indp
+$n \gets$ size of $arr$ \\
+$\text{tree}[1 \ldots 4n] \gets 0$ \\
+$\text{lazy}[1 \ldots 4n] \gets 0$ \\
+\texttt{build}$(arr, 1, 0, n-1)$ \\
+\Indm
+
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\Push{$\text{node}, l, r$}}{
+    \If{$\text{lazy[node]} \neq 0$}{
+        $\text{tree[node]} \gets \text{tree[node]} + \text{lazy[node]} \times (r - l + 1)$ \\
+        \If{$l \neq r$ \tcp*[f]{not a leaf}}{
+            $\text{lazy}[2 \times \text{node}] \gets \text{lazy}[2 \times \text{node}] + \text{lazy[node]}$ \\
+            $\text{lazy}[2 \times \text{node} + 1] \gets \text{lazy}[2 \times \text{node} + 1] + \text{lazy[node]}$ \\
+        }
+        $\text{lazy[node]} \gets 0$
+    }
+}

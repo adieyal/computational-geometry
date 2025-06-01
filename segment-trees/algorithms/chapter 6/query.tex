@@ -1,0 +1,16 @@
+\SetAlgoLined
+\KwIn{Node pointer \texttt{root}, range $[l, r]$, query range $[ql, qr]$}
+\KwOut{Sum of values in $[ql, qr]$ for the given version}
+\SetKwFunction{FQuery}{query}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\FQuery{root, l, r, ql, qr}}{
+    \If{root is null \textbf{or} $ql > r$ \textbf{or} $qr < l$}{
+        \Return $0$\;
+    }
+    \If{$ql \leq l$ \textbf{and} $r \leq qr$}{
+        \Return \texttt{root.value}\;
+    }
+    $mid \gets \lfloor (l + r) / 2 \rfloor$\;
+    \Return \FQuery{root.left, l, mid, ql, qr} $+$ \FQuery{root.right, mid+1, r, ql, qr}\;
+}
+\caption{Persistent Segment Tree Query}

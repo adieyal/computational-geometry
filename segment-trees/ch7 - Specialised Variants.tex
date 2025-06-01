@@ -1,0 +1,307 @@
+\label{chap:specialised_variants}
+
+Standard segment trees\index{segment tree} excel at handling moderate-sized ranges with frequent updates and queries, but competitive programming\index{competitive programming} often presents scenarios that push beyond these basic capabilities. This chapter explores advanced segment tree variants\index{segment tree!variant} designed for specialized applications: sparse coordinate ranges\index{sparse segment tree}, order statistic queries\index{order statistic tree}, linear function optimization\index{Li Chao tree}, and permutation ranking problems\index{factoradic segment tree}.
+
+Each variant addresses specific limitations of traditional segment trees, extending their applicability to sophisticated competitive programming scenarios that would otherwise require complex alternative approaches.
+
+\section{Dynamic and Sparse Segment Trees}
+\label{sec:dynamic_sparse}
+
+When coordinate ranges reach $10^{12}$ or $10^{18}$, allocating arrays proportional to the entire range becomes impossible due to memory constraints. Dynamic segment trees\index{segment tree!dynamic}\index{segment tree!sparse} solve this problem by creating nodes on-demand, allocating memory only for segments that are actually accessed during operations.
+
+Unlike traditional segment trees that preallocate fixed-size arrays, dynamic trees use pointer-based structures that grow as needed. Each node contains pointers to children and stores aggregate values for its interval. The tree initializes as empty—null pointers indicate segments with default values—and nodes are created only when touched by updates or queries.
+
+\marginnote{Dynamic trees are essential when the coordinate range is truly massive but the number of active positions remains manageable. For example, updating 100,000 positions in a range of $10^{18}$ coordinates.}
+
+\paragraph{Memory Efficiency}
+
+Dynamic trees achieve $\bigO{Q \log N}$ space complexity for $Q$ operations on range size $N$, dramatically reducing memory requirements compared to full tree allocation. This makes problems with huge coordinate ranges tractable while maintaining logarithmic operation complexity.
+
+\paragraph{Implementation Strategies}
+
+Memory pools\index{memory pool} provide significant performance improvements over individual \texttt{new} allocations. Instead of dynamic allocation for each node, preallocate large arrays for node data and manage indices manually. This approach avoids heap fragmentation\index{heap fragmentation} and reduces allocation overhead by 10-20x in competitive programming environments.
+
+\begin{marginlisting}[0pt]{language=C++, caption=Dynamic Segment Tree with Memory Pool}
+\begin{lstlisting}
+const int MAXNODES = 4000000;  // 4M nodes for safety
+int lchild[MAXNODES], rchild[MAXNODES];
+long long tree\_val[MAXNODES];
+int node\_count = 0;
+
+int new\_node() {
+    int node = ++node\_count;
+    lchild[node] = rchild[node] = 0;  // null children
+    tree\_val[node] = 0;               // default value
+    return node;
+}
+
+void update(int& node, long long l, long long r, long long pos, long long val) {
+    if (!node) node = new\_node();
+    if (l == r) {
+        tree\_val[node] = val;
+        return;
+    }
+    long long mid = (l + r) >> 1;
+    if (pos <= mid) update(lchild[node], l, mid, pos, val);
+    else update(rchild[node], mid+1, r, pos, val);
+    
+    long long left\_val = lchild[node] ? tree\_val[lchild[node]] : 0;
+    long long right\_val = rchild[node] ? tree\_val[rchild[node]] : 0;
+    tree\_val[node] = left\_val + right\_val;
+}
+\end{lstlisting}
+\end{marginlisting}
+
+\paragraph{Design Considerations}
+
+Null children implicitly represent segments with neutral values (typically zero). Check for null pointers before recursing, and create nodes only when updates would change default values. This design ensures untouched segments contribute appropriate neutral values without consuming memory.
+
+Lazy propagation\index{lazy propagation} can be implemented by storing tags in each node, similar to standard segment trees. When splitting nodes, create children as needed before assigning lazy values to avoid null pointer access.
+
+\marginnote{Dynamic trees can handle up to $10^6$ operations efficiently with proper memory management. Beyond that, consider whether coordinate compression or alternative algorithms might be more appropriate.}
+
+\section{Merge-Sort and Order-Statistic Trees}
+\label{sec:merge_sort_trees}
+
+Traditional segment trees store scalar aggregates like sums or minimums, but some problems require querying the sorted order of elements within ranges. Merge-sort trees\index{merge-sort tree} address this by storing sorted lists at each node, enabling efficient order-statistic queries\index{order statistic tree} on subarrays.
+
+Each node maintains a sorted vector containing all values in its corresponding segment. Internal nodes' lists are formed by merging their children's sorted lists, creating a tree where range order-statistic queries become feasible through binary search operations.
+
+\paragraph{Construction and Memory}
+
+Building merge-sort trees requires $\bigO{N \log N}$ time and space. At each level, merging sorted child arrays costs $\bigO{N}$ total work, and with $\log N$ levels, the construction complexity becomes $\bigO{N \log N}$. Total memory usage reaches approximately $N \log N$ elements across all node vectors.
+
+The construction process uses efficient merging algorithms—either \texttt{std::merge} or two-pointer techniques—to combine child vectors. Reserve vector capacity in advance to avoid costly reallocations during the build phase.
+
+\paragraph{Query Operations}
+
+Range count queries ("how many values $\leq x$ in range $[L,R]$") execute through binary search\index{binary search} on relevant node vectors. Each query visits $\bigO{\log N}$ nodes and performs $\bigO{\log N}$ binary searches, yielding $\bigO{(\log N)^2}$ total complexity.
+
+For k-th smallest queries, tree-walking provides more efficient $\bigO{\log N}$ complexity. Start at the root and use left subtree counts to decide recursion direction—if the left subtree contains at least $k$ elements, recurse left; otherwise, recurse right with $k$ reduced by the left count.
+
+\begin{marginlisting}[0pt]{language=C++, caption=Merge-Sort Tree Implementation}
+\begin{lstlisting}
+struct MergeSortTree {
+    vector<vector<int>> tree;
+    int n;
+    
+    MergeSortTree(vector<int>& arr) {
+        n = arr.size();
+        tree.resize(4 * n);
+        build(arr, 1, 0, n-1);
+    }
+    
+    void build(vector<int>& arr, int node, int l, int r) {
+        if (l == r) {
+            tree[node] = {arr[l]};
+            return;
+        }
+        int mid = (l + r) >> 1;
+        build(arr, 2*node, l, mid);
+        build(arr, 2*node+1, mid+1, r);
+        
+        merge(tree[2*node].begin(), tree[2*node].end(),
+              tree[2*node+1].begin(), tree[2*node+1].end(),
+              back\_inserter(tree[node]));
+    }
+    
+    int count\_leq(int node, int l, int r, int ql, int qr, int val) {
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) {
+            return upper\_bound(tree[node].begin(), tree[node].end(), val) - tree[node].begin();
+        }
+        int mid = (l + r) >> 1;
+        return count\_leq(2*node, l, mid, ql, qr, val) +
+               count\_leq(2*node+1, mid+1, r, ql, qr, val);
+    }
+};
+\end{lstlisting}
+\end{marginlisting}
+
+\paragraph{Limitations and Alternatives}
+
+Merge-sort trees excel in static scenarios but struggle with frequent updates. Modifying values requires rebuilding entire paths, potentially costing $\bigO{N}$ time per update. For dynamic scenarios, consider persistent segment trees\index{segment tree!persistent} or alternative data structures like balanced binary search trees\index{balanced binary search tree}.
+
+\marginnote{Merge-sort trees use substantial memory—potentially several times the input size. For $N > 300,000$, memory constraints may become problematic in competitive programming environments with 256MB limits.}
+
+\section{Li Chao Trees for Linear Function Queries}
+\label{sec:li_chao_trees}
+
+Dynamic programming\index{dynamic programming} optimizations often involve maintaining sets of linear functions and querying their minimum values at specific points. Li Chao trees\index{Li Chao tree} specialize in this scenario, efficiently managing collections of lines (functions $y = mx + b$) while supporting fast minimum queries at any $x$-coordinate.
+
+Unlike convex hull trick\index{convex hull trick} approaches that assume sorted slopes, Li Chao trees handle arbitrary line collections where any two lines intersect at most once. The tree maintains an implicit binary structure over the $x$-domain, storing the locally optimal line at each node.
+
+\paragraph{Insertion Mechanism}
+
+When inserting a new line, the algorithm compares it with the currently stored line at each node's midpoint. The line that performs better at the midpoint remains at the node, while the other line is pushed to the appropriate child interval based on intersection properties.
+
+This insertion strategy ensures that each node stores the line that is optimal at its midpoint, maintaining query correctness while requiring only $\bigO{\log X\_{\text{range}}}$ time per insertion.
+
+\begin{marginlisting}[0pt]{language=C++, caption=Li Chao Tree Implementation}
+\begin{lstlisting}
+struct Line {
+    long long m, b;  // y = mx + b
+    long long eval(long long x) { return m * x + b; }
+};
+
+struct LiChaoTree {
+    vector<Line> tree;
+    long long xl, xr;
+    
+    LiChaoTree(long long l, long long r) : xl(l), xr(r) {
+        tree.resize(4 * (r - l + 1), {0, LLONG\_MAX});  // neutral line
+    }
+    
+    void insert(int node, long long l, long long r, Line new\_line) {
+        long long mid = (l + r) >> 1;
+        bool left\_better = new\_line.eval(l) < tree[node].eval(l);
+        bool mid\_better = new\_line.eval(mid) < tree[node].eval(mid);
+        
+        if (mid\_better) swap(tree[node], new\_line);
+        
+        if (l == r) return;
+        if (left\_better != mid\_better) {
+            insert(2*node, l, mid, new\_line);
+        } else {
+            insert(2*node+1, mid+1, r, new\_line);
+        }
+    }
+    
+    long long query(int node, long long l, long long r, long long x) {
+        if (l == r) return tree[node].eval(x);
+        
+        long long mid = (l + r) >> 1;
+        long long result = tree[node].eval(x);
+        
+        if (x <= mid) result = min(result, query(2*node, l, mid, x));
+        else result = min(result, query(2*node+1, mid+1, r, x));
+        
+        return result;
+    }
+};
+\end{lstlisting}
+\end{marginlisting}
+
+\paragraph{Domain Management and Precision}
+
+Initialize the tree with a neutral line that returns infinity for minimum queries, ensuring queries always have valid comparisons. Choose the domain $[L,R]$ to cover all possible query $x$-values, either through direct specification or coordinate compression.
+
+Handle potential overflow carefully when evaluating $m \times x + b$ for large coordinates. Consider using 128-bit integers or implementing overflow-safe comparison methods for competitive programming scenarios with extreme value ranges.
+
+\marginnote{Li Chao trees are particularly powerful for online DP optimizations where line slopes are not monotonic. They handle arbitrary line insertion orders while maintaining logarithmic query complexity.}
+
+\paragraph{Applications in Competitive Programming}
+
+Li Chao trees frequently appear in DP optimization problems where states contribute linear cost functions to future computations. Problems involving robot movement with linear costs, escape route optimization, or any scenario requiring dynamic linear function minimization benefit from this approach.
+
+The technique enables online processing of line additions and queries, making it superior to offline convex hull methods when the problem structure demands real-time responses.
+
+\section{Ranking and Factoradic Segment Trees}
+\label{sec:ranking_factoradic}
+
+Problems involving permutation generation\index{permutation}, Josephus elimination\index{Josephus problem}, or k-th element selection in dynamic sets require specialized tree structures that efficiently handle element removal and ranking queries. Factoradic segment trees\index{factoradic segment tree} excel in these scenarios by maintaining availability information and supporting logarithmic-time k-th element retrieval.
+
+The fundamental idea involves building a tree over positions $1$ to $N$ with initial values of $1$ (indicating availability). Finding the k-th available element becomes a tree traversal: check left subtree sums to determine whether the k-th element lies in the left or right half, then recurse accordingly.
+
+\paragraph{Tree Walking Algorithm}
+
+The k-th element search follows a systematic descent from root to leaf. At each internal node, compare the left subtree's sum (number of available elements on the left) with $k$. If $\text{left\_sum} \geq k$, the target lies in the left subtree; otherwise, recurse right with $k$ reduced by $\text{left\_sum}$.
+
+This traversal naturally finds the index of the k-th available position in $\bigO{\log N}$ time. After selection, update that position to $0$ to mark it as taken, ensuring subsequent queries exclude it from consideration.
+
+\begin{marginlisting}[0pt]{language=C++, caption=Order-Statistic Tree for k-th Free Element}
+\begin{lstlisting}
+struct OrderStatTree {
+    vector<int> tree;
+    int n;
+    
+    OrderStatTree(int size) : n(size) {
+        tree.resize(4 * n, 0);
+        build(1, 1, n);  // Initialize all positions as available
+    }
+    
+    void build(int node, int l, int r) {
+        if (l == r) {
+            tree[node] = 1;  // Position initially available
+            return;
+        }
+        int mid = (l + r) >> 1;
+        build(2*node, l, mid);
+        build(2*node+1, mid+1, r);
+        tree[node] = tree[2*node] + tree[2*node+1];
+    }
+    
+    int kth\_element(int node, int l, int r, int k) {
+        if (l == r) return l;  // Found the k-th available position
+        
+        int mid = (l + r) >> 1;
+        int left\_count = tree[2*node];
+        
+        if (k <= left\_count) {
+            return kth\_element(2*node, l, mid, k);
+        } else {
+            return kth\_element(2*node+1, mid+1, r, k - left\_count);
+        }
+    }
+    
+    void remove(int node, int l, int r, int pos) {
+        if (l == r) {
+            tree[node] = 0;  // Mark position as taken
+            return;
+        }
+        int mid = (l + r) >> 1;
+        if (pos <= mid) remove(2*node, l, mid, pos);
+        else remove(2*node+1, mid+1, r, pos);
+        tree[node] = tree[2*node] + tree[2*node+1];
+    }
+};
+\end{lstlisting}
+\end{marginlisting}
+
+\paragraph{Permutation Generation and Factoradic System}
+
+The factoradic number system\index{factoradic number system} provides a bijection between permutations and their lexicographic ranks. To generate the k-th permutation, compute factoradic digits by repeatedly determining which available element occupies each position, then remove it from consideration.
+
+\marginnote{Fenwick trees\index{Fenwick tree} often provide simpler implementations for pure order-statistic queries, requiring less memory and code complexity than full segment trees. However, segment trees offer more flexibility for range operations.}
+
+This process uses the tree to efficiently manage the "available elements" set, avoiding the $\bigO{N^2}$ complexity of naive array manipulation approaches. Each position selection and removal operates in $\bigO{\log N}$ time, yielding $\bigO{N \log N}$ total complexity for permutation generation.
+
+\paragraph{Josephus Problem Applications}
+
+The Josephus elimination problem—repeatedly removing every k-th person from a circle—naturally maps to order-statistic tree operations. Simulate the process by repeatedly finding the k-th remaining person (with appropriate modular arithmetic for circular indexing) and removing them from the tree.
+
+This approach transforms the classical $\bigO{N^2}$ simulation into an $\bigO{N \log N}$ algorithm, making large Josephus instances tractable for competitive programming constraints.
+
+\section{Choosing the Right Variant}
+\label{sec:variant_selection}
+
+Each advanced segment tree variant addresses specific competitive programming scenarios. Understanding when to apply each technique prevents over-engineering solutions while ensuring optimal complexity for the problem constraints.
+
+\paragraph{Decision Framework}
+
+Dynamic trees suit problems with massive coordinate ranges ($10^{12}$ or larger) but relatively few active positions. If coordinate compression\index{coordinate compression} reduces the range to manageable sizes, prefer standard segment trees for better constant factors.
+
+Merge-sort trees excel in offline scenarios requiring order-statistic queries on static data. For frequent updates or online queries, consider persistent segment trees or balanced binary search trees.
+
+Li Chao trees solve dynamic linear function optimization problems where slopes are not monotonic. When slopes are sorted or all queries are known in advance, simpler convex hull techniques may offer better performance.
+
+Order-statistic trees handle k-th element queries and permutation operations efficiently. For simple counting scenarios, Fenwick trees provide adequate functionality with less implementation complexity than full segment trees. However, segment trees offer more flexibility for range operations.
+
+\begin{table}
+\footnotesize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Variant} & \textbf{Time per Op} & \textbf{Memory} & \textbf{Best Use Case} \\
+\midrule
+Dynamic/Sparse & $\bigO{\log N}$ & $\bigO{Q \log N}$ & Huge ranges, sparse updates \\
+Merge-Sort & $\bigO{(\log N)^2}$ & $\bigO{N \log N}$ & Order statistics, offline queries \\
+Li Chao & $\bigO{\log X}$ & $\bigO{M \log X}$ & Linear DP optimization \\
+Order-Statistic & $\bigO{\log N}$ & $\bigO{N}$ & k-th element, permutations \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of advanced segment tree variants}
+\end{table}
+
+\marginnote{Always verify that advanced variants are necessary before implementation. Many problems that initially seem to require specialized trees can be solved with standard segment trees through clever problem reformulation or coordinate compression.}
+
+Understanding these advanced segment tree variants significantly expands your competitive programming toolkit. Each technique addresses limitations of standard approaches, enabling elegant solutions to problems that would otherwise require complex algorithms or multiple data structures. The key lies in recognizing which variant best matches the problem constraints and query patterns you encounter.

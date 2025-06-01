@@ -1,0 +1,203 @@
+\label{chap:persistent_segment_trees}
+
+\begin{marginnoteenv}[0pt]{Think of persistent structures like version control systems for data structures. Just as Git maintains the complete history of code changes while allowing efficient access to any previous commit, persistent segment trees maintain the complete history of data modifications.} \end{marginnoteenv}
+Traditional segment trees excel at handling dynamic data with fast updates and queries, but they suffer from a fundamental limitation: once an update occurs, the previous state is lost forever. Persistent segment trees\index{persistent segment tree} solve this problem by preserving the complete history of modifications, enabling queries on any past version of the data structure.
+
+This chapter explores the principles behind persistence\index{persistence (data structures)}, demonstrates path copying\index{path copying}, and examines applications in competitive programming\index{competitive programming} where historical data access becomes essential.
+
+\section{Motivation and Historical Data Access}
+\label{sec:motivation_use_cases}
+
+\begin{marginlisting}[0pt]{language=Python, caption=Node Structure for Persistence}
+\begin{lstlisting}
+class Node:
+    def __init__(self, v, l, r):
+        self.value = v
+        self.left = l
+        self.right = r
+
+# Store root for each version
+roots = []
+\end{lstlisting}
+\end{marginlisting}
+
+The concept of preserving history to answer queries on past versions addresses a fundamental gap in dynamic data structures. Consider scenarios where you need to maintain multiple versions of an array simultaneously, revert to previous states, or answer queries about the data structure at specific points in time.
+
+Persistent data structures enable these capabilities by storing not just the current state, but the entire evolution of the data. Rather than overwriting previous values, each modification creates a new version while preserving access to all historical states.
+
+
+\subsection{Representative Applications}
+
+\problemrefmarginnote{prob:persistent_bookcase}{Persistent Bookcase}\index{Persistent Bookcase problem}
+Version control scenarios appear frequently in competitive programming. Problems like "Persistent Bookcase" require reverting the data structure to previous states after specific operations. The ability to branch from any historical version provides powerful rollback functionality for interactive problems.
+
+Order statistic queries\index{order statistic query} benefit significantly from persistence. Finding the k-th smallest element\index{k-th smallest element} in any subarray becomes tractable when we can efficiently access frequency information from different time points. Historical range queries\index{historical range query} enable sophisticated analytics on evolving datasets.
+
+Dynamic programming optimization represents another compelling use case. Some DP formulations require access to previous computational states, where persistence allows efficient reuse of historical results rather than recomputing from scratch.
+
+\section{Path Copying and Version Management}
+\label{sec:path_copying_roots}
+\begin{marginfigure}
+\import{graphics/chapter 6/}{path_copying.tex}
+\caption{Path {\footnotesize 1$\to$2$\to$6$\to$5} copied as {\footnotesize 1'$\,{\to}\,$2'$\,{\to}\,$6'$\,{\to}\,$5'}. Nodes 3,4,7 shared.}
+\end{marginfigure}
+
+
+Persistent segment trees achieve efficiency through a technique called path copying\index{path copying}. Rather than duplicating the entire tree for each modification, we create new nodes only along the path from root to the updated leaf, while reusing all untouched portions of the previous version.
+
+\subsection{The Path Copying Principle}
+
+When updating a single element, only the nodes on the path from root to that leaf need modification. Since a segment tree has height $\bigO{\log N}$, each update creates exactly $\bigO{\log N}$ new nodes. All other nodes can be shared between versions, dramatically reducing memory requirements compared to naive full copying.
+
+This selective copying preserves the tree structure while maintaining independent versions. Each version has its own root pointer, but the majority of nodes are shared among multiple versions, creating an efficient directed acyclic graph structure.
+
+\subsection{Version Array Management}
+
+The implementation maintains an array of root pointers\index{root array}, one for each version of the data structure. Version 0 typically represents the initial state, while subsequent versions correspond to states after each modification.
+
+This root array enables $\bigO{1}$ access to any historical version. Queries on version $i$ simply use \texttt{roots[i]} as the starting point, while updates create new versions by copying and modifying paths from existing versions.
+
+\section{Implementation of Persistent Operations}
+\label{sec:update_query_implementation}
+
+Persistent segment tree operations follow the same logical structure as standard segment trees, with the crucial addition of node creation and path copying during updates\index{update (persistent segment tree)}.
+
+\subsection{Persistent Point Updates}
+The update function takes a previous version's root and creates a new version with a single element modified. At each level, we create a new node, recursively update the appropriate child, and reuse the unchanged child from the previous version.
+
+\begin{algorithm}[H]
+\import{algorithms/chapter 6/}{update.tex}
+\end{algorithm}
+\vspace{1em}
+The key insight lies in the reuse strategy: when recursing left, we reuse the entire right subtree from the previous version. When recursing right, we reuse the entire left subtree. This selective copying minimizes memory allocation while preserving correctness.
+
+\subsection{Version-Specific Queries}
+Queries on persistent trees work identically to standard segment trees, except they receive a specific version's root pointer as input\index{query (persistent segment tree)}. The query logic remains unchanged—we traverse the tree structure following the standard three-case analysis for range queries.
+
+\begin{algorithm}
+\import{algorithms/chapter 6/}{query.tex}
+\end{algorithm}
+\vspace{1em}
+
+This approach enables querying any historical version with the same $\bigO{\log N}$ complexity as standard segment trees. The persistence mechanism adds no overhead to query operations.
+
+\section{Complexity Analysis and Memory Considerations}
+\label{sec:complexity_memory}
+
+\subsection{Time Complexity}
+
+Persistent operations maintain the same time complexity as standard segment trees. Updates require $\bigO{\log N}$ time to create the new path and copy unchanged pointers. Queries take $\bigO{\log N}$ time regardless of the version being accessed.
+
+The logarithmic factors remain constant because the tree height and traversal patterns are identical to non-persistent variants. The additional work involves node allocation and pointer copying, both $\bigO{1}$ operations per level.
+
+\subsection{Space Complexity Analysis}
+
+\marginnote[1em]{For typical competitive programming constraints with $N, Q \approx 10^5$, memory usage can reach several million nodes, which is usually acceptable in contest environments. However, keep in mind that persistent trees use significantly more memory than their non-persistent counterparts.}
+Memory usage represents the primary trade-off in persistent structures\index{memory usage!persistent segment tree}. Each update allocates $\bigO{\log N}$ new nodes, leading to $\bigO{(N + Q) \log N}$ total space for $Q$ updates. This bound accounts for the initial tree construction plus logarithmic growth per modification.
+
+
+For practical contest scenarios with $N, Q \leq 10^5$, this translates to roughly $10^5 + 10^5 \times 17 \approx 1.8$ million nodes—manageable for most competitive programming environments. However, problems with larger constraints may require careful memory management.
+
+\subsection{Memory Management Optimizations}
+\begin{marginnoteenv}[0pt]{See \ref{lst:memory_pool_implementation} for an implementation of a memory pool.} \end{marginnoteenv}
+
+Dynamic allocation using \texttt{new} can be 10-20 times slower than array-based alternatives. Many competitive programmers use preallocated node arrays\index{memory pool} to avoid allocation overhead during contests.
+
+Index-based implementations store left and right child indices in arrays rather than using pointers, often providing better cache locality and faster execution\index{index-based implementation}. This approach trades code simplicity for performance gains.
+
+\section{Classic Applications in Competitive Programming}
+\label{sec:classic_applications}
+
+Persistent segment trees enable elegant solutions to several categories of competitive programming problems that would otherwise require complex algorithmic techniques.
+
+\subsection{Order Statistic Queries}
+\problemrefmarginnote{prob:mkthnum}{K-th Number}\index{K-th Number problem}
+\marginnote{The SPOJ problem "K-th Number" exemplifies this technique. Build a persistent frequency tree\index{frequency tree} of array values, then answer queries by traversing the difference between version $L-1$ and version $R$ trees to locate the k-th element.}
+The k-th smallest element in a subarray represents the quintessential persistent segment tree application. By building a persistent frequency tree where each version represents a prefix of the array, we can answer k-th smallest queries in $\bigO{\log N}$ time.
+
+The technique works by coordinate compression followed by building frequency trees. Version $i$ contains the frequency count of all elements in the prefix ending at position $i$. To find the k-th smallest in range $[L,R]$, we compute the difference between version $R$ and version $L-1$, then perform binary search down the tree structure.
+
+
+\subsection{Range Distinct Count Queries}
+
+Counting distinct elements in a range becomes tractable with persistent trees\index{range distinct count query}. The approach maintains each element's last occurrence position, updating the previous occurrence to 0 when an element repeats. Each version represents distinct elements up to that prefix.
+
+This technique transforms the distinct counting problem into a range sum query on appropriately constructed persistent trees, achieving logarithmic query complexity for what would otherwise require complex data structures.
+
+\subsection{Historical Range Queries}
+\problemrefmarginnote{prob:range-queries-and-copies}{Range Queries and Copies}
+Problems requiring queries on past states of the data structure benefit directly from persistence\index{historical query}. "Range Queries and Copies" on CSES demonstrates this pattern—maintaining multiple array versions while supporting copying operations and sum queries on any version.
+
+The persistent tree naturally handles version branching, where new versions can be created from any existing version rather than only the most recent state.
+
+\section{Implementation Considerations and Common Pitfalls}
+\label{sec:implementation_considerations}
+
+\subsection{Memory Pool Management}
+
+Preallocating memory through static arrays dramatically improves performance compared to dynamic allocation\index{preallocation}. Use arrays sized to $(N + Q) \times 4$ as a safe upper bound for total nodes. This optimization often determines whether solutions pass time limits in competitive programming.
+
+\subsection{Coordinate Compression}
+
+When dealing with large value ranges, compress all values to a 0-indexed range before building the persistent tree\index{coordinate compression}. The tree's indices typically represent value ranks in sorted order rather than raw values.
+
+\subsection{K-th Element Search Logic}
+
+\begin{marginnoteenv}[0pt]{The implementation of the k-th smallest element search is shown in \ref{lst:kth_smallest}.} \end{marginnoteenv}
+Binary search for the k-th smallest element requires careful handling of comparison logic\index{binary search!persistent segment tree}. At each node, compute \texttt{leftCount = right\_version.left.sum - left\_version.left.sum} and compare with $k$. Use $k \leq$ leftCount for the comparison, ensuring 1-indexed versus 0-indexed consistency.
+
+
+\subsection{Avoiding Persistent Lazy Propagation}
+
+\begin{marginnoteenv}[0pt]{When debugging persistent trees, test with small examples and verify tree values manually. A common bug involves forgetting to copy untouched child pointers when creating new nodes, leading to corrupted version histories.} \end{marginnoteenv}
+Combining persistence with lazy propagation creates significant complexity and memory overhead\index{lazy propagation!persistent segment tree}. Most contest problems can be reformulated to avoid this combination, using techniques like difference arrays or offline processing instead.
+
+
+\subsection{Version 0 Initialization}
+
+Ensure the initial version (version 0) is properly constructed, typically representing the initial array state or all zeros\index{version 0 initialization}. Many bugs stem from incorrect initialization of the base version.
+
+\section{Representative Problems and Practice}
+\label{sec:practice_problems}
+
+Persistent segment trees appear in various competitive programming contexts, each demonstrating different aspects of the technique.
+
+\subsection{Fundamental Applications}
+\begin{itemize}
+    \problemrefmarginnote{prob:range-queries-and-copies}{Range Queries and Copies}
+    \item \textbf{Range Queries and Copies} - Versioned arrays with copying and point updates - ideal for learning basic persistence concepts
+    \problemrefmarginnote[15pt]{prob:mkthnum}{K-th Number}
+    \item \textbf{K-th Number} - Classic k-th smallest in subarray problem using persistent frequency trees
+    \problemrefmarginnote[15pt]{prob:dquery}{D-QUERY}
+    \item \textbf{D-QUERY} - Distinct count queries solved through offline processing with persistent bit vectors
+\end{itemize}
+
+\subsection{Advanced Scenarios}
+\begin{itemize}
+    \problemrefmarginnote[0pt]{prob:persistent_bookcase}{Persistent Bookcase}
+    \item \textbf{Persistent Bookcase}: Interactive operations with rollback functionality, demonstrating partial persistence
+    \problemrefmarginnote[0pt]{prob:cot}{Count on a Tree (COT)}
+    \item \textbf{Count on a Tree (COT)}: K-th smallest on tree paths using Euler tour flattening with persistent trees
+    \problemrefmarginnote[0pt]{prob:smaller_sum}{Smaller Sum}
+    \item \textbf{Smaller Sum}: Online queries with persistent Fenwick trees for dynamic prefix sum maintenance
+\end{itemize}
+
+\subsection{Complex Applications}
+\begin{itemize}
+    \problemrefmarginnote[0pt]{prob:armycreation}{Army Creation}
+    \item \textbf{Army Creation}: Counting occurrences with frequency constraints using auxiliary arrays and persistent counting
+    \problemrefmarginnote[0pt]{prob:till_i_collapse}{Till I Collapse}
+    \item \textbf{Till I Collapse}: Advanced scenario mixing persistence with other techniques for complex optimization problems
+\end{itemize}
+
+\marginnote{Start with CSES Range Queries and Copies to understand basic persistence mechanics, then progress to SPOJ K-th Number for the classical order statistic application. These problems provide solid foundations before tackling more complex scenarios.}
+
+These problems span various difficulty levels and demonstrate the versatility of persistent segment trees. The progression from basic versioning to complex order statistics provides a comprehensive understanding of persistence applications in competitive programming.
+
+Understanding persistent segment trees opens new possibilities for solving problems involving historical data access, version management, and complex query scenarios that would be intractable with traditional data structures. While implementation requires careful attention to memory management and pointer handling, the technique provides elegant solutions to sophisticated competitive programming challenges.
+
+\problemrefmarginnote{prob:dquery}{D-QUERY}\index{D-QUERY problem}
+\problemrefmarginnote{prob:cot}{Count on a Tree (COT)}\index{Count on a Tree (COT) problem}
+\problemrefmarginnote{prob:smaller_sum}{Smaller Sum}\index{Smaller Sum problem}
+\problemrefmarginnote{prob:armycreation}{Army Creation}\index{Army Creation problem}
+\problemrefmarginnote{prob:till_i_collapse}{Till I Collapse}\index{Till I Collapse problem}

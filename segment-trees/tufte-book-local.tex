@@ -1,0 +1,56 @@
+\usepackage{import}
+
+\renewcommand{\title}[2][]{%
+  \gdef\@title{#2}%
+  \begingroup%
+    % TODO store contents of \thanks command
+    \renewcommand{\thanks}[1]{}% Swallow \thanks contents
+    \protected@xdef\thanklesstitle{{\raggedright #2}}%
+  \endgroup%
+  \ifthenelse{\isempty{#1}}{%
+    % Use thankless title
+    \renewcommand{\plaintitle}{\thanklesstitle}
+  }{%
+    % Use provided plain-text title
+    \renewcommand{\plaintitle}{#1}
+  }
+  \ifx\hypersetup\undefined
+    % hyperref is not loaded; do nothing
+  \else
+    % Set the PDF metadata title
+    \hypersetup{pdftitle={\plaintitle}}
+  \fi
+}
+
+
+% % Title block
+% \renewcommand{\maketitle}{%
+%   \newpage
+%   %  Prevent floats from being placed at the top of the page
+%   \global\@topnum\z@%
+%   \begingroup
+%     \setlength{\parindent}{0pt}%
+%     \setlength{\parskip}{4pt}%
+%     \let\@@title\@empty
+%     \let\@@author\@empty
+%     \let\@@date\@empty
+%     \ifthenelse{\boolean{@tufte@sfsidenotes}}{%
+%       \gdef\@@title{\sffamily\normalsize\allcaps{\@title}\par}%
+%       \gdef\@@author{\sffamily\Large\allcaps{\@author}\par}%
+%       \gdef\@@date{\sffamily\Large\allcaps{\@date}\par}%
+%     }{%
+%       \gdef\@@title{\LARGE\itshape\@title\par}%
+%       \gdef\@@author{\Large\itshape\@author\par}%
+%       \gdef\@@date{\Large\itshape\@date\par}%
+%     }%
+%     \@@title
+%     \@@author
+%     \@@date
+%   \endgroup
+%   %  Suppress the running head
+%   \thispagestyle{plain}%
+%   % Add some space before the text begins
+%   \tuftebreak%
+%   % Suppress indentation of the next paragraph
+%   \@afterindentfalse\@afterheading%
+% }

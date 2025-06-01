@@ -1,0 +1,63 @@
+\centering
+\begin{tikzpicture}[
+    >=Stealth,
+    every node/.style     = {font=\tiny},
+    old/.style            = {circle, draw=gray!60, fill=gray!20, minimum size=8pt, inner sep=1pt},
+    shared/.style         = {circle, draw=gray!60, fill=gray!15, minimum size=8pt, inner sep=1pt},
+    copied/.style         = {circle, draw=blue!70, fill=blue!25, minimum size=8pt, inner sep=1pt},
+    pathedge/.style       = {-, thick, red!70},
+    normaledge/.style     = {-, thin, gray!60},
+    copyedge/.style       = {-, thick, blue!70},
+]
+
+% Version 1 (before)
+\begin{scope}
+\node[old] (a1) at ( 0,  0) {1};
+\node[old] (a2) at (-0.7,-1) {2};
+\node[old] (a3) at ( 0.7,-1) {3};
+\node[old] (a4) at (-1,-2) {4};
+\node[old] (a6) at (-0.4,-2) {6};
+\node[old] (a7) at ( 0.7,-2) {7};
+\node[old] (a5) at (-0.4,-2.8) {5};
+
+\draw[normaledge] (a1) -- (a3);
+\draw[normaledge] (a2) -- (a4);
+\draw[normaledge] (a2) -- (a6);
+\draw[normaledge] (a3) -- (a7);
+\draw[normaledge] (a6) -- (a5);
+\draw[pathedge] (a1) -- (a2);
+\draw[pathedge] (a2) -- (a6);
+\draw[pathedge] (a6) -- (a5);
+
+\node[above=1pt, font=\tiny] at (a1.north) {v0};
+\end{scope}
+
+% Version 2 (after)
+\begin{scope}[xshift=3cm]
+\node[copied] (b1) at ( 0,  0) {$1'$};
+\node[copied] (b2) at (-0.7,-1) {$2'$};
+\node[shared] (b3) at ( 0.7,-1) {3};
+\node[shared] (b4) at (-1,-2) {4};
+\node[copied] (b6) at (-0.4,-2) {$6'$};
+\node[shared] (b7) at ( 0.7,-2) {7};
+\node[copied] (b5) at (-0.4,-2.8) {$5'$};
+
+\draw[normaledge] (b1) -- (b3);
+\draw[normaledge] (b2) -- (b4);
+\draw[copyedge] (b2) -- (b6);
+\draw[normaledge] (b3) -- (b7);
+\draw[copyedge] (b6) -- (b5);
+\draw[copyedge] (b1) -- (b2);
+\draw[copyedge] (b2) -- (b6);
+\draw[copyedge] (b6) -- (b5);
+
+\node[above=1pt, font=\tiny] at (b1.north) {v1};
+\end{scope}
+
+% Compact legend
+\node[old, minimum size=4pt] at (-0.5,-3.5) {};
+\node[font=\tiny, right=1pt] at (-0.4,-3.5) {shared};
+\node[copied, minimum size=4pt] at (-0.5,-3.8) {};
+\node[font=\tiny, right=1pt] at (-0.4,-3.8) {copied};
+
+\end{tikzpicture}

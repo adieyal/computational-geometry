@@ -1,0 +1,75 @@
+\begin{programmingproblem}{Ahoy, Pirates!}{2 seconds}{256 megabytes}{C++}{prob:ahoy_pirates}
+    \problemdescription{
+        In the ancient pirate ages, Pirate Land was divided into two teams: the Buccaneer pirates and the Barbary pirates. Each pirate's team was not fixed—sometimes, after an attack or a magician's spell, pirates would switch teams.\\
+        There are $N$ pirates, each with a unique id from $0$ to $N-1$. Each pirate is either a Buccaneer (represented by \texttt{1}) or a Barbary (represented by \texttt{0}). The initial arrangement of pirates is constructed as follows: you are given $M$ sets, each consisting of an integer $T$ and a nonempty string $Pirates$ (containing only \texttt{0} and \texttt{1}). For each set, concatenate the string $Pirates$ exactly $T$ times. Concatenate all $M$ sets in order to form the initial pirate arrangement.\\
+        Then, a series of $Q$ queries are performed. Each query is one of the following:
+        \begin{itemize}
+            \item \texttt{F a b}: Mutate pirates from index $a$ to $b$ (inclusive) to Buccaneer pirates (\texttt{1}).
+            \item \texttt{E a b}: Mutate pirates from index $a$ to $b$ (inclusive) to Barbary pirates (\texttt{0}).
+            \item \texttt{I a b}: Invert pirates from index $a$ to $b$ (inclusive) (change \texttt{0} to \texttt{1} and vice versa).
+            \item \texttt{S a b}: God's query: Output the number of Buccaneer pirates (\texttt{1}) from index $a$ to $b$ (inclusive).
+        \end{itemize}
+        For each God's query, output the answer in the format shown in the sample output.
+    }
+
+    \probleminput{
+        The first line contains an integer $T$ ($1 \leq T \leq 10$), the number of test cases.\\
+        For each test case:
+        \begin{itemize}
+            \item The first line contains an integer $M$ ($1 \leq M \leq 100$), the number of sets.
+            \item For each set, two lines follow:
+                \begin{itemize}
+                    \item The first line contains an integer $T$ ($1 \leq T \leq 200$).
+                    \item The second line contains a nonempty string $Pirates$ (length at most $50$, consisting of only \texttt{0} and \texttt{1}).
+                \end{itemize}
+            \item The next line contains an integer $Q$ ($1 \leq Q \leq 1000$), the number of queries.
+            \item Each of the next $Q$ lines contains a query in the format described above.
+        \end{itemize}
+    }
+
+    \problemoutput{
+        For each test case, print \texttt{Case X:} where $X$ is the test case number (starting from $1$). For each God's query (\texttt{S}), print \texttt{QY: Z}, where $Y$ is the query number (starting from $1$ for each test case), and $Z$ is the answer to the query.
+    }
+
+    \begin{problemexamples}
+        \begin{example}{
+2\\
+2\\
+5\\
+10\\
+2\\
+1000\\
+5\\
+F 0 17\\
+I 0 5\\
+S 1 10\\
+E 4 9\\
+S 2 10\\
+3\\
+3\\
+1\\
+4\\
+0\\
+2\\
+0\\
+2\\
+I 0 2\\
+S 0 8
+        }{
+Case 1:\\
+Q1: 5\\
+Q2: 1\\
+Case 2:\\
+Q1: 0
+        }
+        \end{example}
+    \end{problemexamples}
+
+    \problemnotes{
+        \begin{itemize}
+            \item The initial pirate arrangement for the first test case is: \texttt{101010101010001000}
+            \item After the first two queries, the arrangement becomes: \texttt{000000111111111111}
+            \item For each God's query, output the answer as shown in the sample output.
+        \end{itemize}
+    }
+\end{programmingproblem}

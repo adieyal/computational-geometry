@@ -1,0 +1,47 @@
+\begin{programmingproblem}{Range Updates and Sums}{1 second}{512 megabytes}{C}{prob:range-updates-sums}
+    \problemdescription{
+        You are given an array of $n$ integers. Your task is to efficiently process $q$ queries of the following types:
+        \begin{itemize}
+            \item Increase each value in the range $[a, b]$ by $x$.
+            \item Set each value in the range $[a, b]$ to $x$.
+            \item Calculate the sum of values in the range $[a, b]$.
+        \end{itemize}
+    }
+    
+    \probleminput{
+        The first input line contains two integers $n$ and $q$ ($1 \leq n, q \leq 2 \cdot 10^5$): the array size and the number of queries.\\
+        The next line contains $n$ integers $t_1, t_2, \dots, t_n$ ($1 \leq t_i \leq 10^6$): the initial contents of the array.\\
+        Finally, there are $q$ lines describing the queries. Each query is one of the following:
+        \begin{itemize}
+            \item \texttt{1 a b x}: Increase each value in the range $[a, b]$ by $x$ ($1 \leq a \leq b \leq n$, $1 \leq x \leq 10^6$).
+            \item \texttt{2 a b x}: Set each value in the range $[a, b]$ to $x$ ($1 \leq a \leq b \leq n$, $1 \leq x \leq 10^6$).
+            \item \texttt{3 a b}: Calculate the sum of values in the range $[a, b]$ ($1 \leq a \leq b \leq n$).
+        \end{itemize}
+    }
+    
+    \problemoutput{
+        For each sum query, print the answer on its own line.
+    }
+    
+    \begin{problemexamples}
+        \begin{example}{
+            6 5\\
+            2 3 1 1 5 3\\
+            3 3 5\\
+            1 2 4 2\\
+            3 3 5\\
+            2 2 4 5\\
+            3 3 5
+        }{
+            7\\
+            11\\
+            15
+        }
+        \end{example}
+    \end{problemexamples}
+    
+    \problemnotes{
+        Each query is independent and should be processed in the order given.\\
+        Efficient data structures such as segment trees with lazy propagation are recommended for this problem.
+    }
+\end{programmingproblem}

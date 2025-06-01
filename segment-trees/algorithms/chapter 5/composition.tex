@@ -1,0 +1,26 @@
+\SetKwInOut{Input}{input}
+\SetKwInOut{Output}{output}
+\SetKwFunction{ApplySet}{ApplySet}
+\SetKwFunction{ApplyAdd}{ApplyAdd}
+
+\KwData{Node index $node$, value $V$ or $X$, segment length $len$}
+\KwIn{$NO\_SET$ is a sentinel value for no assignment pending}
+
+\BlankLine
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\ApplySet{$node$, $V$, $len$}}{
+    $tree[node] \gets V \times len$\;
+    $lazy\_set[node] \gets V$\;
+    $lazy\_add[node] \gets 0$\tcp*{clear any pending adds}
+}
+\BlankLine
+\Fn{\ApplyAdd{$node$, $X$, $len$}}{
+    \If{$lazy\_set[node] \neq NO\_SET$}{
+        $lazy\_set[node] \gets lazy\_set[node] + X$\tcp*{adjust pending set}
+    }
+    \Else{
+        $lazy\_add[node] \gets lazy\_add[node] + X$\;
+    }
+    $tree[node] \gets tree[node] + X \times len$\;
+}
+\caption{Tag Composition Logic for Lazy Propagation}

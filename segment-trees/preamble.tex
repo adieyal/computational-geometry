@@ -1,0 +1,291 @@
+\usepackage{hyperref}
+\hypersetup{colorlinks}% uncomment this line if you prefer colored hyperlinks (e.g., for onscreen viewing)
+
+% =========================
+% Typography and Spacing
+% =========================
+\usepackage{microtype} % Improves character and word spacing
+\usepackage{xspace}    % Better handling of trailing spaces in macros
+\usepackage{units}     % For typesetting units
+\usepackage{xparse}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage{enumitem}
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{tocloft}
+\usepackage{caption}
+
+
+% =========================
+% Math
+% =========================
+\usepackage{amsmath}
+
+% Generates the index
+\usepackage{makeidx}
+
+%%
+% If they're installed, use Bergamo and Chantilly from www.fontsite.com.
+% They're clones of Bembo and Gill Sans, respectively.
+\IfFileExists{bergamo.sty}{\usepackage[osf]{bergamo}}{}% Bembo
+\IfFileExists{chantill.sty}{\usepackage{chantill}}{}% Gill Sans
+
+
+\usepackage{import}
+\usepackage{listings}
+\usepackage[vlined]{algorithm2e}
+
+%%
+% Just some sample text
+\usepackage{lipsum}
+
+%%
+% For nicely typeset tabular material
+\usepackage{booktabs}
+
+%%
+% For graphics / images
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning,calc,arrows.meta}
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+
+% --- Math and Complexity ---
+\newcommand{\bigO}[1]{\ensuremath{\mathcal{O}(#1)}} % Big O notation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Marginlisting and marginnoteenv
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newsavebox{\marginlistingbox}
+\newsavebox{\marginnotecontentbox}
+
+% --- marginlisting Environment ---
+% For putting code listings in the margin
+\newenvironment{marginlisting}[2][0pt]%
+% #1: Optional argument for vertical space BEFORE the minipage in the margin (default 0pt)
+% #2: Mandatory argument for \lstset options (e.g., "language=C++,caption=My Code")
+  {\def\marginlistingvspace{#1}%  % Save #1 in a macro
+   \begin{lrbox}{\marginlistingbox}%
+   \vspace*{\marginlistingvspace}%
+   \begin{minipage}{\marginparwidth}%
+     \setlength{\parindent}{0pt}%       Set paragraph indent to 0 for any text in this minipage
+     \setlength{\leftskip}{0pt}%        Set left skip to 0 for any text in this minipage
+     % \RaggedRight % Uncomment if you want general text (not listings) in the margin to be ragged right
+     \footnotesize % Default font size for general text within this minipage
+                   % (lstlisting's basicstyle can override for code)
+     \lstset{ % Settings specifically for lstlisting environments *within* this marginlisting environment
+       xleftmargin=0pt,         % --- KEY: Remove listings' own left margin relative to its container (the minipage) ---
+       aboveskip=1pt,           % Minimal vertical space above the listing block
+       belowskip=1pt,           % Minimal vertical space below the listing block
+       basicstyle=\ttfamily\scriptsize, % Default style for code in margin listings (can be overridden by #2)
+       breaklines=true,         % Allow automatic line breaking for long lines
+       breakatwhitespace=true,  % Prefer to break lines at white space
+       keepspaces=true,         % Preserve spaces in the code, important for formatting
+       showstringspaces=false,  % Do not show special symbols for spaces in strings
+       captionpos=b,            % Caption position (bottom)
+       #2                     % Apply user-provided lstlisting options passed as the second argument
+     }%
+   % The content of the \begin{marginlisting}...\end{marginlisting} goes here,
+   % which should typically include a \begin{lstlisting}...\end{lstlisting} block
+  }
+  {\end{minipage}\end{lrbox}\marginpar{\vspace{\marginlistingvspace}\usebox{\marginlistingbox}}} % End minipage, end lrbox, and place it in the margin with vertical adjustment
+
+% --- marginnoteenv Environment ---
+% For putting general text notes in the margin
+\newenvironment{marginnoteenv}[1][0pt]%
+% #1: Optional argument for vertical space BEFORE the minipage in the margin (default 0pt)
+  {\def\marginnotevspace{#1}%
+   \begin{lrbox}{\marginnotecontentbox}%
+   \begin{minipage}{\marginparwidth}%
+     \setlength{\parindent}{0pt}%
+     \setlength{\leftskip}{0pt}%
+     \footnotesize
+  }
+  {\end{minipage}\end{lrbox}%
+   \marginpar{\vspace{\marginnotevspace}\usebox{\marginnotecontentbox}}}
+
+  
+
+%%
+% Prints argument within hanging parentheses (i.e., parentheses that take
+% up no horizontal space).  Useful in tabular environments.
+\newcommand{\hangp}[1]{\makebox[0pt][r]{(}#1\makebox[0pt][l]{)}}
+
+%%
+% Prints an asterisk that takes up no horizontal space.
+% Useful in tabular environments.
+\newcommand{\hangstar}{\makebox[0pt][l]{*}}
+
+%%
+
+%%
+% Some shortcuts for Tufte's book titles.  The lowercase commands will
+% produce the initials of the book title in italics.  The all-caps commands
+% will print out the full title of the book in italics.
+\newcommand{\vdqi}{\textit{VDQI}\xspace}
+\newcommand{\ei}{\textit{EI}\xspace}
+\newcommand{\ve}{\textit{VE}\xspace}
+\newcommand{\be}{\textit{BE}\xspace}
+\newcommand{\VDQI}{\textit{The Visual Display of Quantitative Information}\xspace}
+\newcommand{\EI}{\textit{Envisioning Information}\xspace}
+\newcommand{\VE}{\textit{Visual Explanations}\xspace}
+\newcommand{\BE}{\textit{Beautiful Evidence}\xspace}
+
+\newcommand{\TL}{Tufte-\LaTeX\xspace}
+
+% Prints the month name (e.g., January) and the year (e.g., 2008)
+\newcommand{\monthyear}{%
+  \ifcase\month\or January\or February\or March\or April\or May\or June\or
+  July\or August\or September\or October\or November\or
+  December\fi\space\number\year
+}
+
+
+% Prints an epigraph and speaker in sans serif, all-caps type.
+\newcommand{\openepigraph}[2]{%
+  %\sffamily\fontsize{14}{16}\selectfont
+  \begin{fullwidth}
+  \sffamily\large
+  \begin{doublespace}
+  \noindent\allcaps{#1}\\% epigraph
+  \noindent\allcaps{#2}% author
+  \end{doublespace}
+  \end{fullwidth}
+}
+
+% Inserts a blank page
+\newcommand{\blankpage}{\newpage\hbox{}\thispagestyle{empty}\newpage}
+
+
+% Typesets the font size, leading, and measure in the form of 10/12x26 pc.
+\newcommand{\measure}[3]{#1/#2$\times$\unit[#3]{pc}}
+
+% Macros for typesetting the documentation
+\newcommand{\hlred}[1]{\textcolor{Maroon}{#1}}% prints in red
+\newcommand{\hangleft}[1]{\makebox[0pt][r]{#1}}
+\newcommand{\hairsp}{\hspace{1pt}}% hair space
+\newcommand{\hquad}{\hskip0.5em\relax}% half quad space
+\newcommand{\TODO}{\textcolor{red}{\bf TODO!}\xspace}
+\newcommand{\na}{\quad--}% used in tables for N/A cells
+\providecommand{\XeLaTeX}{X\lower.5ex\hbox{\kern-0.15em\reflectbox{E}}\kern-0.1em\LaTeX}
+\newcommand{\tXeLaTeX}{\XeLaTeX\index{XeLaTeX@\protect\XeLaTeX}}
+% \index{\texttt{\textbackslash xyz}@\hangleft{\texttt{\textbackslash}}\texttt{xyz}}
+\newcommand{\tuftebs}{\symbol{'134}}% a backslash in tt type in OT1/T1
+\newcommand{\doccmdnoindex}[2][]{
+  \texttt{\tuftebs#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2} (\texttt{#1} package)}% command name
+      \index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}% package name
+    }%
+}% command name -- adds backslash automatically
+\newcommand{\doccmddef}[2][]{%
+  \hlred{\texttt{\tuftebs#2}}\label{cmd:#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2} (\texttt{#1} package)}% command name
+      \index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}% package name
+    }%
+}% command name -- adds backslash automatically
+\newcommand{\doccmd}[2][]{%
+  \texttt{\tuftebs#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2} (\texttt{#1} package)}% command name
+      \index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}% package name
+    }%
+}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newenvironment{docspec}{\begin{quotation}\ttfamily\parskip0pt\parindent0pt\ignorespaces}{\end{quotation}}% command specification environment
+\newcommand{\docenv}[1]{\texttt{#1}\index{#1 environment@\texttt{#1} environment}\index{environments!#1@\texttt{#1}}}% environment name
+\newcommand{\docenvdef}[1]{\hlred{\texttt{#1}}\label{env:#1}\index{#1 environment@\texttt{#1} environment}\index{environments!#1@\texttt{#1}}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}\index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}\index{#1 class option@\texttt{#1} class option}\index{class options!#1@\texttt{#1}}}% document class option name
+\newcommand{\docclsoptdef}[1]{\hlred{\texttt{#1}}\label{clsopt:#1}\index{#1 class option@\texttt{#1} class option}\index{class options!#1@\texttt{#1}}}% document class option name defined
+\newcommand{\docmsg}[2]{\bigskip\begin{fullwidth}\noindent\ttfamily#1\end{fullwidth}\medskip\par\noindent#2}
+\newcommand{\docfilehook}[2]{\texttt{#1}\index{file hooks!#2}\index{#1@\texttt{#1}}}
+\newcommand{\doccounter}[1]{\texttt{#1}\index{#1 counter@\texttt{#1} counter}}
+
+
+
+\newtcolorbox{intuition}{
+  colback=gray!10,
+  colframe=gray!50,
+  boxrule=0.5pt,
+  arc=0.5mm,
+  left=1mm, right=1mm, top=1mm, bottom=1mm,
+  fontupper=\small,
+  before skip=10pt, after skip=10pt
+}
+  
+\lstset{
+  basicstyle   = \footnotesize\ttfamily,
+  columns      = fullflexible,
+  resetmargins = true,     % forget any list indent
+  xleftmargin  = 0pt,      % really flush with margin
+  numbers      = none,
+  frame        = none,
+  aboveskip    = 0pt,
+  belowskip    = 0pt
+}
+
+\lstdefinestyle{mypython}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{gray},
+    numbers=none,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    showstringspaces=false,
+    tabsize=4,
+    breaklines=true,
+    frame=none,
+    backgroundcolor=\color{white}
+}
+
+\lstset{style=mypython}
+
+\input{problem-enviornment.tex}
+
+% In your preamble, after \usepackage{tocloft} if you use it
+
+% Define how each entry in the list looks
+\makeatletter
+\newcommand{\l@problems}[2]{\@dottedtocline{1}{1.5em}{2.3em}{#1}{#2}}
+\makeatother
+
+\DeclareCaptionFont{scriptsize}{\scriptsize}
+\captionsetup[lstlisting]{font=scriptsize}
+
+% Custom command for problem marginnote with pill style
+\newcommand{\problemrefmarginnote}[3][0pt]{%
+  \begin{marginnoteenv}[#1]
+    \tcbox[colback=gray!15, colframe=gray!50, boxrule=0pt, arc=4pt, left=4pt, right=4pt, top=2pt, bottom=2pt, boxsep=0pt, enhanced]{%
+      Problem~\ref{#2} (#3)
+    }
+  \end{marginnoteenv}
+}
+
+

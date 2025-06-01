@@ -1,0 +1,29 @@
+\begin{tikzpicture}[level distance=1.2cm,
+  level 1/.style={sibling distance=4cm},
+  level 2/.style={sibling distance=2cm},
+  level 3/.style={sibling distance=1cm},
+  every node/.style={font=\small,draw,rounded corners,minimum size=8mm},
+  edge from parent/.style={draw,-latex}]
+% Root
+\node[fill=white] {$[0,7]$}
+  child {node[fill=white] {$[0,3]$}
+    child {node[fill=green!30] {$[0,1]$}
+      child {node[fill=green!30] {$0$}}
+      child {node[fill=green!30] {$1$}}
+    }
+    child {node[fill=white] {$[2,3]$}
+      child {node[fill=white] {$2$}}
+      child {node[fill=white] {$3$}}
+    }
+  }
+  child {node[fill=white] {$[4,7]$}
+    child {node[fill=white] {$[4,5]$}
+      child {node[fill=white] {$4$}}
+      child {node[fill=white] {$5$}}
+    }
+    child {node[fill=green!30] {$[6,7]$}
+      child {node[fill=green!30] {$6$}}
+      child {node[fill=green!30] {$7$}}
+    }
+  };
+\end{tikzpicture}

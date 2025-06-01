@@ -1,0 +1,247 @@
+% Programming Problem Environment for Tufte-Book
+% Add these packages to your preamble
+% \usepackage{tcolorbox}
+% \usepackage{xparse}
+% \usepackage{enumitem}
+% \usepackage{amsmath}
+% \usepackage{listings}
+
+% Configure tcolorbox for tufte compatibility
+\tcbuselibrary{breakable,skins}
+
+% Define colors that work well with tufte
+\definecolor{problemtitle}{RGB}{107, 36, 31}
+\definecolor{sectioncolor}{RGB}{107, 36, 31}
+\definecolor{exampleback}{RGB}{248, 248, 248}
+\definecolor{exampleborder}{RGB}{200, 200, 200}
+
+% Configure listings for code blocks
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=none,
+    numbers=none,
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b
+}
+
+% In your preamble
+\newcounter{programmingproblem}[chapter] % or [section] if you want per-section numbering
+\renewcommand{\theprogrammingproblem}{\arabic{programmingproblem}} % or \thesection.\arabic{programmingproblem} for section-based
+% \newcommand{\listofproblems}{\listof{problems}{List of Problems}}
+% \newcommand{\problemsname}{List of Problems}
+\makeatletter
+\newcommand{\listofproblems}{\section*{\problemsname}\@starttoc{problems}}
+\makeatother
+\newcommand{\problemsname}{List of Problems}
+
+% Main programming problem environment
+\NewDocumentEnvironment{programmingproblem}{m m m m m}{%
+    \refstepcounter{programmingproblem}
+    \begin{fullwidth}
+    % Arguments: {title}{time_limit}{memory_limit}{problem_id}{label}
+    \needspace{4\baselineskip}
+    \vspace{\baselineskip}
+    
+    % Add to list of problems
+    \addcontentsline{problems}{section}{\protect\numberline{\theprogrammingproblem}#1}
+    
+    % Problem title and metadata (left-aligned)
+    \noindent{\Large\color{problemtitle}\textbf{Problem~\theprogrammingproblem. #1}}
+    \vspace{0.25\baselineskip}
+    
+    \noindent{\small
+    \textit{time limit per test:} #2 \\
+    \textit{memory limit per test:} #3
+    }
+    \label{#5}
+
+    \vspace{0.5\baselineskip}
+}{%
+    \vspace{\baselineskip}
+    \end{fullwidth}
+}
+
+% Problem description command
+\NewDocumentCommand{\problemdescription}{m}{%
+    \noindent\raggedright #1
+    \vspace{0.5\baselineskip}
+}
+
+% Input section
+\NewDocumentCommand{\probleminput}{m}{%
+    \vspace{0.5\baselineskip}
+    \noindent{\color{sectioncolor}\textbf{Input}}
+    
+    \noindent #1
+    \vspace{0.5\baselineskip}
+}
+
+% Output section  
+\NewDocumentCommand{\problemoutput}{m}{%
+    \vspace{0.5\baselineskip}
+    \noindent{\color{sectioncolor}\textbf{Output}}
+    
+    \noindent #1
+    \vspace{0.5\baselineskip}
+}
+
+% Examples environment
+\NewDocumentEnvironment{problemexamples}{}{%
+    \vspace{0.5\baselineskip}
+    \noindent{\color{sectioncolor}\textbf{Examples}}
+    \vspace{0.25\baselineskip}
+}{%
+    \vspace{0.5\baselineskip}
+}
+
+% Individual example environment
+\NewDocumentEnvironment{example}{m m}{%
+    % Arguments: {input_text}{output_text}
+    \begin{tcolorbox}[
+        colback=exampleback,
+        colframe=exampleborder,
+        boxrule=0.5pt,
+        arc=2pt,
+        left=5pt,
+        right=5pt,
+        top=5pt,
+        bottom=5pt,
+        breakable,
+        before skip=0.5\baselineskip,
+        after skip=0.5\baselineskip
+    ]
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{input}
+        \vspace{2pt}
+        
+        {\ttfamily\small #1}
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{output}
+        \vspace{2pt}
+        
+        {\ttfamily\small #2}
+    \end{minipage}
+    \end{tcolorbox}
+}{}
+
+% Alternative single-column example for very long inputs/outputs
+\NewDocumentEnvironment{longexample}{m m}{%
+    % Arguments: {input_text}{output_text}
+    \begin{tcolorbox}[
+        colback=exampleback,
+        colframe=exampleborder,
+        boxrule=0.5pt,
+        arc=2pt,
+        left=5pt,
+        right=5pt,
+        top=5pt,
+        bottom=5pt,
+        breakable,
+        before skip=0.5\baselineskip,
+        after skip=0.5\baselineskip
+    ]
+    \textbf{input}
+    \vspace{2pt}
+    
+    {\ttfamily\small #1}
+    
+    \vspace{8pt}
+    \textbf{output}
+    \vspace{2pt}
+    
+    {\ttfamily\small #2}
+    \end{tcolorbox}
+}{}
+
+% Notes section
+\NewDocumentCommand{\problemnotes}{m}{%
+    \vspace{0.5\baselineskip}
+    \noindent{\color{sectioncolor}\textbf{Note}}
+    
+    \noindent #1
+}
+
+% Helper command for mathematical notation in problems
+\NewDocumentCommand{\mathvar}{m}{\ensuremath{#1}}
+
+% Helper command for sequence notation
+\NewDocumentCommand{\sequence}{m}{\ensuremath{#1}}
+
+% Helper command for highlighting important terms
+\NewDocumentCommand{\term}{m}{\textit{#1}}
+
+% Usage example:
+% \begin{programmingproblem}{Sereja and Brackets}{1 second}{256 megabytes}{C}
+%     \problemdescription{
+%         Sereja has a bracket sequence \sequence{s_1, s_2, \ldots, s_n}, or, in other words, 
+%         a string \mathvar{s} of length \mathvar{n}, consisting of characters ``('' and ``)''.
+%         
+%         Sereja needs to answer \mathvar{m} queries, each of them is described by two integers 
+%         \mathvar{l_i, r_i} (\mathvar{1 \leq l_i \leq r_i \leq n}). The answer to the \mathvar{i}-th 
+%         query is the length of the maximum \term{correct bracket subsequence} of sequence 
+%         \sequence{s_{l_i}, s_{l_i + 1}, \ldots, s_{r_i}}. Help Sereja answer all queries.
+%         
+%         You can find the definitions for a \term{subsequence} and a \term{correct bracket sequence} 
+%         in the notes.
+%     }
+%     
+%     \probleminput{
+%         The first line contains a sequence of characters \sequence{s_1, s_2, \ldots, s_n} 
+%         (\mathvar{1 \leq n \leq 10^6}) without any spaces. Each character is either a ``('' or a ``)''. 
+%         The second line contains integer \mathvar{m} (\mathvar{1 \leq m \leq 10^5}) --- the number of queries. 
+%         Each of the next \mathvar{m} lines contains a pair of integers. The \mathvar{i}-th line contains 
+%         integers \mathvar{l_i, r_i} (\mathvar{1 \leq l_i \leq r_i \leq n}) --- the description of the 
+%         \mathvar{i}-th query.
+%     }
+%     
+%     \problemoutput{
+%         Print the answer to each question on a single line. Print the answers in the order they go in the input.
+%     }
+%     
+%     \begin{problemexamples}
+%         \begin{example}{
+%             ())(())(())(\\
+%             7\\
+%             1 1\\
+%             2 3\\
+%             1 2\\
+%             1 12\\
+%             8 12\\
+%             5 11\\
+%             2 10
+%         }{
+%             0\\
+%             0\\
+%             2\\
+%             10\\
+%             4\\
+%             6\\
+%             6
+%         }
+%         \end{example}
+%     \end{problemexamples}
+%     
+%     % For very long examples, use:
+%     % \begin{longexample}{very long input here}{very long output here}
+%     % \end{longexample}
+%     
+%     \problemnotes{
+%         A \term{subsequence} of length \mathvar{|x|} of string \mathvar{s = s_1s_2\ldots s_{|s|}} 
+%         (where \mathvar{|s|} is the length of string \mathvar{s}) is string 
+%         \mathvar{x = s_{k_1}s_{k_2}\ldots s_{k_{|x|}}} (\mathvar{1 \leq k_1 < k_2 < \ldots < k_{|x|} \leq |s|}).
+%         
+%         A \term{correct bracket sequence} is a bracket sequence that can be transformed into a correct 
+%         arithmetic expression by inserting characters ``1'' and ``+'' between the characters of the string. 
+%         For example, bracket sequences ``()()'', ``(())'', are correct (the resulting expressions 
+%         ``(1)+(1)'', ``((1+1)+1)''), and ``)('' and ``('' are not.
+%         
+%         For the third query required sequence will be \sequence{()}.
+%         
+%         For the fourth query required sequence will be \sequence{()()()()}.
+%     }
+% \end{programmingproblem}
